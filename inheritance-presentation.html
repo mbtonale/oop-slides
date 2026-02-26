@@ -259,9 +259,41 @@
   .access-table th { background: var(--surface); color: var(--accent); font-weight: 600; text-align: left; padding: 0.6rem 1rem; border-bottom: 2px solid var(--accent); font-size: 0.95rem; }
   .access-table td { padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.95rem; }
   .access-table tr:hover td { background: rgba(239, 68, 68, 0.05); }
+
+  .mobile-warning {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--bg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    gap: 1.5rem;
+  }
+  .mobile-warning svg { opacity: 0.5; }
+  .mobile-warning h2 { font-size: 1.5rem; color: #fff; }
+  .mobile-warning p { color: var(--muted); font-size: 1rem; line-height: 1.6; max-width: 300px; }
+  .mobile-warning a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  @media (max-width: 900px) {
+    .mobile-warning { display: flex; }
+    .slide, .nav, .progress, .visma-logo { display: none !important; }
+  }
 </style>
 </head>
 <body>
+
+<div class="mobile-warning">
+  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+  </svg>
+  <h2>Please use a larger screen</h2>
+  <p>This presentation is designed for desktop or projector displays.</p>
+  <a href="index.html">&larr; Back to curriculum</a>
+</div>
+
 <div class="progress" id="progress"></div>
 
 <div class="visma-logo" style="display: flex; align-items: center; gap: 16px;">
