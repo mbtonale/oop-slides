@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inheritance: Course 3 — Python OOP</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0c0e14;
+    --surface: #161923;
+    --border: #252838;
+    --text: #e2e4ea;
+    --muted: #8b8fa4;
+    --accent: #ef4444;
+    --accent-glow: rgba(239, 68, 68, 0.15);
+    --green: #34d399;
+    --cyan: #22d3ee;
+    --orange: #fb923c;
+    --purple: #a78bfa;
+    --pink: #f472b6;
+    --blue: #60a5fa;
+  }
+  body {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+  }
+  .slide {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 50px 100px 90px;
+    height: 100vh;
+    animation: fadeIn 0.35s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide.center { align-items: center; text-align: center; }
+  h1 {
+    font-size: 3.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.8rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  p, li { font-size: 1.15rem; line-height: 1.7; color: var(--muted); }
+  ul { list-style: none; padding: 0; }
+  ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.6rem; }
+  ul li::before { content: '\2192'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
+  strong { color: #fff; font-weight: 600; }
+  .subtitle { font-size: 1.4rem; color: var(--muted); margin-bottom: 2rem; }
+  .callout {
+    background: var(--accent-glow);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.4rem;
+    border-radius: 0 8px 8px 0;
+    margin-top: 1.5rem;
+    font-size: 1.05rem;
+    color: #fff;
+  }
+  .layout { display: flex; gap: 3rem; align-items: center; flex: 1; }
+  .layout .text { flex: 1; }
+  .layout .visual { flex: 1; display: flex; justify-content: center; align-items: center; }
+  .layout .visual svg { width: 100%; height: auto; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+  .col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+  }
+  .col h3 { margin-top: 0; }
+  .tag {
+    display: inline-block;
+    background: var(--accent-glow);
+    color: var(--accent);
+    padding: 0.15rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-right: 0.3rem;
+  }
+  .tag.green { background: rgba(52, 211, 153, 0.15); color: var(--green); }
+  .tag.orange { background: rgba(251, 146, 60, 0.15); color: var(--orange); }
+  .tag.purple { background: rgba(167, 139, 250, 0.15); color: var(--purple); }
+  .tag.cyan { background: rgba(34, 211, 238, 0.15); color: var(--cyan); }
+  .tag.blue { background: rgba(96, 165, 250, 0.15); color: var(--blue); }
+  .tag.pink { background: rgba(244, 114, 182, 0.15); color: var(--pink); }
+  pre {
+    background: #111320;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0.6rem 0;
+    overflow-x: auto;
+  }
+  pre .kw { color: var(--accent); }
+  pre .cls { color: var(--cyan); }
+  pre .fn { color: var(--green); }
+  pre .str { color: var(--orange); }
+  pre .num { color: var(--purple); }
+  pre .cm { color: #555; }
+  pre .par { color: var(--pink); }
+  pre .op { color: var(--muted); }
+
+  .quiz-slide .quiz-answers { opacity: 0; transform: translateY(10px); transition: opacity 0.4s, transform 0.4s; pointer-events: none; }
+  .quiz-slide.step-1 .quiz-answers { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .quiz-slide .quiz-answer.correct { border-color: var(--border); box-shadow: none; font-weight: normal; }
+  .quiz-slide .quiz-answer.correct strong { font-weight: normal; }
+  .quiz-slide.step-2 .quiz-answer.correct { border-color: var(--green); box-shadow: 0 0 15px rgba(52,211,153,0.2); }
+  .quiz-slide.step-2 .quiz-answer.correct strong { font-weight: 700; }
+  .quiz-slide .quiz-explanation { opacity: 0; transition: opacity 0.4s; }
+  .quiz-slide.step-2 .quiz-explanation { opacity: 1; }
+
+  .nav {
+    position: fixed;
+    bottom: 24px;
+    right: 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 100;
+  }
+  .nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    font-family: 'Outfit', sans-serif;
+  }
+  .nav button:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .nav button:disabled { opacity: 0.3; cursor: default; background: var(--surface); border-color: var(--border); color: var(--text); }
+  .nav .counter { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); transition: width 0.3s ease; z-index: 100; }
+
+  .visma-logo {
+    position: fixed;
+    bottom: 24px;
+    left: 32px;
+    z-index: 100;
+    opacity: 0.7;
+  }
+
+  /* Animations */
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes inheritFlow {
+    0% { stroke-dashoffset: 20; }
+    100% { stroke-dashoffset: 0; }
+  }
+  .inherit-line {
+    stroke-dasharray: 6 4;
+    animation: inheritFlow 1.5s linear infinite;
+  }
+  @keyframes nodeGlow {
+    0%, 100% { filter: drop-shadow(0 0 0px transparent); }
+    50% { filter: drop-shadow(0 0 8px var(--accent)); }
+  }
+  @keyframes treeGrow {
+    from { opacity: 0; transform: scaleY(0); transform-origin: top; }
+    to { opacity: 1; transform: scaleY(1); }
+  }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes diamondRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes chainPulse1 { 0%, 100% { opacity: 0.3; } 0%, 33% { opacity: 1; } }
+  @keyframes chainPulse2 { 0%, 100% { opacity: 0.3; } 33%, 66% { opacity: 1; } }
+  @keyframes chainPulse3 { 0%, 100% { opacity: 0.3; } 66%, 100% { opacity: 1; } }
+  .chain-1 { animation: chainPulse1 3s ease-in-out infinite; }
+  .chain-2 { animation: chainPulse2 3s ease-in-out infinite; }
+  .chain-3 { animation: chainPulse3 3s ease-in-out infinite; }
+
+  @keyframes mroToken {
+    0%   { cy: 40; fill: var(--cyan); }
+    25%  { cy: 120; fill: var(--green); }
+    50%  { cy: 200; fill: var(--orange); }
+    75%  { cy: 280; fill: var(--purple); }
+    100% { cy: 340; fill: var(--accent); }
+  }
+  .mro-token { animation: mroToken 4s ease-in-out infinite; }
+
+  @keyframes overrideSwap {
+    0%, 40% { opacity: 1; }
+    50%, 90% { opacity: 0.2; }
+    100% { opacity: 1; }
+  }
+  @keyframes overrideSwapAlt {
+    0%, 40% { opacity: 0.2; }
+    50%, 90% { opacity: 1; }
+    100% { opacity: 0.2; }
+  }
+  .override-parent { animation: overrideSwap 3s ease-in-out infinite; }
+  .override-child { animation: overrideSwapAlt 3s ease-in-out infinite; }
+
+  .slide.active li { animation: fadeIn 0.35s ease backwards; }
+  .slide.active li:nth-child(1) { animation-delay: 0.1s; }
+  .slide.active li:nth-child(2) { animation-delay: 0.2s; }
+  .slide.active li:nth-child(3) { animation-delay: 0.3s; }
+  .slide.active li:nth-child(4) { animation-delay: 0.4s; }
+  .slide.active li:nth-child(5) { animation-delay: 0.5s; }
+
+  .big-number { font-size: 7rem; font-weight: 800; color: var(--accent); line-height: 1; opacity: 0.15; position: absolute; right: 80px; top: 40px; }
+  .accent { color: var(--accent); }
+  .green-text { color: var(--green); }
+  .cyan-text { color: var(--cyan); }
+  .orange-text { color: var(--orange); }
+  .purple-text { color: var(--purple); }
+
+  .curriculum-list { columns: 2; column-gap: 3rem; }
+  .curriculum-list li { break-inside: avoid; }
+  .curriculum-list li.current { color: var(--accent); font-weight: 600; }
+  .curriculum-list li.current::before { content: '\25B6'; color: var(--accent); }
+
+  .access-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  .access-table th { background: var(--surface); color: var(--accent); font-weight: 600; text-align: left; padding: 0.6rem 1rem; border-bottom: 2px solid var(--accent); font-size: 0.95rem; }
+  .access-table td { padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.95rem; }
+  .access-table tr:hover td { background: rgba(239, 68, 68, 0.05); }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="visma-logo" style="display: flex; align-items: center; gap: 16px;">
+  <svg width="100" height="24" viewBox="30 75 165 45" xmlns="http://www.w3.org/2000/svg">
+    <path d="M32.228 81.327c8.803.852 18.458 5.253 23.996 11.643 7.099 8.093 4.686 16.187-5.396 18.032-10.081 1.988-23.996-3.123-31.095-11.217-5.396-6.248-5.253-12.495-.284-15.902l27.971 20.73-15.192-23.286z" fill="#c92043"/>
+    <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z" fill="#fff"/>
+  </svg>
+  <span style="color: var(--border); font-size: 1.2rem;">|</span>
+  <img src="https://vilniustech.lt/files/3843/192/9/11_0/VT_pilnas_BlueTransparent.png" alt="VILNIUS TECH" height="28" style="opacity: 0.8; filter: brightness(0) invert(1);">
+</div>
+
+<!-- ====== 1. TITLE ====== -->
+<div class="slide active center">
+  <p style="color: var(--accent); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Python Object Oriented Programming</p>
+  <h1>Inheritance</h1>
+  <p class="subtitle">Course 3</p>
+  <div style="margin-top: 3rem;">
+    <svg viewBox="0 0 300 160" width="300">
+      <rect x="110" y="5" width="80" height="32" rx="6" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.5"/>
+      <text x="150" y="26" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Parent</text>
+      <line x1="130" y1="37" x2="70" y2="75" stroke="var(--accent)" stroke-width="1.5" class="inherit-line"/>
+      <line x1="170" y1="37" x2="230" y2="75" stroke="var(--accent)" stroke-width="1.5" class="inherit-line"/>
+      <rect x="30" y="75" width="80" height="32" rx="6" fill="var(--surface)" stroke="var(--green)" stroke-width="1.5"/>
+      <text x="70" y="96" text-anchor="middle" fill="var(--green)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Child A</text>
+      <rect x="190" y="75" width="80" height="32" rx="6" fill="var(--surface)" stroke="var(--cyan)" stroke-width="1.5"/>
+      <text x="230" y="96" text-anchor="middle" fill="var(--cyan)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Child B</text>
+      <line x1="70" y1="107" x2="70" y2="130" stroke="var(--green)" stroke-width="1" class="inherit-line"/>
+      <rect x="30" y="125" width="80" height="26" rx="5" fill="var(--surface)" stroke="var(--orange)" stroke-width="1"/>
+      <text x="70" y="142" text-anchor="middle" fill="var(--orange)" font-size="9" font-weight="600" font-family="JetBrains Mono, monospace">Grandchild</text>
+    </svg>
+  </div>
+  <p style="color: var(--muted); font-size: 0.9rem; margin-top: 2rem;">
+    <span class="tag">&larr;</span> <span class="tag">&rarr;</span> to navigate
+  </p>
+</div>
+
+<!-- ====== 2. CURRICULUM ====== -->
+<div class="slide">
+  <h2>Course Curriculum</h2>
+  <p style="color: #fff; margin-bottom: 1.5rem;">Where we are in the journey</p>
+  <ul class="curriculum-list">
+    <li style="color: var(--muted);">0. Introduction to the course</li>
+    <li style="color: var(--muted);">1. Classes vs. Objects</li>
+    <li style="color: var(--muted);">2. Encapsulation & Access Control</li>
+    <li class="current" style="color: var(--accent); font-weight: 600;">3. Inheritance</li>
+    <li>4. Polymorphism</li>
+    <li>5. Composition & Aggregation</li>
+    <li>6. SOLID Principles</li>
+    <li>7. UML & Design Patterns</li>
+    <li>8. Design Patterns (2nd part)</li>
+    <li>9. Exception Handling & Logging</li>
+    <li>10. Testing & TDD</li>
+    <li>11. Libraries & Frameworks</li>
+    <li>12. Recap & Consultation</li>
+  </ul>
+</div>
+
+<!-- ====== 3. RECAP - CLASSES ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap</p>
+      <h2>Classes: The Blueprint</h2>
+      <ul>
+        <li>A <strong>class</strong> defines <strong>attributes</strong> (color, size) and <strong>methods</strong> (make_call, take_photo)</li>
+        <li>It doesn't represent a tangible item until we create an <strong>Object</strong> from it</li>
+        <li>Creating an object = <strong>instantiation</strong></li>
+      </ul>
+      <pre><span class="kw">class</span> <span class="cls">Smartphone</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, brand, color):
+        <span class="par">self</span>.__brand = brand
+        <span class="par">self</span>.__color = color
+
+    <span class="kw">def</span> <span class="fn">make_call</span>(<span class="par">self</span>, number):
+        <span class="kw">return</span> <span class="str">f"Calling {number}..."</span></pre>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 300 300" width="280">
+        <defs>
+          <filter id="glow1"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect x="80" y="40" width="140" height="220" rx="20" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="8 4" opacity="0.5"/>
+        <text x="150" y="75" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="700" font-family="Outfit">BLUEPRINT</text>
+        <rect x="100" y="95" width="100" height="50" rx="8" fill="var(--surface)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="150" y="118" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600">attributes</text>
+        <text x="150" y="133" text-anchor="middle" fill="var(--muted)" font-size="8">brand, color</text>
+        <rect x="100" y="160" width="100" height="50" rx="8" fill="var(--surface)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="150" y="183" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600">methods</text>
+        <text x="150" y="198" text-anchor="middle" fill="var(--muted)" font-size="8">make_call()</text>
+        <text x="150" y="240" text-anchor="middle" fill="var(--muted)" font-size="9">class Smartphone</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 4. RECAP - SELF ====== -->
+<div class="slide">
+  <h2>The <span class="accent">self</span> Parameter</h2>
+  <p style="color: #fff; font-size: 1.15rem; margin-bottom: 1rem;">A way for an object to refer to <strong>itself</strong></p>
+  <div class="two-col">
+    <div>
+      <ul>
+        <li><code style="color: var(--accent);">self</code> is the <strong>first parameter</strong> in any method defined within a class</li>
+        <li>It lets the method access the instance's <strong>attributes</strong> and other <strong>methods</strong></li>
+        <li>When you call <code style="color: var(--green);">person1.compare_age(person2)</code>, <code style="color: var(--accent);">self</code> = person1</li>
+      </ul>
+    </div>
+    <div>
+      <pre><span class="kw">class</span> <span class="cls">Person</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, age):
+        <span class="par">self</span>.name = name
+        <span class="par">self</span>.age = age
+
+    <span class="kw">def</span> <span class="fn">compare_age</span>(<span class="par">self</span>, other):
+        <span class="kw">if</span> <span class="par">self</span>.age > other.age:
+            <span class="fn">print</span>(<span class="str">f"{self.name} is older"</span>)
+
+person1 = <span class="cls">Person</span>(<span class="str">"Alice"</span>, <span class="num">30</span>)
+person2 = <span class="cls">Person</span>(<span class="str">"Bob"</span>, <span class="num">25</span>)
+person1.<span class="fn">compare_age</span>(person2)
+<span class="cm"># Alice is older</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 5. RECAP - ACCESS CONTROL ====== -->
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap</p>
+  <h2>Access Control</h2>
+  <div class="three-col" style="margin-top: 1rem;">
+    <div class="col">
+      <h3 style="color: var(--green);">Public</h3>
+      <p style="font-size: 0.95rem;">Accessible from <strong>anywhere</strong> outside the class. No underscores.</p>
+      <pre style="font-size: 0.8rem;"><span class="par">self</span>.engine_status = <span class="str">"Off"</span>
+
+<span class="kw">def</span> <span class="fn">start_engine</span>(<span class="par">self</span>):
+    <span class="par">self</span>.engine_status = <span class="str">"On"</span></pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">Protected <span class="tag orange">_single</span></h3>
+      <p style="font-size: 0.95rem;">Accessible within class and <strong>subclasses</strong>. Convention, not enforced.</p>
+      <pre style="font-size: 0.8rem;"><span class="par">self</span>._fuel_level = <span class="num">50</span>
+
+<span class="kw">def</span> <span class="fn">_check_fuel</span>(<span class="par">self</span>):
+    <span class="kw">return</span> <span class="par">self</span>._fuel_level > <span class="num">0</span></pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--accent);">Private <span class="tag">__double</span></h3>
+      <p style="font-size: 0.95rem;">Accessible <strong>within class only</strong>. Name mangling prevents outside access.</p>
+      <pre style="font-size: 0.8rem;"><span class="par">self</span>.__owner = <span class="str">"John"</span>
+
+<span class="kw">def</span> <span class="fn">__display_owner</span>(<span class="par">self</span>):
+    <span class="fn">print</span>(<span class="par">self</span>.__owner)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 5b. RECAP - ABSTRACTION ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap</p>
+      <h2>Abstraction</h2>
+      <p style="color: #fff; font-size: 1.1rem; margin-bottom: 1rem;">Hiding complexity, exposing only what matters</p>
+      <ul>
+        <li>Think of a <strong>car</strong> &mdash; you turn the key and it works. You don't need to understand the engine internals.</li>
+        <li>In OOP, abstraction means showing only the <strong>essential features</strong> of an object</li>
+        <li>The <strong>interface</strong> is simple, the <strong>implementation</strong> is hidden</li>
+        <li>Users interact with <strong>what</strong> an object does, not <strong>how</strong> it does it</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 280 260" width="260">
+        <rect x="50" y="10" width="180" height="110" rx="12" fill="var(--surface)" stroke="var(--purple)" stroke-width="2"/>
+        <text x="140" y="35" text-anchor="middle" fill="var(--purple)" font-size="12" font-weight="700">What you see</text>
+        <text x="140" y="58" text-anchor="middle" fill="#fff" font-size="22">&#x1F697;</text>
+        <text x="140" y="80" text-anchor="middle" fill="var(--muted)" font-size="9">start()</text>
+        <text x="140" y="95" text-anchor="middle" fill="var(--muted)" font-size="9">accelerate()</text>
+        <text x="140" y="110" text-anchor="middle" fill="var(--muted)" font-size="9">brake()</text>
+        <rect x="50" y="135" width="180" height="110" rx="12" fill="var(--surface)" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3" opacity="0.5"/>
+        <text x="140" y="160" text-anchor="middle" fill="var(--muted)" font-size="12" font-weight="600">Hidden complexity</text>
+        <text x="140" y="180" text-anchor="middle" fill="var(--muted)" font-size="8" opacity="0.6">_ignite_spark_plugs()</text>
+        <text x="140" y="195" text-anchor="middle" fill="var(--muted)" font-size="8" opacity="0.6">_inject_fuel()</text>
+        <text x="140" y="210" text-anchor="middle" fill="var(--muted)" font-size="8" opacity="0.6">_engage_transmission()</text>
+        <text x="140" y="225" text-anchor="middle" fill="var(--muted)" font-size="8" opacity="0.6">_calculate_torque()</text>
+        <text x="140" y="240" text-anchor="middle" fill="var(--muted)" font-size="8" opacity="0.6">_monitor_temperature()</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- ====== 6. 4 CHARACTERISTICS ====== -->
+<div class="slide">
+  <h2>The 4 Characteristics of Behaviors</h2>
+  <div class="two-col" style="margin-top: 1rem;">
+    <div class="col" style="border-color: var(--border);">
+      <h3 style="color: var(--purple);">Abstraction</h3>
+      <p style="font-size: 0.95rem;">The most essential, impressive, stable thing of an object</p>
+    </div>
+    <div class="col" style="border-color: var(--border);">
+      <h3 style="color: var(--cyan);">Encapsulation</h3>
+      <p style="font-size: 0.95rem;">Behavior hides internal details</p>
+    </div>
+    <div class="col" style="border-color: var(--accent); border-width: 2px; box-shadow: 0 0 20px var(--accent-glow);">
+      <h3 style="color: var(--accent);">Inheritance</h3>
+      <p style="font-size: 0.95rem; color: #fff;">Behaviors are <strong>inheritable</strong></p>
+    </div>
+    <div class="col" style="border-color: var(--border);">
+      <h3 style="color: var(--green);">Polymorphism</h3>
+      <p style="font-size: 0.95rem;">Behaviors are polymorphic</p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 1.5rem;">
+    Today's focus: <strong>Inheritance</strong> &mdash; how behaviors pass from parent to child classes
+  </div>
+</div>
+
+<!-- ====== 7. AGENDA ====== -->
+<div class="slide">
+  <h2>Agenda for Today</h2>
+  <div class="three-col" style="margin-top: 1rem;">
+    <div>
+      <h3 style="color: var(--muted);">Recap</h3>
+      <ul>
+        <li><strong>Classes</strong>, objects &amp; <strong>self</strong></li>
+        <li>Access control &amp; <strong>abstraction</strong></li>
+        <li>Magic methods &amp; OOP benefits</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Inheritance</h3>
+      <ul>
+        <li>5 types of inheritance</li>
+        <li><code style="color: var(--accent);">super()</code> &amp; constructors</li>
+        <li>Method overriding &amp; overloading</li>
+        <li>Abstract classes &amp; properties</li>
+        <li>Composition vs inheritance</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="color: var(--green);">Practice</h3>
+      <ul>
+        <li>Quiz questions</li>
+        <li>Live coding: <strong>Employee System</strong></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 8. INHERITANCE VISUAL - VEHICLE ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <h2>Inheritance</h2>
+      <p style="color: #fff; font-size: 1.2rem; margin-bottom: 1rem;">Real-world hierarchies map to code</p>
+      <ul>
+        <li>A <strong>Vehicle</strong> can be a wheeled vehicle or a boat</li>
+        <li>A <strong>Car</strong> and a <strong>Bicycle</strong> are both wheeled vehicles</li>
+        <li>A <strong>Truck</strong> and <strong>Sports Car</strong> are both cars</li>
+        <li>Each level <strong>inherits</strong> from the one above and <strong>adds</strong> its own specifics</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 480 340" width="420">
+        <rect x="190" y="10" width="120" height="46" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="250" y="28" text-anchor="middle" fill="var(--accent)" font-size="12" font-weight="600">Vehicle</text>
+        <text x="250" y="46" text-anchor="middle" font-size="16">&#x1F697;</text>
+
+        <line x1="220" y1="56" x2="140" y2="96" stroke="var(--accent)" stroke-width="1.5" class="inherit-line"/>
+        <line x1="280" y1="56" x2="370" y2="96" stroke="var(--accent)" stroke-width="1.5" class="inherit-line"/>
+
+        <rect x="65" y="96" width="150" height="46" rx="8" fill="var(--surface)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="140" y="114" text-anchor="middle" fill="var(--green)" font-size="11" font-weight="600">Wheeled Vehicle</text>
+        <text x="140" y="134" text-anchor="middle" font-size="14">&#x2699;&#xFE0F;</text>
+
+        <rect x="305" y="96" width="120" height="46" rx="8" fill="var(--surface)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="365" y="114" text-anchor="middle" fill="var(--cyan)" font-size="11" font-weight="600">Boat</text>
+        <text x="365" y="134" text-anchor="middle" font-size="16">&#x26F5;</text>
+
+        <line x1="105" y1="142" x2="80" y2="186" stroke="var(--green)" stroke-width="1" class="inherit-line"/>
+        <line x1="175" y1="142" x2="210" y2="186" stroke="var(--green)" stroke-width="1" class="inherit-line"/>
+
+        <rect x="25" y="186" width="110" height="46" rx="6" fill="var(--surface)" stroke="var(--orange)" stroke-width="1.5"/>
+        <text x="80" y="204" text-anchor="middle" fill="var(--orange)" font-size="10" font-weight="600">Car</text>
+        <text x="80" y="224" text-anchor="middle" font-size="16">&#x1F698;</text>
+
+        <rect x="155" y="186" width="110" height="46" rx="6" fill="var(--surface)" stroke="var(--purple)" stroke-width="1.5"/>
+        <text x="210" y="204" text-anchor="middle" fill="var(--purple)" font-size="10" font-weight="600">Bicycle</text>
+        <text x="210" y="224" text-anchor="middle" font-size="16">&#x1F6B2;</text>
+
+        <line x1="55" y1="232" x2="40" y2="276" stroke="var(--orange)" stroke-width="1" class="inherit-line"/>
+        <line x1="105" y1="232" x2="140" y2="276" stroke="var(--orange)" stroke-width="1" class="inherit-line"/>
+
+        <rect x="0" y="276" width="85" height="42" rx="5" fill="var(--surface)" stroke="var(--pink)" stroke-width="1"/>
+        <text x="42" y="291" text-anchor="middle" fill="var(--pink)" font-size="9" font-weight="600">Truck</text>
+        <text x="42" y="310" text-anchor="middle" font-size="14">&#x1F69A;</text>
+
+        <rect x="100" y="276" width="95" height="42" rx="5" fill="var(--surface)" stroke="var(--blue)" stroke-width="1"/>
+        <text x="147" y="291" text-anchor="middle" fill="var(--blue)" font-size="9" font-weight="600">Sports Car</text>
+        <text x="147" y="310" text-anchor="middle" font-size="14">&#x1F3CE;&#xFE0F;</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 9. INHERITANCE - MAMMALS ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <h2>Another Example: Mammals</h2>
+      <ul>
+        <li><strong>Mammals</strong> is the base class</li>
+        <li><strong>Humans</strong>, <strong>Cats</strong>, <strong>Dogs</strong> inherit from Mammals</li>
+        <li><strong>Lions</strong>, <strong>Tigers</strong>, <strong>Leopards</strong> inherit from Cats</li>
+        <li>Each child gains parent's traits while adding its own</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 360 300" width="340">
+        <rect x="130" y="5" width="100" height="44" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="180" y="23" text-anchor="middle" fill="var(--accent)" font-size="12" font-weight="600">Mammals</text>
+        <text x="180" y="42" text-anchor="middle" font-size="14">&#x1F43E;</text>
+
+        <line x1="150" y1="49" x2="60" y2="100" stroke="var(--accent)" stroke-width="1.5" class="inherit-line"/>
+        <line x1="180" y1="49" x2="180" y2="100" stroke="var(--accent)" stroke-width="1.5" class="inherit-line"/>
+        <line x1="210" y1="49" x2="300" y2="100" stroke="var(--accent)" stroke-width="1.5" class="inherit-line"/>
+
+        <rect x="15" y="100" width="90" height="44" rx="6" fill="var(--surface)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="60" y="117" text-anchor="middle" fill="var(--green)" font-size="11" font-weight="600">Humans</text>
+        <text x="60" y="136" text-anchor="middle" font-size="16">&#x1F465;</text>
+
+        <rect x="135" y="100" width="90" height="44" rx="6" fill="var(--surface)" stroke="var(--orange)" stroke-width="1.5"/>
+        <text x="180" y="117" text-anchor="middle" fill="var(--orange)" font-size="11" font-weight="600">Cats</text>
+        <text x="180" y="136" text-anchor="middle" font-size="16">&#x1F431;</text>
+
+        <rect x="255" y="100" width="90" height="44" rx="6" fill="var(--surface)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="300" y="117" text-anchor="middle" fill="var(--cyan)" font-size="11" font-weight="600">Dogs</text>
+        <text x="300" y="136" text-anchor="middle" font-size="16">&#x1F436;</text>
+
+        <line x1="155" y1="144" x2="80" y2="200" stroke="var(--orange)" stroke-width="1" class="inherit-line"/>
+        <line x1="180" y1="144" x2="180" y2="200" stroke="var(--orange)" stroke-width="1" class="inherit-line"/>
+        <line x1="205" y1="144" x2="280" y2="200" stroke="var(--orange)" stroke-width="1" class="inherit-line"/>
+
+        <rect x="35" y="200" width="90" height="44" rx="6" fill="var(--surface)" stroke="var(--pink)" stroke-width="1"/>
+        <text x="80" y="217" text-anchor="middle" fill="var(--pink)" font-size="10" font-weight="600">Lions</text>
+        <text x="80" y="236" text-anchor="middle" font-size="14">&#x1F981;</text>
+
+        <rect x="135" y="200" width="90" height="44" rx="6" fill="var(--surface)" stroke="var(--purple)" stroke-width="1"/>
+        <text x="180" y="217" text-anchor="middle" fill="var(--purple)" font-size="10" font-weight="600">Tigers</text>
+        <text x="180" y="236" text-anchor="middle" font-size="14">&#x1F42F;</text>
+
+        <rect x="235" y="200" width="90" height="44" rx="6" fill="var(--surface)" stroke="var(--blue)" stroke-width="1"/>
+        <text x="280" y="217" text-anchor="middle" fill="var(--blue)" font-size="10" font-weight="600">Leopards</text>
+        <text x="280" y="236" text-anchor="middle" font-size="14">&#x1F406;</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 10. TERMINOLOGY ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <h2>Terminology</h2>
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="color: var(--accent);">Base Class (Superclass)</h3>
+        <p style="font-size: 1rem;">The class from which properties and methods are inherited. Also known as a <strong>"parent"</strong> class.</p>
+      </div>
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="color: var(--green);">Derived Class (Subclass)</h3>
+        <p style="font-size: 1rem;">The class that inherits from another class. Can add new properties or modify existing ones. Also known as a <strong>"child"</strong> class.</p>
+      </div>
+      <div>
+        <h3 style="color: var(--blue);">Inheritance</h3>
+        <p style="font-size: 1rem;">Allows creation of a new class that is a <strong>modified version</strong> of an existing class.</p>
+      </div>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 300 250" width="280">
+        <rect x="85" y="15" width="130" height="55" rx="10" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="130" y="37" text-anchor="middle" fill="var(--accent)" font-size="12" font-weight="600">Animal</text>
+        <text x="170" y="37" text-anchor="middle" font-size="14">&#x1F43E;</text>
+        <text x="150" y="55" text-anchor="middle" fill="var(--muted)" font-size="9">Parent / Superclass</text>
+        <line x1="120" y1="70" x2="70" y2="140" stroke="var(--blue)" stroke-width="2" class="inherit-line"/>
+        <line x1="180" y1="70" x2="230" y2="140" stroke="var(--blue)" stroke-width="2" class="inherit-line"/>
+        <rect x="15" y="140" width="110" height="55" rx="10" fill="var(--surface)" stroke="var(--green)" stroke-width="2"/>
+        <text x="50" y="160" text-anchor="middle" fill="var(--green)" font-size="12" font-weight="600">Dog</text>
+        <text x="90" y="162" text-anchor="middle" font-size="16">&#x1F436;</text>
+        <text x="70" y="180" text-anchor="middle" fill="var(--muted)" font-size="9">Child / Subclass</text>
+        <rect x="175" y="140" width="110" height="55" rx="10" fill="var(--surface)" stroke="var(--green)" stroke-width="2"/>
+        <text x="210" y="160" text-anchor="middle" fill="var(--green)" font-size="12" font-weight="600">Cat</text>
+        <text x="250" y="162" text-anchor="middle" font-size="16">&#x1F431;</text>
+        <text x="230" y="180" text-anchor="middle" fill="var(--muted)" font-size="9">Child / Subclass</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 11. TERMINOLOGY CODE ====== -->
+<div class="slide">
+  <h2>Terminology in Code</h2>
+  <div class="two-col" style="margin-top: 0.5rem;">
+    <div>
+      <pre style="font-size: 0.85rem;"><span class="kw">class</span> <span class="cls">Animal</span>: <span class="cm"># Parent class</span>
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"This animal is eating"</span>)
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>): <span class="cm"># Child class</span>
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"The dog barks"</span>)
+
+<span class="kw">class</span> <span class="cls">Cat</span>(<span class="cls">Animal</span>): <span class="cm"># Child class</span>
+    <span class="kw">def</span> <span class="fn">meow</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"The cat meows"</span>)
+
+rex = <span class="cls">Dog</span>()
+rex.<span class="fn">eat</span>()   <span class="cm"># This animal is eating</span>
+rex.<span class="fn">bark</span>()  <span class="cm"># The dog barks</span></pre>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <svg viewBox="0 0 340 265" width="320">
+        <rect x="105" y="20" width="130" height="55" rx="10" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="170" y="42" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="600">Animal</text>
+        <text x="170" y="60" text-anchor="middle" fill="var(--muted)" font-size="10">eat()</text>
+
+        <line x1="235" y1="47" x2="268" y2="47" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <circle cx="235" cy="47" r="2.5" fill="var(--accent)"/>
+        <text x="273" y="43" fill="var(--accent)" font-size="10" font-weight="600">Base class</text>
+        <text x="273" y="55" fill="var(--accent)" font-size="9">(parent)</text>
+
+        <line x1="140" y1="75" x2="80" y2="145" stroke="var(--blue)" stroke-width="2"/>
+        <line x1="200" y1="75" x2="260" y2="145" stroke="var(--blue)" stroke-width="2"/>
+
+        <circle cx="112" cy="107" r="2.5" fill="var(--orange)"/>
+        <line x1="112" y1="107" x2="48" y2="100" stroke="var(--orange)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="5" y="96" fill="var(--orange)" font-size="10" font-weight="600">Inheritance</text>
+
+        <rect x="15" y="145" width="130" height="55" rx="10" fill="var(--surface)" stroke="var(--green)" stroke-width="2"/>
+        <text x="80" y="167" text-anchor="middle" fill="var(--green)" font-size="13" font-weight="600">Dog</text>
+        <text x="80" y="185" text-anchor="middle" fill="var(--muted)" font-size="10">bark() + eat()</text>
+
+        <rect x="195" y="145" width="130" height="55" rx="10" fill="var(--surface)" stroke="var(--green)" stroke-width="2"/>
+        <text x="260" y="167" text-anchor="middle" fill="var(--green)" font-size="13" font-weight="600">Cat</text>
+        <text x="260" y="185" text-anchor="middle" fill="var(--muted)" font-size="10">meow() + eat()</text>
+
+        <circle cx="80" cy="200" r="2.5" fill="var(--green)"/>
+        <line x1="80" y1="200" x2="80" y2="220" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <circle cx="260" cy="200" r="2.5" fill="var(--green)"/>
+        <line x1="260" y1="200" x2="260" y2="220" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="80" y1="220" x2="260" y2="220" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="170" y1="220" x2="170" y2="235" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="170" y="250" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600">Derived classes (children)</text>
+      </svg>
+      <div class="callout" style="margin-top: 0.5rem;">
+        <code style="color: var(--accent);">class Dog(Animal)</code> &mdash; the parentheses declare the inheritance relationship
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 11b. ISINSTANCE & ISSUBCLASS ====== -->
+<div class="slide">
+  <h2><code style="color: var(--green);">isinstance()</code> & <code style="color: var(--cyan);">issubclass()</code></h2>
+  <p style="color: #fff; margin-bottom: 1rem;">Checking inheritance relationships at runtime</p>
+  <div class="two-col">
+    <div>
+      <h3 style="color: var(--green);">isinstance(obj, class)</h3>
+      <p style="font-size: 0.95rem; margin-bottom: 0.5rem;">Is this object an instance of this class <strong>or its parents</strong>?</p>
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">Animal</span>: <span class="kw">pass</span>
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>): <span class="kw">pass</span>
+
+rex = <span class="cls">Dog</span>()
+<span class="fn">print</span>(<span class="fn">isinstance</span>(rex, <span class="cls">Dog</span>))     <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(rex, <span class="cls">Animal</span>))  <span class="cm"># True!</span></pre>
+    </div>
+    <div>
+      <h3 style="color: var(--cyan);">issubclass(child, parent)</h3>
+      <p style="font-size: 0.95rem; margin-bottom: 0.5rem;">Is this class a <strong>subclass</strong> of another class?</p>
+      <pre style="font-size: 0.82rem;"><span class="fn">print</span>(<span class="fn">issubclass</span>(<span class="cls">Dog</span>, <span class="cls">Animal</span>))  <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">issubclass</span>(<span class="cls">Animal</span>, <span class="cls">Dog</span>))  <span class="cm"># False</span>
+<span class="fn">print</span>(<span class="fn">issubclass</span>(<span class="cls">Dog</span>, <span class="cls">Dog</span>))     <span class="cm"># True</span></pre>
+      <div class="callout" style="margin-top: 0.8rem;">Every class is considered a subclass of <strong>itself</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 12. SINGLE INHERITANCE ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <span class="big-number">1</span>
+      <h2>Single Inheritance</h2>
+      <p style="color: #fff; margin-bottom: 1rem;">A class inherits from <strong>only one</strong> parent</p>
+      <pre><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"This animal is eating"</span>)
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"The dog barks"</span>)</pre>
+      <p style="margin-top: 0.8rem;"><code style="color: var(--green);">Dog</code> inherits from <code style="color: var(--accent);">Animal</code>, gaining <code style="color: var(--cyan);">eat()</code></p>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 200 220" width="200">
+        <rect x="45" y="15" width="110" height="50" rx="10" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="80" y="38" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="600">Animal</text>
+        <text x="125" y="40" text-anchor="middle" font-size="16">&#x1F43E;</text>
+        <text x="100" y="55" text-anchor="middle" fill="var(--muted)" font-size="8">eat()</text>
+        <line x1="100" y1="65" x2="100" y2="130" stroke="#fff" stroke-width="2" class="inherit-line"/>
+        <rect x="45" y="130" width="110" height="50" rx="10" fill="var(--surface)" stroke="var(--green)" stroke-width="2"/>
+        <text x="80" y="153" text-anchor="middle" fill="var(--green)" font-size="13" font-weight="600">Dog</text>
+        <text x="125" y="155" text-anchor="middle" font-size="18">&#x1F436;</text>
+        <text x="100" y="170" text-anchor="middle" fill="var(--muted)" font-size="8">bark()</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 13. HIERARCHICAL INHERITANCE ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <span class="big-number">2</span>
+      <h2>Hierarchical Inheritance</h2>
+      <p style="color: #fff; margin-bottom: 1rem;"><strong>Multiple classes</strong> inherit from a single parent</p>
+      <pre><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"This animal is eating"</span>)
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="par">self</span>): ...
+
+<span class="kw">class</span> <span class="cls">Cat</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">meow</span>(<span class="par">self</span>): ...</pre>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 260 220" width="250">
+        <rect x="75" y="10" width="110" height="50" rx="10" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="110" y="33" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="600">Animal</text>
+        <text x="155" y="35" text-anchor="middle" font-size="16">&#x1F43E;</text>
+        <text x="130" y="50" text-anchor="middle" fill="var(--muted)" font-size="8">eat()</text>
+        <line x1="105" y1="60" x2="60" y2="125" stroke="#fff" stroke-width="2" class="inherit-line"/>
+        <line x1="155" y1="60" x2="200" y2="125" stroke="#fff" stroke-width="2" class="inherit-line"/>
+        <rect x="5" y="125" width="110" height="50" rx="10" fill="var(--surface)" stroke="var(--green)" stroke-width="2"/>
+        <text x="40" y="148" text-anchor="middle" fill="var(--green)" font-size="13" font-weight="600">Dog</text>
+        <text x="80" y="150" text-anchor="middle" font-size="18">&#x1F436;</text>
+        <text x="60" y="166" text-anchor="middle" fill="var(--muted)" font-size="8">bark()</text>
+        <rect x="145" y="125" width="110" height="50" rx="10" fill="var(--surface)" stroke="var(--cyan)" stroke-width="2"/>
+        <text x="180" y="148" text-anchor="middle" fill="var(--cyan)" font-size="13" font-weight="600">Cat</text>
+        <text x="220" y="150" text-anchor="middle" font-size="18">&#x1F431;</text>
+        <text x="200" y="166" text-anchor="middle" fill="var(--muted)" font-size="8">meow()</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 14. MULTIPLE INHERITANCE ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <span class="big-number">3</span>
+      <h2>Multiple Inheritance</h2>
+      <p style="color: #fff; margin-bottom: 1rem;">A class inherits from <strong>more than one</strong> base class</p>
+      <pre><span class="kw">class</span> <span class="cls">Father</span>:
+    <span class="kw">def</span> <span class="fn">gardening</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Enjoys gardening"</span>)
+
+<span class="kw">class</span> <span class="cls">Mother</span>:
+    <span class="kw">def</span> <span class="fn">cooking</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Enjoys cooking"</span>)
+
+<span class="kw">class</span> <span class="cls">Child</span>(<span class="cls">Father</span>, <span class="cls">Mother</span>):
+    <span class="kw">pass</span>
+
+child = <span class="cls">Child</span>()
+child.<span class="fn">gardening</span>()  <span class="cm"># From Father</span>
+child.<span class="fn">cooking</span>()    <span class="cm"># From Mother</span></pre>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 260 185" width="230">
+        <rect x="10" y="5" width="100" height="45" rx="10" fill="var(--surface)" stroke="var(--orange)" stroke-width="2"/>
+        <text x="60" y="25" text-anchor="middle" fill="var(--orange)" font-size="13" font-weight="600">Father</text>
+        <text x="60" y="43" text-anchor="middle" font-size="14">&#x1F468;</text>
+        <rect x="150" y="5" width="100" height="45" rx="10" fill="var(--surface)" stroke="var(--pink)" stroke-width="2"/>
+        <text x="200" y="25" text-anchor="middle" fill="var(--pink)" font-size="13" font-weight="600">Mother</text>
+        <text x="200" y="43" text-anchor="middle" font-size="14">&#x1F469;</text>
+        <line x1="60" y1="50" x2="110" y2="105" stroke="#fff" stroke-width="2" class="inherit-line"/>
+        <line x1="200" y1="50" x2="150" y2="105" stroke="#fff" stroke-width="2" class="inherit-line"/>
+        <rect x="75" y="105" width="110" height="45" rx="10" fill="var(--surface)" stroke="var(--green)" stroke-width="2"/>
+        <text x="130" y="126" text-anchor="middle" fill="var(--green)" font-size="13" font-weight="600">Child</text>
+        <text x="130" y="143" text-anchor="middle" font-size="14">&#x1F467;</text>
+      </svg>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 0.5rem;">
+    <strong>Method conflicts?</strong> Python searches <strong>left-to-right</strong>: <code style="color: var(--accent);">class Child(Father, Mother)</code> checks Father first, then Mother
+  </div>
+</div>
+
+<!-- ====== 15. MULTILEVEL INHERITANCE ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <span class="big-number">4</span>
+      <h2>Multilevel Inheritance</h2>
+      <p style="color: #fff; margin-bottom: 1rem;">An <strong>inheritance chain</strong> &mdash; class derived from a class derived from another</p>
+      <pre><span class="kw">class</span> <span class="cls">Grandparent</span>:
+    <span class="kw">def</span> <span class="fn">walking</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Enjoys walking"</span>)
+
+<span class="kw">class</span> <span class="cls">Parent</span>(<span class="cls">Grandparent</span>):
+    <span class="kw">def</span> <span class="fn">reading</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Enjoys reading"</span>)
+
+<span class="kw">class</span> <span class="cls">Child</span>(<span class="cls">Parent</span>):
+    <span class="kw">def</span> <span class="fn">playing</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Enjoys playing"</span>)</pre>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 260 300" width="280">
+        <rect x="60" y="10" width="140" height="55" rx="10" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="130" y="32" text-anchor="middle" fill="var(--accent)" font-size="14" font-weight="600">Grandparent</text>
+        <text x="130" y="54" text-anchor="middle" font-size="18">&#x1F474;</text>
+        <line x1="130" y1="65" x2="130" y2="115" stroke="#fff" stroke-width="2" class="inherit-line chain-1"/>
+        <rect x="60" y="115" width="140" height="55" rx="10" fill="var(--surface)" stroke="var(--orange)" stroke-width="2"/>
+        <text x="130" y="137" text-anchor="middle" fill="var(--orange)" font-size="14" font-weight="600">Parent</text>
+        <text x="130" y="159" text-anchor="middle" font-size="18">&#x1F468;</text>
+        <line x1="130" y1="170" x2="130" y2="220" stroke="#fff" stroke-width="2" class="inherit-line chain-2"/>
+        <rect x="60" y="220" width="140" height="55" rx="10" fill="var(--surface)" stroke="var(--green)" stroke-width="2"/>
+        <text x="130" y="242" text-anchor="middle" fill="var(--green)" font-size="14" font-weight="600">Child</text>
+        <text x="130" y="264" text-anchor="middle" font-size="18">&#x1F467;</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 16. HYBRID / DIAMOND ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <span class="big-number">5</span>
+      <h2>Hybrid Inheritance</h2>
+      <p style="color: #fff; margin-bottom: 1rem;">A <strong>combination</strong> of two or more types</p>
+      <ul>
+        <li><strong>Diamond inheritance</strong>: a derived class inherits from two classes that both inherit from the same base class</li>
+        <li>Python handles this with the <strong>MRO</strong> (Method Resolution Order)</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 280 280" width="260">
+        <defs>
+          <filter id="diamondGlow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect x="90" y="10" width="100" height="36" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="140" y="33" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="600">Base Class</text>
+
+        <line x1="110" y1="46" x2="50" y2="100" stroke="var(--green)" stroke-width="1.5" class="inherit-line"/>
+        <line x1="170" y1="46" x2="230" y2="100" stroke="var(--cyan)" stroke-width="1.5" class="inherit-line"/>
+
+        <rect x="10" y="100" width="80" height="36" rx="8" fill="var(--surface)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="50" y="123" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600">Class A</text>
+
+        <rect x="190" y="100" width="80" height="36" rx="8" fill="var(--surface)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="230" y="123" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600">Class B</text>
+
+        <line x1="50" y1="136" x2="110" y2="195" stroke="var(--green)" stroke-width="1.5" class="inherit-line"/>
+        <line x1="230" y1="136" x2="170" y2="195" stroke="var(--cyan)" stroke-width="1.5" class="inherit-line"/>
+
+        <rect x="90" y="195" width="100" height="36" rx="8" fill="var(--surface)" stroke="var(--orange)" stroke-width="2" filter="url(#diamondGlow)"/>
+        <text x="140" y="218" text-anchor="middle" fill="var(--orange)" font-size="10" font-weight="600">Class C</text>
+
+        <line x1="140" y1="10" x2="140" y2="195" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 6" opacity="0.2"/>
+        <text x="140" y="255" text-anchor="middle" fill="var(--muted)" font-size="9">Diamond pattern</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 17. VEHICLE HIERARCHY VISUAL ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <h2>Inheritance in Practice: Vehicles</h2>
+      <p style="color: #fff; font-size: 1.1rem; margin-bottom: 1rem;">Let's build this hierarchy in code</p>
+      <ul>
+        <li><span class="tag">Vehicle</span> has <strong>make</strong>, <strong>model</strong>, <strong>year</strong> + <code style="color: var(--green);">display_info()</code></li>
+        <li><span class="tag green">Car</span> adds <strong>max_speed</strong> + <code style="color: var(--green);">show_speed()</code></li>
+        <li><span class="tag cyan">Boat</span> adds <strong>max_knots</strong> + <code style="color: var(--green);">show_knots()</code></li>
+        <li><span class="tag orange">Amphibious</span> inherits from <strong>both</strong> Car and Boat</li>
+      </ul>
+      <div class="callout" style="margin-top: 1.5rem;">This example combines <strong>single</strong>, <strong>hierarchical</strong>, and <strong>multiple</strong> inheritance</div>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 280 310" width="280">
+        <rect x="90" y="5" width="100" height="54" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="125" y="22" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="600">Vehicle</text>
+        <text x="165" y="24" text-anchor="middle" font-size="12">&#x1F697;</text>
+        <text x="140" y="38" text-anchor="middle" fill="var(--muted)" font-size="7">make, model, year</text>
+        <text x="140" y="50" text-anchor="middle" fill="var(--green)" font-size="7">display_info()</text>
+
+        <line x1="115" y1="59" x2="60" y2="105" stroke="#fff" stroke-width="1.5" class="inherit-line"/>
+        <line x1="165" y1="59" x2="220" y2="105" stroke="#fff" stroke-width="1.5" class="inherit-line"/>
+
+        <rect x="5" y="105" width="110" height="56" rx="8" fill="var(--surface)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="42" y="123" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600">Car</text>
+        <text x="80" y="125" text-anchor="middle" font-size="14">&#x1F698;</text>
+        <text x="60" y="140" text-anchor="middle" fill="var(--muted)" font-size="7">+ max_speed</text>
+        <text x="60" y="152" text-anchor="middle" fill="var(--green)" font-size="7">+ show_speed()</text>
+
+        <rect x="165" y="105" width="110" height="56" rx="8" fill="var(--surface)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="202" y="123" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600">Boat</text>
+        <text x="242" y="125" text-anchor="middle" font-size="14">&#x26F5;</text>
+        <text x="220" y="140" text-anchor="middle" fill="var(--muted)" font-size="7">+ max_knots</text>
+        <text x="220" y="152" text-anchor="middle" fill="var(--green)" font-size="7">+ show_knots()</text>
+
+        <line x1="60" y1="161" x2="110" y2="215" stroke="var(--green)" stroke-width="1.5" class="inherit-line"/>
+        <line x1="220" y1="161" x2="170" y2="215" stroke="var(--cyan)" stroke-width="1.5" class="inherit-line"/>
+
+        <rect x="60" y="215" width="160" height="55" rx="8" fill="var(--surface)" stroke="var(--orange)" stroke-width="2"/>
+        <text x="120" y="233" text-anchor="middle" fill="var(--orange)" font-size="10" font-weight="600">Amphibious Vehicle</text>
+        <text x="195" y="235" text-anchor="middle" font-size="14">&#x1F6A4;</text>
+        <text x="140" y="257" text-anchor="middle" fill="var(--muted)" font-size="7">inherits all attrs + methods</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 18. VEHICLE CODE + GRAPHIC ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <h2>Vehicle Hierarchy: Code</h2>
+      <pre style="font-size: 0.68rem;"><span class="kw">class</span> <span class="cls">Vehicle</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, make, model, year):
+        <span class="par">self</span>.make = make
+        <span class="par">self</span>.model = model
+        <span class="par">self</span>.year = year
+
+    <span class="kw">def</span> <span class="fn">display_info</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"{self.make} {self.model}, {self.year}"</span>)
+
+<span class="kw">class</span> <span class="cls">Car</span>(<span class="cls">Vehicle</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, make, model, year, max_speed):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(make, model, year)
+        <span class="par">self</span>.max_speed = max_speed
+
+    <span class="kw">def</span> <span class="fn">show_speed</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"Max: {self.max_speed} mph"</span>)
+
+<span class="kw">class</span> <span class="cls">Boat</span>(<span class="cls">Vehicle</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, make, model, year, max_knots):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(make, model, year)
+        <span class="par">self</span>.max_knots = max_knots
+
+    <span class="kw">def</span> <span class="fn">show_knots</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"Max: {self.max_knots} knots"</span>)
+
+<span class="kw">class</span> <span class="cls">AmphibiousVehicle</span>(<span class="cls">Car</span>, <span class="cls">Boat</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, make, model, year,
+                 max_speed, max_knots):
+        <span class="cls">Car</span>.<span class="fn">__init__</span>(<span class="par">self</span>, make, model, year, max_speed)
+        <span class="cls">Boat</span>.<span class="fn">__init__</span>(<span class="par">self</span>, make, model, year, max_knots)</pre>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 280 310" width="240">
+        <rect x="90" y="5" width="100" height="54" rx="8" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="125" y="22" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="600">Vehicle</text>
+        <text x="165" y="24" text-anchor="middle" font-size="12">&#x1F697;</text>
+        <text x="140" y="38" text-anchor="middle" fill="var(--muted)" font-size="7">make, model, year</text>
+        <text x="140" y="50" text-anchor="middle" fill="var(--green)" font-size="7">display_info()</text>
+
+        <line x1="115" y1="59" x2="60" y2="105" stroke="#fff" stroke-width="1.5" class="inherit-line"/>
+        <line x1="165" y1="59" x2="220" y2="105" stroke="#fff" stroke-width="1.5" class="inherit-line"/>
+
+        <rect x="5" y="105" width="110" height="56" rx="8" fill="var(--surface)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="42" y="123" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600">Car</text>
+        <text x="80" y="125" text-anchor="middle" font-size="14">&#x1F698;</text>
+        <text x="60" y="140" text-anchor="middle" fill="var(--muted)" font-size="7">+ max_speed</text>
+        <text x="60" y="152" text-anchor="middle" fill="var(--green)" font-size="7">+ show_speed()</text>
+
+        <rect x="165" y="105" width="110" height="56" rx="8" fill="var(--surface)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="202" y="123" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600">Boat</text>
+        <text x="242" y="125" text-anchor="middle" font-size="14">&#x26F5;</text>
+        <text x="220" y="140" text-anchor="middle" fill="var(--muted)" font-size="7">+ max_knots</text>
+        <text x="220" y="152" text-anchor="middle" fill="var(--green)" font-size="7">+ show_knots()</text>
+
+        <line x1="60" y1="161" x2="110" y2="215" stroke="var(--green)" stroke-width="1.5" class="inherit-line"/>
+        <line x1="220" y1="161" x2="170" y2="215" stroke="var(--cyan)" stroke-width="1.5" class="inherit-line"/>
+
+        <rect x="60" y="215" width="160" height="55" rx="8" fill="var(--surface)" stroke="var(--orange)" stroke-width="2"/>
+        <text x="120" y="233" text-anchor="middle" fill="var(--orange)" font-size="10" font-weight="600">Amphibious Vehicle</text>
+        <text x="195" y="235" text-anchor="middle" font-size="14">&#x1F6A4;</text>
+        <text x="140" y="257" text-anchor="middle" fill="var(--muted)" font-size="7">inherits all attrs + methods</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 18b. __INIT__ IN INHERITANCE ====== -->
+<div class="slide">
+  <h2><code style="color: var(--accent);">__init__</code> in Inheritance</h2>
+  <p style="color: #fff; margin-bottom: 1rem;">How constructors chain through the hierarchy</p>
+  <div class="two-col">
+    <div>
+      <h3 style="color: var(--accent);">The Problem</h3>
+      <p style="font-size: 0.95rem; margin-bottom: 0.5rem;">Child's <code>__init__</code> <strong>overrides</strong> parent's. Parent attributes are lost!</p>
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>.name = name
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, breed):
+        <span class="par">self</span>.breed = breed  <span class="cm"># name is LOST!</span>
+
+rex = <span class="cls">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Labrador"</span>)
+<span class="fn">print</span>(rex.breed)  <span class="cm"># Labrador</span>
+<span class="fn">print</span>(rex.name)   <span class="cm"># AttributeError!</span></pre>
+    </div>
+    <div>
+      <h3 style="color: var(--green);">The Solution</h3>
+      <p style="font-size: 0.95rem; margin-bottom: 0.5rem;">Call <code>super().__init__()</code> to chain constructors</p>
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>.name = name
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, breed):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(name)
+        <span class="par">self</span>.breed = breed
+
+rex = <span class="cls">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Labrador"</span>)
+<span class="fn">print</span>(rex.name)   <span class="cm"># Rex &#10004;</span>
+<span class="fn">print</span>(rex.breed)  <span class="cm"># Labrador &#10004;</span></pre>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 1rem;"><strong>Rule:</strong> Always call <code>super().__init__()</code> when overriding the constructor</div>
+</div>
+
+<!-- ====== 18c. __INIT__ MULTI-LEVEL ====== -->
+<div class="slide">
+  <h2>Constructor Chaining</h2>
+  <p style="color: #fff; margin-bottom: 1rem;">Each level initializes its own attributes, then delegates upward</p>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="fn">print</span>(<span class="str">"Animal init"</span>)
+        <span class="par">self</span>.name = name
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, breed):
+        <span class="fn">print</span>(<span class="str">"Dog init"</span>)
+        <span class="fn">super</span>().<span class="fn">__init__</span>(name)
+        <span class="par">self</span>.breed = breed
+
+<span class="kw">class</span> <span class="cls">Puppy</span>(<span class="cls">Dog</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, breed, toy):
+        <span class="fn">print</span>(<span class="str">"Puppy init"</span>)
+        <span class="fn">super</span>().<span class="fn">__init__</span>(name, breed)
+        <span class="par">self</span>.toy = toy
+
+p = <span class="cls">Puppy</span>(<span class="str">"Max"</span>, <span class="str">"Beagle"</span>, <span class="str">"Ball"</span>)</pre>
+    </div>
+    <div>
+      <h3 style="color: var(--cyan);">Output order:</h3>
+      <pre style="font-size: 0.85rem; background: var(--surface);"><span class="str">Puppy init</span>    <span class="cm"># 1. Puppy starts</span>
+<span class="str">Dog init</span>      <span class="cm"># 2. Delegates to Dog</span>
+<span class="str">Animal init</span>   <span class="cm"># 3. Delegates to Animal</span></pre>
+      <div class="callout" style="margin-top: 1rem;">
+        <strong>Execution flows down</strong> (Puppy &rarr; Dog &rarr; Animal) but <strong>initialization chains upward</strong> via <code>super()</code>
+      </div>
+      <ul style="margin-top: 1rem;">
+        <li><code style="color: var(--green);">p.name</code> = "Max"</li>
+        <li><code style="color: var(--cyan);">p.breed</code> = "Beagle"</li>
+        <li><code style="color: var(--orange);">p.toy</code> = "Ball"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 19. METHOD OVERRIDING ====== -->
+<div class="slide">
+  <h2>Understanding Method <span class="accent">Overriding</span></h2>
+  <p style="color: #fff; font-size: 1.1rem; margin-bottom: 1.5rem;">A subclass provides a <strong>specific implementation</strong> for a method already defined in its superclass</p>
+  <div class="three-col">
+    <div class="col">
+      <h3 style="color: var(--green);">Customization</h3>
+      <p style="font-size: 0.95rem;">Subclasses tailor or <strong>modify inherited behavior</strong> without altering the superclass code</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--cyan);">Extensibility</h3>
+      <p style="font-size: 0.95rem;">Subclasses can <strong>extend</strong> behavior by adding steps and calling <code style="color: var(--accent);">super()</code></p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">Polymorphism</h3>
+      <p style="font-size: 0.95rem;">A single interface can represent <strong>different underlying forms</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 20. METHOD OVERRIDING EXAMPLE ====== -->
+<div class="slide">
+  <div class="layout">
+    <div class="text">
+      <h2>Overriding in Action</h2>
+      <pre style="font-size: 0.85rem;"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Animal speaks"</span>)
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Dog barks"</span>)
+
+<span class="kw">class</span> <span class="cls">Cat</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Cat meows"</span>)
+
+dog = <span class="cls">Dog</span>()
+dog.<span class="fn">speak</span>()  <span class="cm"># Dog barks</span>
+cat = <span class="cls">Cat</span>()
+cat.<span class="fn">speak</span>()  <span class="cm"># Cat meows</span></pre>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 300 280" width="280">
+        <rect x="85" y="10" width="130" height="58" rx="10" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="130" y="30" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="600">Animal</text>
+        <text x="170" y="32" text-anchor="middle" font-size="14">&#x1F43E;</text>
+        <text x="150" y="50" text-anchor="middle" fill="var(--muted)" font-size="9" class="override-parent">speak() → "Animal speaks"</text>
+
+        <line x1="120" y1="68" x2="60" y2="135" stroke="#fff" stroke-width="1.5" class="inherit-line"/>
+        <line x1="180" y1="68" x2="240" y2="135" stroke="#fff" stroke-width="1.5" class="inherit-line"/>
+
+        <rect x="0" y="135" width="120" height="60" rx="10" fill="var(--surface)" stroke="var(--green)" stroke-width="2"/>
+        <text x="40" y="155" text-anchor="middle" fill="var(--green)" font-size="11" font-weight="600">Dog</text>
+        <text x="80" y="158" text-anchor="middle" font-size="18">&#x1F436;</text>
+        <text x="60" y="180" text-anchor="middle" fill="#fff" font-size="9" class="override-child">speak() → "Dog barks"</text>
+
+        <rect x="180" y="135" width="120" height="60" rx="10" fill="var(--surface)" stroke="var(--cyan)" stroke-width="2"/>
+        <text x="220" y="155" text-anchor="middle" fill="var(--cyan)" font-size="11" font-weight="600">Cat</text>
+        <text x="260" y="158" text-anchor="middle" font-size="18">&#x1F431;</text>
+        <text x="240" y="180" text-anchor="middle" fill="#fff" font-size="9" class="override-child">speak() → "Cat meows"</text>
+
+        <text x="150" y="235" text-anchor="middle" fill="var(--muted)" font-size="10">Same method name, different behavior</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 21. OVERRIDING RULES ====== -->
+<div class="slide">
+  <h2><span class="accent">Rules</span> for Method Overriding</h2>
+  <div class="three-col" style="margin-top: 1.5rem;">
+    <div class="col">
+      <h3 style="color: var(--green);">1. Method Signature</h3>
+      <p style="font-size: 0.95rem;">Same <strong>name and parameters</strong> as the superclass method. Return type should be the same or a subtype.</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--cyan);">2. Access Level</h3>
+      <p style="font-size: 0.95rem;">Cannot be <strong>more restrictive</strong> than the method in the superclass.</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">3. super() Invocation</h3>
+      <p style="font-size: 0.95rem;">The overridden method can still be accessed using <code style="color: var(--accent);">super()</code>.</p>
+    </div>
+  </div>
+  <pre style="margin-top: 1.5rem;"><span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="par">self</span>):
+        <span class="fn">super</span>().<span class="fn">speak</span>()          <span class="cm"># calls Animal.speak()</span>
+        <span class="fn">print</span>(<span class="str">"Dog barks"</span>)       <span class="cm"># adds Dog-specific behavior</span></pre>
+</div>
+
+<!-- ====== 21c. PROPERTY INHERITANCE ====== -->
+<div class="slide">
+  <h2>Property Inheritance</h2>
+  <p style="color: #fff; margin-bottom: 1rem;"><code style="color: var(--green);">@property</code> decorators are inherited and can be overridden</p>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>._name = name
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">name</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="par">self</span>._name
+
+    <span class="kw">@</span>name.<span class="fn">setter</span>
+    <span class="kw">def</span> <span class="fn">name</span>(<span class="par">self</span>, value):
+        <span class="kw">if not</span> value:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">"Empty!"</span>)
+        <span class="par">self</span>._name = value</pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, breed):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(name)
+        <span class="par">self</span>.breed = breed
+
+<span class="cm"># Dog inherits the property!</span>
+rex = <span class="cls">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Labrador"</span>)
+<span class="fn">print</span>(rex.name)    <span class="cm"># Rex</span>
+
+rex.name = <span class="str">"Buddy"</span> <span class="cm"># Setter works!</span>
+rex.name = <span class="str">""</span>       <span class="cm"># ValueError!</span></pre>
+      <div class="callout" style="margin-top: 1rem;">Properties with <strong>validation logic</strong> carry their rules to all child classes automatically</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 22. SUPER FUNCTION ====== -->
+<div class="slide">
+  <h2>The <span class="accent">super()</span> Function</h2>
+  <p style="color: #fff; font-size: 1.1rem; margin-bottom: 1.5rem;">Access superclass methods &mdash; ensures proper initialization</p>
+  <div class="two-col">
+    <div>
+      <pre><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>.name = name
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, breed):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(name)
+        <span class="par">self</span>.breed = breed</pre>
+      <div class="callout" style="margin-top: 1rem;">
+        <code style="color: var(--accent);">super()</code> can call <strong>any</strong> method from the parent class, not just the constructor.
+      </div>
+    </div>
+    <div>
+      <ul>
+        <li><strong>Access superclass methods</strong> that have been overridden</li>
+        <li>Ensures the superclass is <strong>properly initialized</strong></li>
+        <li>Allows subclasses to <strong>extend</strong> rather than replace behavior</li>
+        <li>Respects the class hierarchy and <strong>MRO</strong></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 25. SUPER BEST PRACTICES ====== -->
+<div class="slide">
+  <h2>Best Practices with <span class="accent">super()</span></h2>
+  <div style="margin-top: 1.5rem;">
+    <ul>
+      <li><strong>Consistency</strong>: Use <code style="color: var(--accent);">super()</code> consistently to avoid unexpected behaviors, especially when extending class hierarchies</li>
+      <li><strong>Always use super() in inherited methods</strong>: Ensures your class hierarchy remains flexible and maintainable</li>
+      <li><strong>Be mindful in multiple inheritance</strong>: Understand the MRO and how it affects method calls in complex hierarchies</li>
+    </ul>
+  </div>
+  <div class="callout" style="margin-top: 2rem;">
+    If a subclass does not define its own constructor, the parent's constructor is called <strong>automatically</strong>.<br>
+    If it does define one, you must <strong>explicitly call</strong> <code style="color: var(--accent);">super().__init__()</code> to initialize the parent.
+  </div>
+</div>
+
+<!-- ====== 25b. CLASS VS INSTANCE ATTRIBUTES ====== -->
+<div class="slide">
+  <h2>Class vs Instance Attributes</h2>
+  <p style="color: #fff; margin-bottom: 1rem;">Same class, two kinds of data</p>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">Employee</span>:
+    raise_pct = <span class="num">1.05</span>       <span class="cm"># class attribute</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>.name = name  <span class="cm"># instance attribute</span>
+
+<span class="kw">class</span> <span class="cls">Developer</span>(<span class="cls">Employee</span>):
+    raise_pct = <span class="num">1.10</span>       <span class="cm"># overrides class attr</span>
+
+e1 = <span class="cls">Employee</span>(<span class="str">"Alice"</span>)
+e2 = <span class="cls">Employee</span>(<span class="str">"Bob"</span>)
+d1 = <span class="cls">Developer</span>(<span class="str">"Carol"</span>)
+
+<span class="fn">print</span>(e1.name)       <span class="cm"># Alice</span>
+<span class="fn">print</span>(e2.name)       <span class="cm"># Bob</span>
+<span class="fn">print</span>(e1.raise_pct)  <span class="cm"># 1.05</span>
+<span class="fn">print</span>(e2.raise_pct)  <span class="cm"># 1.05 (same!)</span>
+<span class="fn">print</span>(d1.raise_pct)  <span class="cm"># 1.10 (overridden)</span></pre>
+    </div>
+    <div>
+      <div class="col" style="margin-bottom: 1rem;">
+        <h3 style="color: var(--orange);">Class attribute <span style="color: var(--muted); font-weight: 400; font-size: 0.9rem;">raise_pct</span></h3>
+        <p style="font-size: 0.95rem;"><strong>Shared</strong> by all instances. Defined outside <code>__init__</code>. Child classes can <strong>override</strong> it without affecting the parent.</p>
+      </div>
+      <div class="col">
+        <h3 style="color: var(--cyan);">Instance attribute <span style="color: var(--muted); font-weight: 400; font-size: 0.9rem;">name</span></h3>
+        <p style="font-size: 0.95rem;"><strong>Unique</strong> to each object. Set in <code>__init__</code> via <code>self</code>. Every employee has their own name.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 26. ACCESS MODIFIERS & INHERITANCE ====== -->
+<div class="slide">
+  <h2>How Access Modifiers Affect Inheritance</h2>
+  <div class="three-col" style="margin-top: 1rem;">
+    <div class="col">
+      <h3 style="color: var(--green);">Public</h3>
+      <p style="font-size: 0.9rem;">Subclasses <strong>freely inherit</strong> and access public methods and properties</p>
+      <pre style="font-size: 0.75rem;"><span class="par">self</span>.public_var = <span class="str">"Public"</span>
+<span class="cm"># accessible everywhere</span></pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">Protected</h3>
+      <p style="font-size: 0.9rem;">Accessible within class <strong>and subclasses</strong>. Allows safe modification without exposure.</p>
+      <pre style="font-size: 0.75rem;"><span class="par">self</span>._protected_var = <span class="str">"Prot"</span>
+<span class="cm"># convention, not enforced</span></pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--accent);">Private</h3>
+      <p style="font-size: 0.9rem;"><strong>Not directly accessible</strong> to subclasses. Name mangling prevents direct access, but parent methods using them still work.</p>
+      <pre style="font-size: 0.75rem;"><span class="par">self</span>.__private_var = <span class="str">"Priv"</span>
+<span class="cm"># raises AttributeError</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 27. OVERLOADING VS OVERRIDING ====== -->
+<div class="slide">
+  <h2>Overloading vs Overriding</h2>
+  <div class="two-col" style="margin-top: 1rem;">
+    <div class="col" style="border-color: var(--orange);">
+      <h3 style="color: var(--orange); font-size: 1.3rem;">Method Overloading</h3>
+      <p style="font-size: 0.95rem; margin-bottom: 0.6rem;">Same name, <strong>different parameters</strong></p>
+      <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem;">Within one class:</p>
+      <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Calculator</span>:
+    <span class="kw">def</span> <span class="fn">add</span>(<span class="par">self</span>, *args):
+        <span class="kw">return</span> <span class="fn">sum</span>(args)
+
+calc.<span class="fn">add</span>(<span class="num">1</span>, <span class="num">2</span>)      <span class="cm"># 3</span>
+calc.<span class="fn">add</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)   <span class="cm"># 6</span></pre>
+      <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; margin-top: 0.5rem;">Across inheritance:</p>
+      <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Eating"</span>)
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="par">self</span>, food=<span class="str">"meat"</span>):
+        <span class="fn">print</span>(<span class="str">f"Eating <span class="par">{food}</span>"</span>)</pre>
+      <p style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--orange);">Python simulates this with default args / *args</p>
+    </div>
+    <div class="col" style="border-color: var(--accent);">
+      <h3 style="color: var(--accent); font-size: 1.3rem;">Method Overriding</h3>
+      <p style="font-size: 0.95rem; margin-bottom: 0.8rem;">Subclass <strong>redefines</strong> a parent method with same signature</p>
+      <pre style="font-size: 0.78rem;"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Animal sound"</span>)
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Dog barks"</span>)
+
+pet = <span class="cls">Dog</span>()
+pet.<span class="fn">speak</span>()  <span class="cm"># Dog barks</span></pre>
+      <p style="font-size: 0.85rem; margin-top: 0.5rem; color: var(--accent);">Straightforward in Python</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 28. SHAPE OVERRIDING EXAMPLE ====== -->
+<div class="slide">
+  <h2>Overriding Example: Shapes</h2>
+  <div class="two-col" style="margin-top: 0.5rem;">
+    <div>
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">Shape</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="num">0</span>
+
+<span class="kw">class</span> <span class="cls">Rectangle</span>(<span class="cls">Shape</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, width, height):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        <span class="par">self</span>.__width = width
+        <span class="par">self</span>.__height = height
+
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="par">self</span>.__width * <span class="par">self</span>.__height</pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.8rem;"><span class="kw">import</span> math
+
+<span class="kw">class</span> <span class="cls">Circle</span>(<span class="cls">Shape</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, radius):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        <span class="par">self</span>.__radius = radius
+
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">return</span> math.pi * <span class="par">self</span>.__radius**<span class="num">2</span></pre>
+      <div class="callout" style="margin-top: 1rem;">
+        Both <code style="color: var(--green);">Rectangle</code> and <code style="color: var(--cyan);">Circle</code> override <code style="color: var(--accent);">area()</code> with their own formula
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 28b. COMMON MISTAKES ====== -->
+<div class="slide">
+  <h2>Common Mistakes</h2>
+  <p style="color: #fff; margin-bottom: 1rem;">Pitfalls to watch out for</p>
+  <div class="three-col">
+    <div class="col" style="border-color: var(--accent);">
+      <h3>Forgetting super().__init__()</h3>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, breed):
+        <span class="cm"># Missing super().__init__()!</span>
+        <span class="par">self</span>.breed = breed
+
+rex = <span class="cls">Dog</span>(<span class="str">"Lab"</span>)
+rex.name  <span class="cm"># AttributeError!</span></pre>
+    </div>
+    <div class="col" style="border-color: var(--orange);">
+      <h3>Mutable Class Attributes</h3>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">Animal</span>:
+    tricks = []  <span class="cm"># SHARED!</span>
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>): <span class="kw">pass</span>
+<span class="kw">class</span> <span class="cls">Cat</span>(<span class="cls">Animal</span>): <span class="kw">pass</span>
+
+<span class="cls">Dog</span>().tricks.append(<span class="str">"fetch"</span>)
+<span class="fn">print</span>(<span class="cls">Cat</span>().tricks)
+<span class="cm"># ['fetch'] -- oops!</span></pre>
+    </div>
+    <div class="col" style="border-color: var(--cyan);">
+      <h3>Too Deep Hierarchies</h3>
+      <pre style="font-size: 0.75rem;"><span class="cm"># Don't do this:</span>
+<span class="cls">Animal</span>
+  <span class="cls">Mammal</span>
+    <span class="cls">Carnivore</span>
+      <span class="cls">Canine</span>
+        <span class="cls">DomesticDog</span>
+          <span class="cls">Labrador</span>
+            <span class="cls">ChocolateLab</span>
+<span class="cm"># Keep it 2-3 levels!</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 29. WHY INHERITANCE ====== -->
+<div class="slide">
+  <h2><span class="accent">Inheritance</span>: Why Do We Care?</h2>
+  <div style="margin-top: 1.5rem;">
+    <ul>
+      <li><strong>Reuse code</strong> &mdash; avoid duplicating code that's needed in multiple places</li>
+      <li><strong>Organized code</strong> &mdash; group related code together, more manageable structure</li>
+      <li><strong>Flexible code</strong> &mdash; change behavior of a section without many changes across the codebase</li>
+      <li><strong>Readable code</strong> &mdash; easier for other developers to understand what is going on</li>
+      <li><strong>Maintainable code</strong> &mdash; easy to read = easy to maintain = easy to keep up-to-date</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====== QUIZ 1 ====== -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time!</h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What does this code print?</p>
+  <pre style="font-size: 0.9rem; max-width: 700px;"><span class="kw">class</span> <span class="cls">A</span>:
+    <span class="kw">def</span> <span class="fn">greet</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Hello from A"</span>)
+
+<span class="kw">class</span> <span class="cls">B</span>(<span class="cls">A</span>):
+    <span class="kw">def</span> <span class="fn">greet</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">"Hello from B"</span>)
+
+<span class="kw">class</span> <span class="cls">C</span>(<span class="cls">B</span>):
+    <span class="kw">pass</span>
+
+obj = <span class="cls">C</span>()
+obj.<span class="fn">greet</span>()</pre>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Hello from A</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) Hello from B</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) Error</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Nothing</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">C has no <code>greet()</code>, so Python follows the MRO: C &rarr; B &rarr; finds it in B</p>
+</div>
+
+<!-- ====== QUIZ 2 ====== -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time!</h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What's the output?</p>
+  <pre style="font-size: 0.9rem; max-width: 700px;"><span class="kw">class</span> <span class="cls">Vehicle</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, speed):
+        <span class="par">self</span>.speed = speed
+
+<span class="kw">class</span> <span class="cls">Car</span>(<span class="cls">Vehicle</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, speed, brand):
+        <span class="par">self</span>.brand = brand
+
+car = <span class="cls">Car</span>(<span class="num">120</span>, <span class="str">"Toyota"</span>)
+<span class="fn">print</span>(car.speed)</pre>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) 120</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) AttributeError</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) None</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Toyota</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">Car's <code>__init__</code> overrides Vehicle's but never calls <code>super().__init__(speed)</code> &mdash; so <code>speed</code> is never set!</p>
+</div>
+
+<!-- ====== QUIZ 3 ====== -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time!</h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">Identify the inheritance type</p>
+  <pre style="font-size: 0.9rem; max-width: 700px;"><span class="kw">class</span> <span class="cls">Flyable</span>:
+    <span class="kw">def</span> <span class="fn">fly</span>(<span class="par">self</span>): <span class="fn">print</span>(<span class="str">"Flying"</span>)
+
+<span class="kw">class</span> <span class="cls">Swimmable</span>:
+    <span class="kw">def</span> <span class="fn">swim</span>(<span class="par">self</span>): <span class="fn">print</span>(<span class="str">"Swimming"</span>)
+
+<span class="kw">class</span> <span class="cls">Duck</span>(<span class="cls">Flyable</span>, <span class="cls">Swimmable</span>):
+    <span class="kw">def</span> <span class="fn">quack</span>(<span class="par">self</span>): <span class="fn">print</span>(<span class="str">"Quack!"</span>)</pre>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Single</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) Hierarchical</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>C) Multiple</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Multilevel</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">Duck inherits from <strong>two</strong> unrelated parent classes &mdash; that's multiple inheritance</p>
+</div>
+
+<!-- ====== LIVE CODING SESSION ====== -->
+<div class="slide center">
+  <p style="color: var(--accent); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Hands-on</p>
+  <h1 style="font-size: 2.8rem;">Live Coding Session</h1>
+  <p class="subtitle">Employee Management System</p>
+  <div class="two-col" style="margin-top: 2rem; max-width: 900px; text-align: left;">
+    <div>
+      <h3 style="color: var(--green);">What we'll build</h3>
+      <ul>
+        <li><code style="color: var(--accent);">Employee</code> base class</li>
+        <li><code style="color: var(--green);">Developer</code> &mdash; single inheritance</li>
+        <li><code style="color: var(--cyan);">Manager</code> &mdash; method overriding</li>
+        <li><code style="color: var(--orange);">TechLead</code> &mdash; multiple inheritance</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="color: var(--cyan);">Concepts covered</h3>
+      <ul>
+        <li><code>super().__init__()</code> chaining</li>
+        <li>Method overriding &amp; <code>super()</code></li>
+        <li><code>isinstance()</code> &amp; MRO</li>
+        <li>Polymorphism in action</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 30. SUMMARY ====== -->
+<div class="slide center">
+  <h1>Key Takeaways</h1>
+  <div style="max-width: 700px; margin-top: 2rem; text-align: left;">
+    <ul>
+      <li><strong>Inheritance</strong> lets child classes receive attributes and methods from parent classes</li>
+      <li>5 types: <span class="tag">Single</span> <span class="tag green">Hierarchical</span> <span class="tag cyan">Multiple</span> <span class="tag orange">Multilevel</span> <span class="tag purple">Hybrid</span></li>
+      <li><strong>Method overriding</strong> customizes inherited behavior in subclasses</li>
+      <li><code style="color: var(--accent);">super()</code> accesses parent methods &mdash; use it consistently</li>
+      <li>In multiple inheritance, Python searches <strong>left-to-right</strong> for methods</li>
+    </ul>
+  </div>
+  <p style="color: var(--muted); margin-top: 3rem; font-size: 1rem;">Next up: <strong style="color: var(--accent);">Polymorphism</strong></p>
+</div>
+
+<!-- ====== NAVIGATION ====== -->
+<div class="nav">
+  <button id="prev" onclick="navigate(-1)">&lsaquo;</button>
+  <span class="counter" id="counter"></span>
+  <button id="next" onclick="navigate(1)">&rsaquo;</button>
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+
+  function show(i) {
+    slides[current].classList.remove('active', 'step-1', 'step-2');
+    current = Math.max(0, Math.min(total - 1, i));
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === total - 1;
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  function advanceQuizStep(slide) {
+    if (!slide.classList.contains('step-1')) { slide.classList.add('step-1'); return true; }
+    if (!slide.classList.contains('step-2')) { slide.classList.add('step-2'); return true; }
+    return false;
+  }
+
+  function navigate(d) {
+    if (d === 1 && slides[current].classList.contains('quiz-slide')) {
+      if (advanceQuizStep(slides[current])) return;
+    }
+    show(current + d);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); navigate(1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); navigate(-1); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(total - 1); }
+  });
+
+  show(0);
+</script>
+</body>
+</html>
