@@ -21,6 +21,27 @@
     --purple: #a78bfa;
     --pink: #f472b6;
     --blue: #60a5fa;
+    --heading: #fff;
+    --code-bg: #111320;
+    --code-comment: #555;
+  }
+  [data-theme="light"] {
+    --bg: #f5f6f8;
+    --surface: #e8eaef;
+    --border: #c8ccd4;
+    --text: #1e2030;
+    --heading: #111320;
+    --muted: #4a5068;
+    --accent: #dc2626;
+    --accent-glow: rgba(220, 38, 38, 0.1);
+    --green: #059669;
+    --cyan: #0e7490;
+    --orange: #c2410c;
+    --purple: #7c3aed;
+    --pink: #be185d;
+    --blue: #2563eb;
+    --code-bg: #e2e4ea;
+    --code-comment: #6b7280;
   }
   body {
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -48,7 +69,7 @@
   h1 {
     font-size: 3.4rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+    background: linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 0.8rem;
@@ -58,7 +79,7 @@
   h2 {
     font-size: 2.1rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--heading);
     margin-bottom: 1.2rem;
     letter-spacing: -0.01em;
   }
@@ -72,7 +93,7 @@
   ul { list-style: none; padding: 0; }
   ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.6rem; }
   ul li::before { content: '\2192'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
-  strong { color: #fff; font-weight: 600; }
+  strong { color: var(--heading); font-weight: 600; }
   .subtitle { font-size: 1.4rem; color: var(--muted); margin-bottom: 2rem; }
   .callout {
     background: var(--accent-glow);
@@ -81,7 +102,7 @@
     border-radius: 0 8px 8px 0;
     margin-top: 1.5rem;
     font-size: 1.05rem;
-    color: #fff;
+    color: var(--heading);
   }
   .layout { display: flex; gap: 3rem; align-items: center; flex: 1; }
   .layout .text { flex: 1; }
@@ -113,7 +134,7 @@
   .tag.blue { background: rgba(96, 165, 250, 0.15); color: var(--blue); }
   .tag.pink { background: rgba(244, 114, 182, 0.15); color: var(--pink); }
   pre {
-    background: #111320;
+    background: var(--code-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1rem 1.4rem;
@@ -129,7 +150,7 @@
   pre .fn { color: var(--green); }
   pre .str { color: var(--orange); }
   pre .num { color: var(--purple); }
-  pre .cm { color: #555; }
+  pre .cm { color: var(--code-comment); }
   pre .par { color: var(--pink); }
   pre .op { color: var(--muted); }
 
@@ -159,7 +180,7 @@
   }
   .quiz-slide.step-2 .quiz-answer.correct strong {
     font-weight: 700;
-    color: #fff;
+    color: var(--heading);
   }
   .quiz-slide .quiz-explanation {
     opacity: 0;
@@ -196,7 +217,7 @@
   .nav button:hover {
     background: var(--accent);
     border-color: var(--accent);
-    color: #fff;
+    color: var(--heading);
   }
   .nav button:disabled {
     opacity: 0.3;
@@ -353,7 +374,7 @@
   .mobile-warning svg { opacity: 0.5; }
   .mobile-warning h2 {
     font-size: 1.5rem;
-    color: #fff;
+    color: var(--heading);
   }
   .mobile-warning p {
     color: var(--muted);
@@ -395,7 +416,7 @@
     <path d="M32.228 81.327c8.803.852 18.458 5.253 23.996 11.643 7.099 8.093 4.686 16.187-5.396 18.032-10.081 1.988-23.996-3.123-31.095-11.217-5.396-6.248-5.253-12.495-.284-15.902l27.971 20.73-15.192-23.286z"
           fill="#c92043"/>
     <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z"
-          fill="#fff"/>
+          fill="var(--heading)"/>
   </svg>
   <span style="color: var(--border); font-size: 1.2rem;">|</span>
   <img src="vgtu.jpg" alt="VILNIUS TECH" height="28" style="border-radius: 4px;">
@@ -1295,7 +1316,7 @@ my_phone.<span class="fn">check_battery</span>()
 </div>
 
 <div class="slide center">
-  <p style="font-size: 1.8rem; color: #fff; font-weight: 700;">
+  <p style="font-size: 1.8rem; color: var(--heading); font-weight: 700;">
     so... what's OOP motivation<br>and core concepts?
   </p>
   <svg viewBox="0 0 120 120" width="140" height="140"
@@ -1825,7 +1846,7 @@ my_phone.<span class="fn">check_battery</span>()
     <circle cx="44" cy="158" r="4" fill="var(--orange)"/>
     <circle cx="56" cy="158" r="4" fill="var(--orange)"/>
   </svg>
-  <p style="font-size: 1.4rem; color: #fff; font-weight: 600; margin-top: 1.5rem;">
+  <p style="font-size: 1.4rem; color: var(--heading); font-weight: 600; margin-top: 1.5rem;">
     TV Static
   </p>
   <p style="color: var(--muted); margin-top: 0.5rem;">
@@ -2216,7 +2237,7 @@ __all__ <span class="op">=</span> [<span class="str">'public_function'</span>]
 
 <div class="slide quiz-slide">
   <h2>Quiz Time</h2>
-  <p style="margin-bottom: 1.5rem; font-size: 1.2rem; color: #fff;">
+  <p style="margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--heading);">
     What does the underscore prefix
     <code style="color: var(--cyan); font-size: 1.1rem;">_</code>
     mean in Python?
@@ -2326,12 +2347,30 @@ __all__ <span class="op">=</span> [<span class="str">'public_function'</span>]
 </div>
 
 <div class="nav">
+  <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size: 1.2rem;">&#9788;</button>
   <button id="prev" onclick="navigate(-1)">&lsaquo;</button>
   <span class="counter" id="counter"></span>
   <button id="next" onclick="navigate(1)">&rsaquo;</button>
 </div>
 
 <script>
+  const saved = localStorage.getItem('oop-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'light' ? '' : 'light';
+    if (next) {
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('oop-theme', next);
+    } else {
+      html.removeAttribute('data-theme');
+      localStorage.removeItem('oop-theme');
+    }
+    document.getElementById('theme-toggle').textContent = next === 'light' ? '\u263E' : '\u2604';
+  }
+  document.getElementById('theme-toggle').textContent = saved === 'light' ? '\u263E' : '\u2604';
+
   let current = 0;
   const slides = document.querySelectorAll('.slide');
   const total = slides.length;

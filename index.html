@@ -12,10 +12,22 @@
     --surface: #161923;
     --border: #252838;
     --text: #e2e4ea;
+    --heading: #fff;
     --muted: #8b8fa4;
     --accent: #ef4444;
     --accent-glow: rgba(239, 68, 68, 0.15);
     --green: #34d399;
+  }
+  [data-theme="light"] {
+    --bg: #f5f6f8;
+    --surface: #e8eaef;
+    --border: #c8ccd4;
+    --text: #1e2030;
+    --heading: #111320;
+    --muted: #4a5068;
+    --accent: #dc2626;
+    --accent-glow: rgba(220, 38, 38, 0.1);
+    --green: #059669;
   }
   body {
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -49,7 +61,7 @@
   .header h1 {
     font-size: 3rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+    background: linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 1.1;
@@ -133,7 +145,7 @@
 <div class="logos">
   <svg width="100" height="24" viewBox="30 75 165 45" xmlns="http://www.w3.org/2000/svg">
     <path d="M32.228 81.327c8.803.852 18.458 5.253 23.996 11.643 7.099 8.093 4.686 16.187-5.396 18.032-10.081 1.988-23.996-3.123-31.095-11.217-5.396-6.248-5.253-12.495-.284-15.902l27.971 20.73-15.192-23.286z" fill="#c92043"/>
-    <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z" fill="#fff"/>
+    <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z" fill="var(--heading)"/>
   </svg>
   <span style="color: var(--border); font-size: 1.2rem;">|</span>
   <img src="vgtu.jpg" alt="VILNIUS TECH" height="28" style="border-radius: 4px;">
@@ -208,5 +220,18 @@
   </div>
 </div>
 
+<button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="position: fixed; top: 1.5rem; right: 1.5rem; background: var(--surface); border: 1px solid var(--border); color: var(--text); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; z-index: 100;">&#9788;</button>
+<script>
+  const saved = localStorage.getItem('oop-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'light' ? '' : 'light';
+    if (next) { html.setAttribute('data-theme', next); localStorage.setItem('oop-theme', next); }
+    else { html.removeAttribute('data-theme'); localStorage.removeItem('oop-theme'); }
+    document.getElementById('theme-toggle').textContent = next === 'light' ? '\u263E' : '\u2604';
+  }
+  document.getElementById('theme-toggle').textContent = saved === 'light' ? '\u263E' : '\u2604';
+</script>
 </body>
 </html>

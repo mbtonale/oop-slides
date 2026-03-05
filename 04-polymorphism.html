@@ -12,6 +12,7 @@
     --surface: #161923;
     --border: #252838;
     --text: #e2e4ea;
+    --heading: #fff;
     --muted: #8b8fa4;
     --accent: #ef4444;
     --accent-glow: rgba(239, 68, 68, 0.15);
@@ -21,6 +22,26 @@
     --purple: #a78bfa;
     --pink: #f472b6;
     --blue: #60a5fa;
+    --code-bg: #111320;
+    --code-comment: #555;
+  }
+  [data-theme="light"] {
+    --bg: #f5f6f8;
+    --surface: #e8eaef;
+    --border: #c8ccd4;
+    --text: #1e2030;
+    --heading: #111320;
+    --muted: #4a5068;
+    --accent: #dc2626;
+    --accent-glow: rgba(220, 38, 38, 0.1);
+    --green: #059669;
+    --cyan: #0e7490;
+    --orange: #c2410c;
+    --purple: #7c3aed;
+    --pink: #be185d;
+    --blue: #2563eb;
+    --code-bg: #e2e4ea;
+    --code-comment: #6b7280;
   }
   body {
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -48,7 +69,7 @@
   h1 {
     font-size: 3.4rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+    background: linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 0.8rem;
@@ -58,7 +79,7 @@
   h2 {
     font-size: 2.1rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--heading);
     margin-bottom: 1.2rem;
     letter-spacing: -0.01em;
   }
@@ -72,7 +93,7 @@
   ul { list-style: none; padding: 0; }
   ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.6rem; }
   ul li::before { content: '\2192'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
-  strong { color: #fff; font-weight: 600; }
+  strong { color: var(--heading); font-weight: 600; }
   .subtitle { font-size: 1.4rem; color: var(--muted); margin-bottom: 2rem; }
   .callout {
     background: var(--accent-glow);
@@ -81,7 +102,7 @@
     border-radius: 0 8px 8px 0;
     margin-top: 1.5rem;
     font-size: 1.05rem;
-    color: #fff;
+    color: var(--heading);
   }
   .layout { display: flex; gap: 3rem; align-items: center; flex: 1; }
   .layout .text { flex: 1; }
@@ -113,7 +134,7 @@
   .tag.blue { background: rgba(96, 165, 250, 0.15); color: var(--blue); }
   .tag.pink { background: rgba(244, 114, 182, 0.15); color: var(--pink); }
   pre {
-    background: #111320;
+    background: var(--code-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1rem 1.4rem;
@@ -129,7 +150,7 @@
   pre .fn { color: var(--green); }
   pre .str { color: var(--orange); }
   pre .num { color: var(--purple); }
-  pre .cm { color: #555; }
+  pre .cm { color: var(--code-comment); }
   pre .par { color: var(--pink); }
   pre .op { color: var(--muted); }
 
@@ -138,7 +159,7 @@
   .quiz-slide .quiz-answer.correct { border-color: var(--border); box-shadow: none; font-weight: normal; }
   .quiz-slide .quiz-answer.correct strong { font-weight: normal; color: var(--green); }
   .quiz-slide.step-2 .quiz-answer.correct { border-color: var(--green); box-shadow: 0 0 15px rgba(52,211,153,0.2); }
-  .quiz-slide.step-2 .quiz-answer.correct strong { font-weight: 700; color: #fff; }
+  .quiz-slide.step-2 .quiz-answer.correct strong { font-weight: 700; color: var(--heading); }
   .quiz-slide .quiz-explanation { opacity: 0; transition: opacity 0.4s; }
   .quiz-slide.step-2 .quiz-explanation { opacity: 1; }
 
@@ -163,7 +184,7 @@
     transition: all 0.2s;
     font-family: 'Outfit', sans-serif;
   }
-  .nav button:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .nav button:hover { background: var(--accent); border-color: var(--accent); color: var(--heading); }
   .nav button:disabled { opacity: 0.3; cursor: default; background: var(--surface); border-color: var(--border); color: var(--text); }
   .nav .counter { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
   .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); transition: width 0.3s ease; z-index: 100; }
@@ -257,7 +278,7 @@
     gap: 1.5rem;
   }
   .mobile-warning svg { opacity: 0.5; }
-  .mobile-warning h2 { font-size: 1.5rem; color: #fff; }
+  .mobile-warning h2 { font-size: 1.5rem; color: var(--heading); }
   .mobile-warning p { color: var(--muted); font-size: 1rem; line-height: 1.6; max-width: 300px; }
   .mobile-warning a { color: var(--accent); text-decoration: none; font-weight: 600; }
   @media (max-width: 900px) {
@@ -282,7 +303,7 @@
 <div class="visma-logo" style="display: flex; align-items: center; gap: 16px;">
   <svg width="100" height="24" viewBox="30 75 165 45" xmlns="http://www.w3.org/2000/svg">
     <path d="M32.228 81.327c8.803.852 18.458 5.253 23.996 11.643 7.099 8.093 4.686 16.187-5.396 18.032-10.081 1.988-23.996-3.123-31.095-11.217-5.396-6.248-5.253-12.495-.284-15.902l27.971 20.73-15.192-23.286z" fill="#c92043"/>
-    <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z" fill="#fff"/>
+    <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z" fill="var(--heading)"/>
   </svg>
   <span style="color: var(--border); font-size: 1.2rem;">|</span>
   <img src="vgtu.jpg" alt="VILNIUS TECH" height="28" style="border-radius: 4px;">
@@ -315,7 +336,7 @@
 
 <div class="slide">
   <h2>Course Curriculum</h2>
-  <p style="color: #fff; margin-bottom: 1.5rem;">Where we are in the journey</p>
+  <p style="color: var(--heading); margin-bottom: 1.5rem;">Where we are in the journey</p>
   <ul class="curriculum-list">
     <li style="color: var(--muted);">0. Introduction to the course</li>
     <li style="color: var(--muted);">1. Classes vs. Objects</li>
@@ -392,7 +413,7 @@ phone = <span class="cls">Smartphone</span>(<span class="str">"Apple"</span>, <s
 </div>
 <div class="slide">
   <h2>The <span class="accent">self</span> Parameter</h2>
-  <p style="color: #fff; font-size: 1.15rem; margin-bottom: 1rem;">A way for an object to refer to <strong>itself</strong></p>
+  <p style="color: var(--heading); font-size: 1.15rem; margin-bottom: 1rem;">A way for an object to refer to <strong>itself</strong></p>
   <div class="two-col">
     <div>
       <ul>
@@ -573,7 +594,7 @@ car = <span class="cls">Car</span>(<span class="num">120</span>, <span class="st
 <div class="slide">
   <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 03</p>
   <h2>How <span class="accent">super()</span> Works</h2>
-  <p style="color: #fff; margin-bottom: 1rem;">Call <code style="color: var(--accent);">super()</code> to access the superclass's methods that have been overridden</p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">Call <code style="color: var(--accent);">super()</code> to access the superclass's methods that have been overridden</p>
   <div class="two-col">
     <div>
       <pre><span class="kw">class</span> <span class="cls">Animal</span>:
@@ -696,7 +717,7 @@ animals = [<span class="cls">Dog</span>(), <span class="cls">Cat</span>()]
     </div>
     <div class="col" style="border-color: var(--accent); border-width: 2px; box-shadow: 0 0 20px var(--accent-glow);">
       <h3 style="color: var(--accent);">Polymorphism</h3>
-      <p style="font-size: 0.95rem; color: #fff;">Behaviors take <strong>many forms</strong></p>
+      <p style="font-size: 0.95rem; color: var(--heading);">Behaviors take <strong>many forms</strong></p>
     </div>
   </div>
   <div class="callout" style="margin-top: 1.5rem;">
@@ -739,7 +760,7 @@ animals = [<span class="cls">Dog</span>(), <span class="cls">Cat</span>()]
   <h2>Understanding <span class="accent">Polymorphism</span></h2>
   <div class="layout">
     <div class="text">
-      <p style="color: #fff; font-size: 1.15rem; margin-bottom: 1rem;">A fundamental OOP concept where objects of different classes can be treated as objects of a common super class</p>
+      <p style="color: var(--heading); font-size: 1.15rem; margin-bottom: 1rem;">A fundamental OOP concept where objects of different classes can be treated as objects of a common super class</p>
       <ul>
         <li><strong>poly</strong> = many, <strong>morph</strong> = form</li>
         <li>The ability of <strong>one interface</strong> to represent <strong>multiple forms</strong></li>
@@ -774,7 +795,7 @@ animals = [<span class="cls">Dog</span>(), <span class="cls">Cat</span>()]
   <h2>Why <span class="accent">Polymorphism</span> Matters</h2>
   <div class="layout">
     <div class="text">
-      <p style="color: #fff; font-size: 1.05rem; margin-bottom: 1rem;">Real-world analogy: You press <strong>play()</strong> and different players behave differently</p>
+      <p style="color: var(--heading); font-size: 1.05rem; margin-bottom: 1rem;">Real-world analogy: You press <strong>play()</strong> and different players behave differently</p>
       <ul>
         <li>Same <strong>remote control</strong>, different devices</li>
         <li>Write code that works with <strong>any</strong> subclass</li>
@@ -807,7 +828,7 @@ animals = [<span class="cls">Dog</span>(), <span class="cls">Cat</span>()]
 
 <div class="slide">
   <h2>Polymorphism <span class="accent">You Already Use</span></h2>
-  <p style="color: #fff; margin-bottom: 1rem;">Python's built-in functions are polymorphic!</p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">Python's built-in functions are polymorphic!</p>
   <div class="two-col">
     <div>
       <h3 style="color: var(--cyan);">len() on different types</h3>
@@ -950,7 +971,7 @@ animals = [<span class="cls">Dog</span>(), <span class="cls">Cat</span>(), <span
 
 <div class="slide">
   <h2>Method Overloading &mdash; <span class="cyan-text">Java Example</span></h2>
-  <p style="color: #fff; margin-bottom: 1rem;">In languages like Java, you can have multiple methods with the same name but different parameters</p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">In languages like Java, you can have multiple methods with the same name but different parameters</p>
   <pre style="font-size: 0.85rem; max-width: 700px;"><span class="kw">class</span> <span class="cls">Calculator</span> {
     <span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> <span class="par">a</span>, <span class="kw">int</span> <span class="par">b</span>) {
         <span class="kw">return</span> <span class="par">a</span> + <span class="par">b</span>;
@@ -971,7 +992,7 @@ animals = [<span class="cls">Dog</span>(), <span class="cls">Cat</span>(), <span
 
 <div class="slide">
   <h2>Method Overloading in <span class="accent">Python</span></h2>
-  <p style="color: #fff; margin-bottom: 1rem;">Python doesn't support traditional overloading &mdash; but we can use <code style="color: var(--green);">*args</code></p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">Python doesn't support traditional overloading &mdash; but we can use <code style="color: var(--green);">*args</code></p>
   <pre style="font-size: 0.9rem; max-width: 700px;"><span class="kw">class</span> <span class="cls">Calculator</span>:
     <span class="kw">def</span> <span class="fn">add</span>(<span class="par">self</span>, *args):
         <span class="kw">return</span> <span class="fn">sum</span>(args)
@@ -987,7 +1008,7 @@ calc = <span class="cls">Calculator</span>()
 
 <div class="slide">
   <h2>Method <span class="accent">Overriding</span> in Python</h2>
-  <p style="color: #fff; margin-bottom: 1rem;">A subclass provides its own implementation of a parent's method</p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">A subclass provides its own implementation of a parent's method</p>
   <pre style="font-size: 0.9rem; max-width: 700px;"><span class="kw">class</span> <span class="cls">Animal</span>:
     <span class="kw">def</span> <span class="fn">speak</span>(<span class="par">self</span>):
         <span class="kw">return</span> <span class="str">"..."</span>
@@ -1041,7 +1062,7 @@ calc = <span class="cls">Calculator</span>()
 <div class="slide center">
   <div style="max-width: 800px;">
     <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2rem;">Duck Typing</p>
-    <blockquote style="font-size: 1.8rem; color: #fff; font-weight: 300; line-height: 1.5; border-left: 4px solid var(--accent); padding-left: 2rem; text-align: left;">
+    <blockquote style="font-size: 1.8rem; color: var(--heading); font-weight: 300; line-height: 1.5; border-left: 4px solid var(--accent); padding-left: 2rem; text-align: left;">
       &ldquo;If it looks like a duck, swims like a duck, and quacks like a duck, then it probably <span class="accent" style="font-weight: 700;">is</span> a duck.&rdquo;
     </blockquote>
     <p style="color: var(--muted); margin-top: 2rem; font-size: 1rem;">A core Python philosophy for polymorphism</p>
@@ -1293,7 +1314,7 @@ calc = <span class="cls">Calculator</span>()
   <div class="two-col" style="margin-top: 1rem;">
     <div>
       <h3 style="color: var(--cyan);">Indentation</h3>
-      <p style="font-size: 1.1rem; color: #fff; margin-bottom: 0.5rem;">Use <strong>4 spaces</strong> per level</p>
+      <p style="font-size: 1.1rem; color: var(--heading); margin-bottom: 0.5rem;">Use <strong>4 spaces</strong> per level</p>
       <p style="font-size: 0.95rem;">NO TABS! Configure your editor to insert spaces.</p>
       <pre style="font-size: 0.85rem;"><span class="kw">def</span> <span class="fn">greet</span>(<span class="par">name</span>):
     <span class="kw">if</span> name:
@@ -1303,7 +1324,7 @@ calc = <span class="cls">Calculator</span>()
     </div>
     <div>
       <h3 style="color: var(--green);">Line Length</h3>
-      <p style="font-size: 1.1rem; color: #fff; margin-bottom: 0.5rem;">Maximum <strong>79 characters</strong></p>
+      <p style="font-size: 1.1rem; color: var(--heading); margin-bottom: 0.5rem;">Maximum <strong>79 characters</strong></p>
       <p style="font-size: 0.95rem;">Use line continuation for long expressions.</p>
       <pre style="font-size: 0.85rem;">total = (first_variable
          + second_variable
@@ -1466,7 +1487,7 @@ foo(<span class="num">1</span>)</pre>
 
 <div class="slide">
   <h2>Type <span class="accent">Hints</span></h2>
-  <p style="color: #fff; margin-bottom: 1rem;">Python 3.5+ supports type annotations for better documentation and tooling</p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">Python 3.5+ supports type annotations for better documentation and tooling</p>
   <pre style="font-size: 0.9rem; max-width: 700px;"><span class="kw">def</span> <span class="fn">add</span>(<span class="par">x</span>: <span class="cls">int</span>, <span class="par">y</span>: <span class="cls">int</span>) -> <span class="cls">int</span>:
     <span class="kw">return</span> x + y
 
@@ -1649,7 +1670,7 @@ foo(<span class="num">1</span>)</pre>
     <li>Must be <strong>unique within your group</strong></li>
   </ul>
   <div style="margin-top: 2rem; padding: 1.5rem; background: var(--accent-glow); border-radius: 12px; border: 1px solid var(--accent); max-width: 500px;">
-    <p style="font-size: 1.4rem; color: #fff; font-weight: 700;">Deadline: <span class="accent">2026-03-30</span></p>
+    <p style="font-size: 1.4rem; color: var(--heading); font-weight: 700;">Deadline: <span class="accent">2026-03-30</span></p>
     <p style="font-size: 1rem; color: var(--muted); margin-top: 0.5rem;"><strong style="color: var(--accent);">-1 point</strong> penalty if missed!</p>
   </div>
 </div>
@@ -1669,7 +1690,7 @@ foo(<span class="num">1</span>)</pre>
 
 <div class="slide">
   <h2>Requirements: <span class="accent">4 OOP Pillars</span></h2>
-  <p style="color: #fff; margin-bottom: 1rem;">Your code must demonstrate all four:</p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">Your code must demonstrate all four:</p>
   <div class="two-col" style="margin-top: 1rem;">
     <div class="col">
       <h3 style="color: var(--green);">Polymorphism</h3>
@@ -1695,7 +1716,7 @@ foo(<span class="num">1</span>)</pre>
 
 <div class="slide">
   <h2>Requirements: <span class="accent">Design Pattern</span> + Composition</h2>
-  <p style="color: #fff; margin-bottom: 1rem;">Choose <strong>1 design pattern</strong> to implement:</p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">Choose <strong>1 design pattern</strong> to implement:</p>
   <div class="two-col" style="margin-top: 0.5rem;">
     <div>
       <ul>
@@ -1754,7 +1775,7 @@ foo(<span class="num">1</span>)</pre>
 
 <div class="slide">
   <h2>Report <span class="accent">Structure</span></h2>
-  <p style="color: #fff; margin-bottom: 1rem;">Markdown format &bull; English or Lithuanian</p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">Markdown format &bull; English or Lithuanian</p>
   <div class="two-col" style="margin-top: 1rem;">
     <div class="col">
       <h3 style="color: var(--cyan);">1. Introduction</h3>
@@ -1777,7 +1798,7 @@ foo(<span class="num">1</span>)</pre>
 
 <div class="slide">
   <h2>Report <span class="accent">Example</span></h2>
-  <p style="color: #fff; margin-bottom: 1rem;">Your <code style="color: var(--green);">README.md</code> should look something like this:</p>
+  <p style="color: var(--heading); margin-bottom: 1rem;">Your <code style="color: var(--green);">README.md</code> should look something like this:</p>
   <pre style="font-size: 0.75rem; max-width: 900px;"><span class="cm"># Library Management System</span>
 
 <span class="cm">## 1. Introduction</span>
@@ -1844,9 +1865,9 @@ Learned to apply SOLID principles in practice. Would add a GUI next.</pre>
         <td>&mdash;</td>
       </tr>
       <tr style="background: var(--accent-glow);">
-        <td style="color: #fff; font-weight: 700;">Total</td>
+        <td style="color: var(--heading); font-weight: 700;">Total</td>
         <td></td>
-        <td style="color: #fff; font-weight: 700;">100%</td>
+        <td style="color: var(--heading); font-weight: 700;">100%</td>
         <td style="color: var(--accent); font-weight: 700;">3.0</td>
       </tr>
     </tbody>
@@ -1872,12 +1893,30 @@ Learned to apply SOLID principles in practice. Would add a GUI next.</pre>
 </div>
 
 <div class="nav">
+  <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size: 1.2rem;">&#9788;</button>
   <button id="prev" onclick="navigate(-1)">&lsaquo;</button>
   <span class="counter" id="counter"></span>
   <button id="next" onclick="navigate(1)">&rsaquo;</button>
 </div>
 
 <script>
+  const saved = localStorage.getItem('oop-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'light' ? '' : 'light';
+    if (next) {
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('oop-theme', next);
+    } else {
+      html.removeAttribute('data-theme');
+      localStorage.removeItem('oop-theme');
+    }
+    document.getElementById('theme-toggle').textContent = next === 'light' ? '\u263E' : '\u2604';
+  }
+  document.getElementById('theme-toggle').textContent = saved === 'light' ? '\u263E' : '\u2604';
+
   let current = 0;
   const slides = document.querySelectorAll('.slide');
   const total = slides.length;
