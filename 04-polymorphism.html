@@ -5,202 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Polymorphism & PEP 8: Course 4 — Python OOP</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --bg: #0c0e14;
-    --surface: #161923;
-    --border: #252838;
-    --text: #e2e4ea;
-    --heading: #fff;
-    --muted: #8b8fa4;
-    --accent: #ef4444;
-    --accent-glow: rgba(239, 68, 68, 0.15);
-    --green: #34d399;
-    --cyan: #22d3ee;
-    --orange: #fb923c;
-    --purple: #a78bfa;
-    --pink: #f472b6;
-    --blue: #60a5fa;
-    --code-bg: #111320;
-    --code-comment: #555;
-  }
-  [data-theme="light"] {
-    --bg: #f5f6f8;
-    --surface: #e8eaef;
-    --border: #c8ccd4;
-    --text: #1e2030;
-    --heading: #111320;
-    --muted: #4a5068;
-    --accent: #dc2626;
-    --accent-glow: rgba(220, 38, 38, 0.1);
-    --green: #16a34a;
-    --cyan: #0891b2;
-    --orange: #ea580c;
-    --purple: #9333ea;
-    --pink: #db2777;
-    --blue: #2563eb;
-    --code-bg: #ffffff;
-    --code-comment: #6b7280;
-  }
-  body {
-    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow: hidden;
-    height: 100vh;
-  }
-  .slide {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    padding: 50px 100px 90px;
-    height: 100vh;
-    animation: fadeIn 0.35s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .slide.active { display: flex; }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .slide.center { align-items: center; text-align: center; }
-  h1 {
-    font-size: 3.4rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.8rem;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-  }
-  h2 {
-    font-size: 2.1rem;
-    font-weight: 700;
-    color: var(--heading);
-    margin-bottom: 1.2rem;
-    letter-spacing: -0.01em;
-  }
-  h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--accent);
-    margin-bottom: 0.6rem;
-  }
-  p, li { font-size: 1.15rem; line-height: 1.7; color: var(--muted); }
-  ul { list-style: none; padding: 0; }
-  ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.6rem; }
-  ul li::before { content: '\2192'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
-  strong { color: var(--heading); font-weight: 600; }
-  .subtitle { font-size: 1.4rem; color: var(--muted); margin-bottom: 2rem; }
-  .callout {
-    background: var(--accent-glow);
-    border-left: 3px solid var(--accent);
-    padding: 1rem 1.4rem;
-    border-radius: 0 8px 8px 0;
-    margin-top: 1.5rem;
-    font-size: 1.05rem;
-    color: var(--heading);
-  }
-  .layout { display: flex; gap: 3rem; align-items: center; flex: 1; }
-  .layout .text { flex: 1; }
-  .layout .visual { flex: 1; display: flex; justify-content: center; align-items: center; }
-  .layout .visual svg { width: 100%; height: auto; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
-  .col {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.4rem;
-  }
-  .col h3 { margin-top: 0; }
-  .tag {
-    display: inline-block;
-    background: var(--accent-glow);
-    color: var(--accent);
-    padding: 0.15rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-right: 0.3rem;
-  }
-  .tag.green { background: rgba(52, 211, 153, 0.15); color: var(--green); }
-  .tag.orange { background: rgba(251, 146, 60, 0.15); color: var(--orange); }
-  .tag.purple { background: rgba(167, 139, 250, 0.15); color: var(--purple); }
-  .tag.cyan { background: rgba(34, 211, 238, 0.15); color: var(--cyan); }
-  .tag.blue { background: rgba(96, 165, 250, 0.15); color: var(--blue); }
-  .tag.pink { background: rgba(244, 114, 182, 0.15); color: var(--pink); }
-  pre {
-    background: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem 1.4rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: var(--muted);
-    margin: 0.6rem 0;
-    overflow-x: auto;
-  }
-  pre .kw { color: var(--accent); }
-  pre .cls { color: var(--cyan); }
-  pre .fn { color: var(--green); }
-  pre .str { color: var(--orange); }
-  pre .num { color: var(--purple); }
-  pre .cm { color: var(--code-comment); }
-  pre .par { color: var(--pink); }
-  pre .op { color: var(--muted); }
-
-  .quiz-slide .quiz-answers { opacity: 0; transform: translateY(10px); transition: opacity 0.4s, transform 0.4s; pointer-events: none; }
-  .quiz-slide.step-1 .quiz-answers { opacity: 1; transform: translateY(0); pointer-events: auto; }
-  .quiz-slide .quiz-answer.correct { border-color: var(--border); box-shadow: none; font-weight: normal; }
-  .quiz-slide .quiz-answer.correct strong { font-weight: normal; color: var(--green); }
-  .quiz-slide.step-2 .quiz-answer.correct { border-color: var(--green); box-shadow: 0 0 15px rgba(52,211,153,0.2); }
-  .quiz-slide.step-2 .quiz-answer.correct strong { font-weight: 700; color: var(--heading); }
-  .quiz-slide .quiz-explanation { opacity: 0; transition: opacity 0.4s; }
-  .quiz-slide.step-2 .quiz-explanation { opacity: 1; }
-
-  .nav {
-    position: fixed;
-    bottom: 24px;
-    right: 32px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    z-index: 100;
-  }
-  .nav button {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.1rem;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    font-family: 'Outfit', sans-serif;
-  }
-  .nav button:hover { background: var(--accent); border-color: var(--accent); color: var(--heading); }
-  .nav .skip-quiz { font-size: 0.75rem; width: auto; padding: 0.4rem 0.8rem; border-radius: 6px; display: none; }
-  .nav .skip-quiz.visible { display: flex; }
-  .nav button:disabled { opacity: 0.3; cursor: default; background: var(--surface); border-color: var(--border); color: var(--text); }
-  .nav .counter { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); transition: width 0.3s ease; z-index: 100; }
-
-  .visma-logo {
-    position: fixed;
-    bottom: 24px;
-    left: 32px;
-    z-index: 100;
-    opacity: 0.7;
-  }
-
-  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
-  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
   @keyframes inheritFlow {
     0% { stroke-dashoffset: 20; }
     100% { stroke-dashoffset: 0; }
@@ -217,14 +23,6 @@
     from { opacity: 0; transform: scaleY(0); transform-origin: top; }
     to { opacity: 1; transform: scaleY(1); }
   }
-  @keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(20px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
   @keyframes diamondRotate {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -235,57 +33,10 @@
   .chain-1 { animation: chainPulse1 3s ease-in-out infinite; }
   .chain-2 { animation: chainPulse2 3s ease-in-out infinite; }
   .chain-3 { animation: chainPulse3 3s ease-in-out infinite; }
-
   @keyframes morphShape {
     0%, 100% { d: path("M150,40 L260,100 L220,200 L80,200 L40,100 Z"); fill: var(--accent); }
     33% { d: path("M150,30 A120,120 0 1,1 149.9,30"); fill: var(--cyan); }
     66% { d: path("M50,50 L250,50 L250,220 L50,220 Z"); fill: var(--green); }
-  }
-
-  .slide.active li { animation: fadeIn 0.35s ease backwards; }
-  .slide.active li:nth-child(1) { animation-delay: 0.1s; }
-  .slide.active li:nth-child(2) { animation-delay: 0.2s; }
-  .slide.active li:nth-child(3) { animation-delay: 0.3s; }
-  .slide.active li:nth-child(4) { animation-delay: 0.4s; }
-  .slide.active li:nth-child(5) { animation-delay: 0.5s; }
-
-  .big-number { font-size: 7rem; font-weight: 800; color: var(--accent); line-height: 1; opacity: 0.15; position: absolute; right: 80px; top: 40px; }
-  .accent { color: var(--accent); }
-  .green-text { color: var(--green); }
-  .cyan-text { color: var(--cyan); }
-  .orange-text { color: var(--orange); }
-  .purple-text { color: var(--purple); }
-
-  .curriculum-list { columns: 2; column-gap: 3rem; }
-  .curriculum-list li { break-inside: avoid; }
-  .curriculum-list li.current { color: var(--accent); font-weight: 600; }
-  .curriculum-list li.current::before { content: '\25B6'; color: var(--accent); }
-
-  .access-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-  .access-table th { background: var(--surface); color: var(--accent); font-weight: 600; text-align: left; padding: 0.6rem 1rem; border-bottom: 2px solid var(--accent); font-size: 0.95rem; }
-  .access-table td { padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.95rem; }
-  .access-table tr:hover td { background: rgba(239, 68, 68, 0.05); }
-
-  .mobile-warning {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: var(--bg);
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 2rem;
-    gap: 1.5rem;
-  }
-  .mobile-warning svg { opacity: 0.5; }
-  .mobile-warning h2 { font-size: 1.5rem; color: var(--heading); }
-  .mobile-warning p { color: var(--muted); font-size: 1rem; line-height: 1.6; max-width: 300px; }
-  .mobile-warning a { color: var(--accent); text-decoration: none; font-weight: 600; }
-  @media (max-width: 900px) {
-    .mobile-warning { display: flex; }
-    .slide, .nav, .progress, .visma-logo { display: none !important; }
   }
 </style>
 </head>
@@ -1264,6 +1015,7 @@ calc = <span class="cls">Calculator</span>()
       </ul>
     </div>
   </div>
+  <a href="04-live-coding-shapes.md" target="_blank" style="margin-top: 1.5rem; color: var(--accent); font-size: 0.95rem; text-decoration: none; font-weight: 600;">View exercise guide &rarr;</a>
 </div>
 
 <div class="slide center">
@@ -1904,70 +1656,6 @@ Learned to apply SOLID principles in practice. Would add a GUI next.</pre>
   <button id="next" onclick="navigate(1)">&rsaquo;</button>
 </div>
 
-<script>
-  const saved = localStorage.getItem('oop-theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-
-  function toggleTheme() {
-    const html = document.documentElement;
-    const next = html.getAttribute('data-theme') === 'light' ? '' : 'light';
-    if (next) {
-      html.setAttribute('data-theme', next);
-      localStorage.setItem('oop-theme', next);
-    } else {
-      html.removeAttribute('data-theme');
-      localStorage.removeItem('oop-theme');
-    }
-    document.getElementById('theme-toggle').textContent = next === 'light' ? '\u263E' : '\u2604';
-  }
-  document.getElementById('theme-toggle').textContent = saved === 'light' ? '\u263E' : '\u2604';
-
-  let current = 0;
-  const slides = document.querySelectorAll('.slide');
-  const total = slides.length;
-
-  function isQuizSection(i) {
-    return slides[i].classList.contains('quiz-slide') || (i > 0 && slides[i - 1].classList.contains('quiz-slide'));
-  }
-
-  function show(i) {
-    slides[current].classList.remove('active', 'step-1', 'step-2');
-    current = Math.max(0, Math.min(total - 1, i));
-    slides[current].classList.add('active');
-    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
-    document.getElementById('prev').disabled = current === 0;
-    document.getElementById('next').disabled = current === total - 1;
-    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
-    document.getElementById('skip-quiz').classList.toggle('visible', isQuizSection(current));
-  }
-
-  function skipQuiz() {
-    let i = current + 1;
-    while (i < total && isQuizSection(i)) i++;
-    show(i);
-  }
-
-  function advanceQuizStep(slide) {
-    if (!slide.classList.contains('step-1')) { slide.classList.add('step-1'); return true; }
-    if (!slide.classList.contains('step-2')) { slide.classList.add('step-2'); return true; }
-    return false;
-  }
-
-  function navigate(d) {
-    if (d === 1 && slides[current].classList.contains('quiz-slide')) {
-      if (advanceQuizStep(slides[current])) return;
-    }
-    show(current + d);
-  }
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); navigate(1); }
-    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); navigate(-1); }
-    if (e.key === 'Home') { e.preventDefault(); show(0); }
-    if (e.key === 'End') { e.preventDefault(); show(total - 1); }
-  });
-
-  show(0);
-</script>
+<script src="shared.js"></script>
 </body>
 </html>
