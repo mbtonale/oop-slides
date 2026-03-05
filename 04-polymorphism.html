@@ -185,6 +185,8 @@
     font-family: 'Outfit', sans-serif;
   }
   .nav button:hover { background: var(--accent); border-color: var(--accent); color: var(--heading); }
+  .nav .skip-quiz { font-size: 0.75rem; width: auto; padding: 0.4rem 0.8rem; border-radius: 6px; display: none; }
+  .nav .skip-quiz.visible { display: flex; }
   .nav button:disabled { opacity: 0.3; cursor: default; background: var(--surface); border-color: var(--border); color: var(--text); }
   .nav .counter { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
   .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); transition: width 0.3s ease; z-index: 100; }
@@ -1893,6 +1895,7 @@ Learned to apply SOLID principles in practice. Would add a GUI next.</pre>
 </div>
 
 <div class="nav">
+  <button id="skip-quiz" class="skip-quiz" onclick="skipQuiz()">Skip Quiz &#9654;</button>
   <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size: 1.2rem;">&#9788;</button>
   <button id="prev" onclick="navigate(-1)">&lsaquo;</button>
   <span class="counter" id="counter"></span>
@@ -1921,6 +1924,10 @@ Learned to apply SOLID principles in practice. Would add a GUI next.</pre>
   const slides = document.querySelectorAll('.slide');
   const total = slides.length;
 
+  function isQuizSection(i) {
+    return slides[i].classList.contains('quiz-slide') || (i > 0 && slides[i - 1].classList.contains('quiz-slide'));
+  }
+
   function show(i) {
     slides[current].classList.remove('active', 'step-1', 'step-2');
     current = Math.max(0, Math.min(total - 1, i));
@@ -1929,6 +1936,13 @@ Learned to apply SOLID principles in practice. Would add a GUI next.</pre>
     document.getElementById('prev').disabled = current === 0;
     document.getElementById('next').disabled = current === total - 1;
     document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+    document.getElementById('skip-quiz').classList.toggle('visible', isQuizSection(current));
+  }
+
+  function skipQuiz() {
+    let i = current + 1;
+    while (i < total && isQuizSection(i)) i++;
+    show(i);
   }
 
   function advanceQuizStep(slide) {
