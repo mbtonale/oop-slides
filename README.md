@@ -15,10 +15,10 @@ Interactive HTML presentations for the **Python Object-Oriented Programming** co
 | 03 | Inheritance | ready |
 | 04 | Polymorphism & PEP 8 | ready |
 | 05 | Composition & Aggregation | ready |
-| 06 | SOLID Principles | planned |
-| 07 | UML & Design Patterns | planned |
-| 08 | Design Patterns (2nd part) | planned |
-| 09 | Exception Handling & Logging | planned |
+| 06 | Exception Handling & Logging | planned |
+| 07 | SOLID Principles | planned |
+| 08 | UML & Design Patterns | planned |
+| 09 | Design Patterns (2nd part) | planned |
 | 10 | Testing & TDD | planned |
 | 11 | Libraries & Frameworks | planned |
 | 12 | Recap & Consultation | planned |

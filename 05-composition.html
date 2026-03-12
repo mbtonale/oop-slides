@@ -130,10 +130,10 @@
     <li style="color: var(--muted);">3. Inheritance</li>
     <li style="color: var(--muted);">4. Polymorphism &amp; PEP 8</li>
     <li class="current" style="color: var(--accent); font-weight: 600;">5. Composition &amp; Aggregation</li>
-    <li>6. SOLID Principles</li>
-    <li>7. UML &amp; Design Patterns</li>
-    <li>8. Design Patterns (2nd part)</li>
-    <li>9. Exception Handling &amp; Logging</li>
+    <li>6. Exception Handling &amp; Logging</li>
+    <li>7. SOLID Principles</li>
+    <li>8. UML &amp; Design Patterns</li>
+    <li>9. Design Patterns (2nd part)</li>
     <li>10. Testing &amp; TDD</li>
     <li>11. Libraries &amp; Frameworks</li>
     <li>12. Recap &amp; Consultation</li>
@@ -424,30 +424,6 @@
     </div>
   </div>
   <div class="callout">Today's focus: the <strong>has-a</strong> side &mdash; composition, aggregation, and dependency</div>
-</div>
-
-<!-- Has-a Relationship Spectrum -->
-<div class="slide">
-  <h2><span class="accent">has-a</span> Relationship Spectrum</h2>
-  <p style="color: var(--heading); font-size: 1.15rem; margin-bottom: 2rem;">From strong ownership to temporary use</p>
-  <div style="display: flex; align-items: center; gap: 0; max-width: 850px;">
-    <div style="flex: 1; background: var(--surface); border: 1px solid var(--accent); border-radius: 12px 0 0 12px; padding: 1.2rem; text-align: center;">
-      <h3 style="color: var(--accent); font-size: 1.1rem;">Composition</h3>
-      <p style="font-size: 0.85rem; color: var(--muted);">Strong ownership<br>Parts die with owner</p>
-    </div>
-    <div style="flex: 1; background: var(--surface); border: 1px solid var(--orange); border-left: none; padding: 1.2rem; text-align: center;">
-      <h3 style="color: var(--orange); font-size: 1.1rem;">Aggregation</h3>
-      <p style="font-size: 0.85rem; color: var(--muted);">Weak ownership<br>Parts live independently</p>
-    </div>
-    <div style="flex: 1; background: var(--surface); border: 1px solid var(--cyan); border-left: none; border-radius: 0 12px 12px 0; padding: 1.2rem; text-align: center;">
-      <h3 style="color: var(--cyan); font-size: 1.1rem;">Dependency</h3>
-      <p style="font-size: 0.85rem; color: var(--muted);">Temporary use<br>No ownership at all</p>
-    </div>
-  </div>
-  <div style="display: flex; justify-content: space-between; max-width: 850px; margin-top: 0.8rem;">
-    <span style="color: var(--accent); font-size: 0.8rem; font-weight: 600;">&larr; Strongest coupling</span>
-    <span style="color: var(--cyan); font-size: 0.8rem; font-weight: 600;">Weakest coupling &rarr;</span>
-  </div>
 </div>
 
 <!-- ====== COMPOSITION ====== -->
@@ -829,6 +805,30 @@ svc = <span class="cls">UserService</span>(<span class="cls">MockDatabase</span>
         <li>This is <strong>aggregation</strong> at work!</li>
       </ul>
     </div>
+  </div>
+</div>
+
+<!-- Has-a Relationship Spectrum (shown after coupling is explained) -->
+<div class="slide">
+  <h2><span class="accent">has-a</span> Relationship Spectrum</h2>
+  <p style="color: var(--heading); font-size: 1.15rem; margin-bottom: 2rem;">From strong ownership to temporary use</p>
+  <div style="display: flex; align-items: center; gap: 0; max-width: 850px;">
+    <div style="flex: 1; background: var(--surface); border: 1px solid var(--accent); border-radius: 12px 0 0 12px; padding: 1.2rem; text-align: center;">
+      <h3 style="color: var(--accent); font-size: 1.1rem;">Composition</h3>
+      <p style="font-size: 0.85rem; color: var(--muted);">Strong ownership<br>Parts die with owner</p>
+    </div>
+    <div style="flex: 1; background: var(--surface); border: 1px solid var(--orange); border-left: none; padding: 1.2rem; text-align: center;">
+      <h3 style="color: var(--orange); font-size: 1.1rem;">Aggregation</h3>
+      <p style="font-size: 0.85rem; color: var(--muted);">Weak ownership<br>Parts live independently</p>
+    </div>
+    <div style="flex: 1; background: var(--surface); border: 1px solid var(--cyan); border-left: none; border-radius: 0 12px 12px 0; padding: 1.2rem; text-align: center;">
+      <h3 style="color: var(--cyan); font-size: 1.1rem;">Dependency</h3>
+      <p style="font-size: 0.85rem; color: var(--muted);">Temporary use<br>No ownership at all</p>
+    </div>
+  </div>
+  <div style="display: flex; justify-content: space-between; max-width: 850px; margin-top: 0.8rem;">
+    <span style="color: var(--accent); font-size: 0.8rem; font-weight: 600;">&larr; Strongest coupling</span>
+    <span style="color: var(--cyan); font-size: 0.8rem; font-weight: 600;">Weakest coupling &rarr;</span>
   </div>
 </div>
 
@@ -1411,7 +1411,7 @@ svc = <span class="cls">OrderService</span>(<span class="cls">MockShipper</span>
       <li>&#128221; <strong>Coursework</strong>: start early, register by 2026-03-30!</li>
     </ul>
   </div>
-  <p style="color: var(--muted); margin-top: 2.5rem; font-size: 1.1rem;">Next up: <strong style="color: var(--accent);">SOLID Principles</strong></p>
+  <p style="color: var(--muted); margin-top: 2.5rem; font-size: 1.1rem;">Next up: <strong style="color: var(--accent);">Exception Handling &amp; Logging</strong></p>
 </div>
 
 <div class="nav">
