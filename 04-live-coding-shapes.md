@@ -9,7 +9,7 @@ Build a shape calculator using abstract classes and polymorphism.
 from abc import ABC, abstractmethod
 
 
-class Shape(ABC):
+class Shape(ABC):  # Figūra
     @abstractmethod
     def area(self):
         pass
@@ -28,7 +28,7 @@ class Shape(ABC):
 import math
 
 
-class Circle(Shape):
+class Circle(Shape):  # Apskritimas
     def __init__(self, radius):
         self._radius = radius
 
@@ -42,7 +42,7 @@ class Circle(Shape):
 ## Step 3: Rectangle
 
 ```python
-class Rectangle(Shape):
+class Rectangle(Shape):  # Stačiakampis
     def __init__(self, width, height):
         self._width = width
         self._height = height
@@ -57,7 +57,7 @@ class Rectangle(Shape):
 ## Step 4: Square (inherits from Rectangle)
 
 ```python
-class Square(Rectangle):
+class Square(Rectangle):  # Kvadratas
     def __init__(self, side):
         super().__init__(side, side)
 ```

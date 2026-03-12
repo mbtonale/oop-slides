@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Composition & Aggregation: Course 5 — Python OOP</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  @keyframes composeIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes ownerPulse {
+    0%, 100% { stroke-width: 1.5; }
+    50% { stroke-width: 3; }
+  }
+  @keyframes fillDiamond {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  .compose-node { animation: composeIn 0.6s ease backwards; }
+  .compose-node:nth-child(2) { animation-delay: 0.15s; }
+  .compose-node:nth-child(3) { animation-delay: 0.3s; }
+  .compose-node:nth-child(4) { animation-delay: 0.45s; }
+  .owner-line { animation: ownerPulse 2s ease-in-out infinite; }
+  .diamond-fill { animation: fillDiamond 2s ease-in-out infinite; }
+  @keyframes detach {
+    0%, 40% { transform: translateX(0); opacity: 1; }
+    60%, 100% { transform: translateX(20px); opacity: 0.4; }
+  }
+  @keyframes reattach {
+    0%, 40% { transform: translateX(20px); opacity: 0.4; }
+    60%, 100% { transform: translateX(0); opacity: 1; }
+  }
+  .detach-anim { animation: detach 3s ease-in-out infinite alternate; }
+  .reattach-anim { animation: reattach 3s ease-in-out infinite alternate; }
+  @keyframes injectSlide {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .inject-node { animation: injectSlide 0.5s ease backwards; }
+  .inject-node:nth-child(2) { animation-delay: 0.2s; }
+  .inject-node:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pkgStep1 {
+    0% { opacity: 0; transform: scale(0.5); }
+    10% { opacity: 1; transform: scale(1); }
+    20% { opacity: 1; transform: scale(1); }
+    30% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 0; }
+  }
+  @keyframes pkgStep2 {
+    0%, 25% { opacity: 0; transform: scale(0.5); }
+    35% { opacity: 1; transform: scale(1); }
+    45% { opacity: 1; transform: scale(1); }
+    55% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 0; }
+  }
+  @keyframes pkgStep3 {
+    0%, 50% { opacity: 0; transform: scale(0.5); }
+    60% { opacity: 1; transform: scale(1); }
+    70% { opacity: 1; transform: scale(1); }
+    80% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 0; }
+  }
+  @keyframes pkgStep4 {
+    0%, 75% { opacity: 0; transform: scale(0.5); }
+    85% { opacity: 1; transform: scale(1); }
+    95% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.5); }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-warning">
+  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+  </svg>
+  <h2>Please use a larger screen</h2>
+  <p>This presentation is designed for desktop or projector displays.</p>
+  <a href="index.html">&larr; Back to curriculum</a>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<div class="visma-logo" style="display: flex; align-items: center; gap: 16px;">
+  <svg width="100" height="24" viewBox="30 75 165 45" xmlns="http://www.w3.org/2000/svg">
+    <path d="M32.228 81.327c8.803.852 18.458 5.253 23.996 11.643 7.099 8.093 4.686 16.187-5.396 18.032-10.081 1.988-23.996-3.123-31.095-11.217-5.396-6.248-5.253-12.495-.284-15.902l27.971 20.73-15.192-23.286z" fill="#c92043"/>
+    <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z" fill="var(--heading)"/>
+  </svg>
+  <span style="color: var(--border); font-size: 1.2rem;">|</span>
+  <img src="vgtu.jpg" alt="VILNIUS TECH" height="28" style="border-radius: 4px;">
+</div>
+
+<!-- ====== 1. TITLE ====== -->
+<div class="slide active center">
+  <p style="color: var(--accent); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Python Object Oriented Programming</p>
+  <h1>Composition &amp; Aggregation</h1>
+  <p class="subtitle">Course 5</p>
+  <div style="margin-top: 3rem;">
+    <svg viewBox="0 0 320 150" width="340">
+      <rect x="110" y="5" width="100" height="32" rx="6" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+      <text x="160" y="26" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Owner</text>
+      <line x1="160" y1="37" x2="70" y2="75" stroke="var(--muted)" stroke-width="1.2"/>
+      <line x1="160" y1="37" x2="160" y2="75" stroke="var(--muted)" stroke-width="1.2"/>
+      <line x1="160" y1="37" x2="250" y2="75" stroke="var(--muted)" stroke-width="1.2"/>
+      <rect x="30" y="75" width="80" height="30" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+      <text x="70" y="95" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">Part A</text>
+      <rect x="120" y="75" width="80" height="30" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+      <text x="160" y="95" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">Part B</text>
+      <rect x="210" y="75" width="80" height="30" rx="6" fill="var(--code-bg)" stroke="var(--orange)" stroke-width="1.5"/>
+      <text x="250" y="95" text-anchor="middle" fill="var(--orange)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">Part C</text>
+      <text x="160" y="130" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Objects composed of other objects</text>
+    </svg>
+  </div>
+  <p style="color: var(--muted); font-size: 0.9rem; margin-top: 2rem;">
+    <span class="tag">&larr;</span> <span class="tag">&rarr;</span> to navigate
+  </p>
+</div>
+
+<!-- ====== 2. CURRICULUM ====== -->
+<div class="slide">
+  <h2>Course Curriculum</h2>
+  <p style="color: var(--heading); margin-bottom: 1.5rem;">Where we are in the journey</p>
+  <ul class="curriculum-list">
+    <li style="color: var(--muted);">0. Introduction to the course</li>
+    <li style="color: var(--muted);">1. Classes vs. Objects</li>
+    <li style="color: var(--muted);">2. Encapsulation &amp; Access Control</li>
+    <li style="color: var(--muted);">3. Inheritance</li>
+    <li style="color: var(--muted);">4. Polymorphism &amp; PEP 8</li>
+    <li class="current" style="color: var(--accent); font-weight: 600;">5. Composition &amp; Aggregation</li>
+    <li>6. SOLID Principles</li>
+    <li>7. UML &amp; Design Patterns</li>
+    <li>8. Design Patterns (2nd part)</li>
+    <li>9. Exception Handling &amp; Logging</li>
+    <li>10. Testing &amp; TDD</li>
+    <li>11. Libraries &amp; Frameworks</li>
+    <li>12. Recap &amp; Consultation</li>
+  </ul>
+</div>
+
+<!-- ====== RECAP QUIZZES ====== -->
+
+<!-- Quiz 1: Encapsulation -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 02)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">Which prefix makes an attribute private in Python?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) No prefix</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) _single underscore</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>C) __double underscore</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) #hash</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">Double underscore triggers <strong>name mangling</strong>, making the attribute harder to access from outside</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 02</p>
+  <h2>Access Control</h2>
+  <div class="three-col" style="margin-top: 1rem;">
+    <div class="col">
+      <h3 style="color: var(--green);">Public</h3>
+      <p style="font-size: 0.95rem;">Accessible from <strong>anywhere</strong>. No underscores.</p>
+      <pre style="font-size: 0.8rem;"><span class="par">self</span>.engine_status = <span class="str">"Off"</span></pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">Protected <span class="tag orange">_single</span></h3>
+      <p style="font-size: 0.95rem;">Accessible within class and <strong>subclasses</strong>. Convention only.</p>
+      <pre style="font-size: 0.8rem;"><span class="par">self</span>._fuel_level = <span class="num">50</span></pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--accent);">Private <span class="tag">__double</span></h3>
+      <p style="font-size: 0.95rem;">Accessible <strong>within class only</strong>. Name mangling.</p>
+      <pre style="font-size: 0.8rem;"><span class="par">self</span>.__owner = <span class="str">"John"</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 2: Encapsulation -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 02)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What is the main purpose of encapsulation?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Making code run faster</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) Hiding internal state and requiring interaction through methods</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) Allowing multiple inheritance</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Creating abstract classes</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">Encapsulation bundles data with methods and restricts direct access &mdash; protecting the object's internal state from unintended changes</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 02</p>
+  <h2>Encapsulation in Practice</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li><strong>Bundle</strong> data and methods that operate on that data</li>
+        <li><strong>Hide</strong> internal implementation details</li>
+        <li>Expose only what's needed via <strong>public interface</strong></li>
+        <li>Use <strong>getters/setters</strong> or <code style="color: var(--accent);">@property</code> for controlled access</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, balance):
+        <span class="par">self</span>.__balance = balance
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">balance</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="par">self</span>.__balance
+
+    <span class="kw">def</span> <span class="fn">deposit</span>(<span class="par">self</span>, amount):
+        <span class="kw">if</span> amount > <span class="num">0</span>:
+            <span class="par">self</span>.__balance += amount</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 3: Inheritance -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 03)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What does <code style="color: var(--accent);">super().__init__()</code> do in a child class?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Creates a new parent object</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) Calls the parent's constructor</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) Overrides the parent method</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Deletes the parent class</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><code>super()</code> gives access to the parent class &mdash; calling <code>__init__()</code> ensures the parent's setup runs before the child adds its own</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 03</p>
+  <h2>Inheritance: <span class="accent">is-a</span> Relationship</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>A child class <strong>inherits</strong> attributes and methods from a parent</li>
+        <li>Represents an <strong>is-a</strong> relationship: Dog <em>is a</em> Animal</li>
+        <li>Use <code style="color: var(--accent);">super()</code> to call parent methods</li>
+        <li>Child can <strong>override</strong> or <strong>extend</strong> parent behavior</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>.name = name
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, breed):
+        <span class="fn">super</span>().__init__(name)
+        <span class="par">self</span>.breed = breed</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 4: Inheritance -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 03)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">Which type of inheritance involves a child with multiple parents?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Single inheritance</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) Hierarchical inheritance</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>C) Multiple inheritance</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Multilevel inheritance</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><strong>Multiple inheritance</strong> = one child inherits from two or more parents. Python resolves method conflicts via MRO (Method Resolution Order)</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 03</p>
+  <h2>Types of Inheritance</h2>
+  <div class="three-col" style="margin-top: 1rem;">
+    <div class="col">
+      <h3 style="color: var(--cyan);">Single</h3>
+      <p style="font-size: 0.95rem;">One parent &rarr; one child</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">pass</span></pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">Multiple</h3>
+      <p style="font-size: 0.95rem;">Multiple parents &rarr; one child</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">C</span>(<span class="cls">A</span>, <span class="cls">B</span>):
+    <span class="kw">pass</span></pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">Multilevel</h3>
+      <p style="font-size: 0.95rem;">Grandparent &rarr; parent &rarr; child</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">Puppy</span>(<span class="cls">Dog</span>):
+    <span class="kw">pass</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 5: Polymorphism -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 04)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What happens when a child class defines a method with the same name as the parent?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Both methods run</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) The child's method overrides the parent's</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) A syntax error occurs</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) The parent's method always wins</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">This is <strong>method overriding</strong> &mdash; the child provides its own implementation, which takes precedence when called on the child instance</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 04</p>
+  <h2>Polymorphism: Many Forms</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li><strong>Same interface</strong>, different implementations</li>
+        <li>Method overriding lets each subclass behave <strong>differently</strong></li>
+        <li>Enables writing code that works with <strong>any subclass</strong></li>
+      </ul>
+      <pre style="font-size: 0.8rem;"><span class="kw">for</span> shape <span class="kw">in</span> [<span class="cls">Circle</span>(<span class="num">5</span>), <span class="cls">Square</span>(<span class="num">4</span>)]:
+    <span class="fn">print</span>(shape.<span class="fn">area</span>())
+<span class="cm"># Each shape calculates its own area</span></pre>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 260 200" width="240">
+        <rect x="80" y="10" width="100" height="30" rx="6" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="130" y="30" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">.area()</text>
+        <line x1="100" y1="40" x2="50" y2="80" stroke="var(--muted)" stroke-width="1"/>
+        <line x1="160" y1="40" x2="210" y2="80" stroke="var(--muted)" stroke-width="1"/>
+        <circle cx="50" cy="110" r="28" fill="none" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="50" y="114" text-anchor="middle" fill="var(--cyan)" font-size="9" font-weight="600">&pi;r&sup2;</text>
+        <rect x="180" y="82" width="56" height="56" rx="2" fill="none" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="208" y="114" text-anchor="middle" fill="var(--green)" font-size="9" font-weight="600">s&sup2;</text>
+        <text x="130" y="175" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">Same method, different behavior</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 6: Polymorphism -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 04)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What is the purpose of an <strong>abstract class</strong>?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) To create objects directly</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) To store data in a database</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>C) To define a contract that subclasses must implement</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) To prevent inheritance</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">Abstract classes define <strong>methods that subclasses must implement</strong> &mdash; you cannot instantiate an abstract class directly</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 04</p>
+  <h2>Abstract Base Classes</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>Use <code style="color: var(--accent);">ABC</code> and <code style="color: var(--accent);">@abstractmethod</code></li>
+        <li>Cannot be <strong>instantiated</strong> directly</li>
+        <li>Force subclasses to implement required methods</li>
+        <li>Perfect for defining a <strong>common interface</strong></li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre style="font-size: 0.78rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Shape</span>(ABC):
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">Circle</span>(<span class="cls">Shape</span>):
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="num">3.14</span> * <span class="par">self</span>.r ** <span class="num">2</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== NEW CONTENT: LECTURE 05 ====== -->
+
+<!-- OOP Recap & Relationships Overview -->
+<div class="slide">
+  <span class="big-number">05</span>
+  <h2>OOP So Far</h2>
+  <p style="color: var(--heading); font-size: 1.15rem; margin-bottom: 1.5rem;">Four pillars we've covered</p>
+  <div class="two-col">
+    <div class="col">
+      <h3 style="color: var(--cyan);">&#128272; Encapsulation</h3>
+      <p style="font-size: 0.95rem;">Bundling data + methods, hiding internal state</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">&#128106; Inheritance</h3>
+      <p style="font-size: 0.95rem;">Child classes reuse and extend parent behavior</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">&#127917; Polymorphism</h3>
+      <p style="font-size: 0.95rem;">Same interface, different implementations</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--purple);">&#128065; Abstraction</h3>
+      <p style="font-size: 0.95rem;">Exposing only essential features, hiding complexity</p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 1.5rem;">Today we explore <strong>how objects relate to each other</strong> &mdash; beyond inheritance</div>
+</div>
+
+<!-- Types of Relationships -->
+<div class="slide">
+  <h2>Object Relationships</h2>
+  <p style="color: var(--heading); font-size: 1.15rem; margin-bottom: 1.5rem;">Two fundamental types</p>
+  <div class="two-col" style="max-width: 900px;">
+    <div class="col" style="border-color: var(--cyan);">
+      <h3 style="color: var(--cyan);">is-a <span class="tag cyan">Inheritance</span></h3>
+      <p style="font-size: 1rem;">A subclass <strong>is a</strong> type of its parent</p>
+      <ul style="margin-top: 0.8rem;">
+        <li>&#128054; Dog <em>is a</em> Animal</li>
+        <li>&#128663; Car <em>is a</em> Vehicle</li>
+        <li>&#128100; Manager <em>is a</em> Employee</li>
+      </ul>
+    </div>
+    <div class="col" style="border-color: var(--accent);">
+      <h3 style="color: var(--accent);">has-a <span class="tag">Association</span></h3>
+      <p style="font-size: 1rem;">An object <strong>has a</strong> reference to another object</p>
+      <ul style="margin-top: 0.8rem;">
+        <li>&#128663; Car <em>has a</em> Engine</li>
+        <li>&#128218; Library <em>has</em> Books</li>
+        <li>&#9917; Team <em>has</em> Players</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">Today's focus: the <strong>has-a</strong> side &mdash; composition, aggregation, and dependency</div>
+</div>
+
+<!-- Has-a Relationship Spectrum -->
+<div class="slide">
+  <h2><span class="accent">has-a</span> Relationship Spectrum</h2>
+  <p style="color: var(--heading); font-size: 1.15rem; margin-bottom: 2rem;">From strong ownership to temporary use</p>
+  <div style="display: flex; align-items: center; gap: 0; max-width: 850px;">
+    <div style="flex: 1; background: var(--surface); border: 1px solid var(--accent); border-radius: 12px 0 0 12px; padding: 1.2rem; text-align: center;">
+      <h3 style="color: var(--accent); font-size: 1.1rem;">Composition</h3>
+      <p style="font-size: 0.85rem; color: var(--muted);">Strong ownership<br>Parts die with owner</p>
+    </div>
+    <div style="flex: 1; background: var(--surface); border: 1px solid var(--orange); border-left: none; padding: 1.2rem; text-align: center;">
+      <h3 style="color: var(--orange); font-size: 1.1rem;">Aggregation</h3>
+      <p style="font-size: 0.85rem; color: var(--muted);">Weak ownership<br>Parts live independently</p>
+    </div>
+    <div style="flex: 1; background: var(--surface); border: 1px solid var(--cyan); border-left: none; border-radius: 0 12px 12px 0; padding: 1.2rem; text-align: center;">
+      <h3 style="color: var(--cyan); font-size: 1.1rem;">Dependency</h3>
+      <p style="font-size: 0.85rem; color: var(--muted);">Temporary use<br>No ownership at all</p>
+    </div>
+  </div>
+  <div style="display: flex; justify-content: space-between; max-width: 850px; margin-top: 0.8rem;">
+    <span style="color: var(--accent); font-size: 0.8rem; font-weight: 600;">&larr; Strongest coupling</span>
+    <span style="color: var(--cyan); font-size: 0.8rem; font-weight: 600;">Weakest coupling &rarr;</span>
+  </div>
+</div>
+
+<!-- ====== COMPOSITION ====== -->
+<div class="slide center">
+  <p style="color: var(--accent); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Part 1</p>
+  <h1>Composition</h1>
+  <p class="subtitle">Strong "has-a" &mdash; parts cannot exist without the whole</p>
+</div>
+
+<div class="slide">
+  <h2>What Is <span class="accent">Composition</span>?</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>A <strong>strong has-a</strong> relationship</li>
+        <li>The <strong>owner creates</strong> and manages the parts</li>
+        <li>Parts are <strong>exclusive</strong> &mdash; they belong to only one owner</li>
+        <li>When the owner is <strong>destroyed</strong>, all parts are destroyed too</li>
+        <li>Lifecycle is <strong>tightly coupled</strong></li>
+      </ul>
+      <div class="callout">Think: a house and its rooms. Demolish the house &rarr; rooms are gone</div>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 300 200" width="280">
+        <rect class="compose-node" x="75" y="5" width="150" height="40" rx="8" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="130" y="31" text-anchor="middle" font-size="14">&#127968;</text>
+        <text x="170" y="31" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="700" font-family="JetBrains Mono, monospace">House</text>
+        <line x1="150" y1="45" x2="60" y2="110" stroke="var(--accent)" stroke-width="1.5"/>
+        <line x1="150" y1="45" x2="150" y2="110" stroke="var(--accent)" stroke-width="1.5"/>
+        <line x1="150" y1="45" x2="240" y2="110" stroke="var(--accent)" stroke-width="1.5"/>
+        <rect class="compose-node" x="10" y="110" width="100" height="35" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="40" y="132" text-anchor="middle" font-size="12">&#127859;</text>
+        <text x="72" y="132" text-anchor="middle" fill="var(--cyan)" font-size="11" font-weight="600">Kitchen</text>
+        <rect class="compose-node" x="100" y="110" width="100" height="35" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="128" y="132" text-anchor="middle" font-size="12">&#128716;</text>
+        <text x="163" y="132" text-anchor="middle" fill="var(--green)" font-size="11" font-weight="600">Bedroom</text>
+        <rect class="compose-node" x="190" y="110" width="100" height="35" rx="6" fill="var(--code-bg)" stroke="var(--orange)" stroke-width="1.5"/>
+        <text x="218" y="132" text-anchor="middle" font-size="12">&#128701;</text>
+        <text x="254" y="132" text-anchor="middle" fill="var(--orange)" font-size="11" font-weight="600">Bathroom</text>
+        <text x="150" y="180" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">Owner destroyed &rarr; all parts destroyed</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Real-World <span class="accent">Composition</span> Examples</h2>
+  <div class="three-col" style="margin-top: 1rem;">
+    <div class="col">
+      <h3 style="color: var(--cyan);">&#129728; Body &amp; Heart</h3>
+      <p style="font-size: 0.95rem;">A heart cannot exist outside the body. The body <strong>owns</strong> the heart.</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">&#128663; Car &amp; Engine</h3>
+      <p style="font-size: 0.95rem;">Engine is built <strong>for this car</strong>. Car is destroyed &rarr; engine goes with it.</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">&#127976; Hotel &amp; Rooms</h3>
+      <p style="font-size: 0.95rem;">Rooms don't exist without the hotel. <strong>Exclusive ownership.</strong></p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 1.5rem;">Key pattern: the <strong>owner creates parts internally</strong> &mdash; they are never shared with other objects</div>
+</div>
+
+<div class="slide">
+  <h2>Composition in <span class="accent">Python</span></h2>
+  <div class="two-col">
+    <div>
+      <pre><span class="kw">class</span> <span class="cls">Engine</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, horsepower):
+        <span class="par">self</span>.horsepower = horsepower
+
+    <span class="kw">def</span> <span class="fn">start</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Engine running"</span>
+
+
+<span class="kw">class</span> <span class="cls">Car</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, model):
+        <span class="par">self</span>.model = model
+        <span class="par">self</span>.engine = <span class="cls">Engine</span>(<span class="num">200</span>)
+
+    <span class="kw">def</span> <span class="fn">drive</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="par">self</span>.engine.<span class="fn">start</span>()</pre>
+    </div>
+    <div>
+      <ul style="margin-top: 1rem;">
+        <li><code style="color: var(--cls);">Car</code> <strong>creates</strong> the <code>Engine</code> inside <code>__init__</code></li>
+        <li>Engine is not passed in &mdash; it's created <strong>internally</strong></li>
+        <li>If the <code>Car</code> object is deleted, the <code>Engine</code> goes with it</li>
+        <li>No other object references this engine</li>
+      </ul>
+      <pre style="margin-top: 1rem;"><span class="cm"># Usage</span>
+my_car = <span class="cls">Car</span>(<span class="str">"Toyota"</span>)
+<span class="fn">print</span>(my_car.<span class="fn">drive</span>())
+<span class="cm"># Engine running</span></pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Composition: <span class="accent">Multiple</span> Parts</h2>
+  <pre style="font-size: 0.82rem; max-width: 800px;"><span class="kw">class</span> <span class="cls">Wheel</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, position):
+        <span class="par">self</span>.position = position
+
+<span class="kw">class</span> <span class="cls">Transmission</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, type_):
+        <span class="par">self</span>.type = type_
+
+<span class="kw">class</span> <span class="cls">Car</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, model):
+        <span class="par">self</span>.model = model
+        <span class="par">self</span>.engine = <span class="cls">Engine</span>(<span class="num">200</span>)
+        <span class="par">self</span>.transmission = <span class="cls">Transmission</span>(<span class="str">"automatic"</span>)
+        <span class="par">self</span>.wheels = [<span class="cls">Wheel</span>(pos) <span class="kw">for</span> pos <span class="kw">in</span> [<span class="str">"FL"</span>, <span class="str">"FR"</span>, <span class="str">"RL"</span>, <span class="str">"RR"</span>]]</pre>
+  <div class="callout">All parts are <strong>created inside</strong> the Car constructor &mdash; they live and die together</div>
+</div>
+
+<!-- ====== AGGREGATION ====== -->
+<div class="slide center">
+  <p style="color: var(--orange); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Part 2</p>
+  <h1 style="background: linear-gradient(135deg, var(--heading) 0%, var(--orange) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Aggregation</h1>
+  <p class="subtitle">Weak "has-a" &mdash; parts can exist independently</p>
+</div>
+
+<div class="slide">
+  <h2>What Is <span class="orange-text">Aggregation</span>?</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>A <strong>weak has-a</strong> relationship</li>
+        <li>Objects are <strong>passed in</strong> from outside, not created internally</li>
+        <li>Parts can be <strong>shared</strong> across multiple owners</li>
+        <li>Parts <strong>survive</strong> after the owner is destroyed</li>
+        <li>Lifecycle is <strong>independent</strong></li>
+      </ul>
+      <div class="callout" style="border-color: var(--orange); background: rgba(251, 146, 60, 0.1);">Think: a team and its players. Dissolve the team &rarr; players still exist</div>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 300 200" width="280">
+        <rect x="75" y="5" width="150" height="40" rx="8" fill="var(--code-bg)" stroke="var(--orange)" stroke-width="2"/>
+        <text x="125" y="30" text-anchor="middle" font-size="14">&#9917;</text>
+        <text x="168" y="30" text-anchor="middle" fill="var(--orange)" font-size="13" font-weight="700" font-family="JetBrains Mono, monospace">Team</text>
+        <line x1="150" y1="45" x2="60" y2="110" stroke="var(--orange)" stroke-width="1.5" stroke-dasharray="6 3"/>
+        <line x1="150" y1="45" x2="150" y2="110" stroke="var(--orange)" stroke-width="1.5" stroke-dasharray="6 3"/>
+        <line x1="150" y1="45" x2="240" y2="110" stroke="var(--orange)" stroke-width="1.5" stroke-dasharray="6 3"/>
+        <rect x="10" y="110" width="100" height="35" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="38" y="131" text-anchor="middle" font-size="12">&#129485;</text>
+        <text x="73" y="131" text-anchor="middle" fill="var(--cyan)" font-size="11" font-weight="600">Player 1</text>
+        <rect x="100" y="110" width="100" height="35" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="128" y="131" text-anchor="middle" font-size="12">&#129485;</text>
+        <text x="163" y="131" text-anchor="middle" fill="var(--green)" font-size="11" font-weight="600">Player 2</text>
+        <rect x="190" y="110" width="100" height="35" rx="6" fill="var(--code-bg)" stroke="var(--purple)" stroke-width="1.5"/>
+        <text x="218" y="131" text-anchor="middle" font-size="12">&#129485;</text>
+        <text x="253" y="131" text-anchor="middle" fill="var(--purple)" font-size="11" font-weight="600">Player 3</text>
+        <text x="150" y="180" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">Owner destroyed &rarr; parts survive</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Real-World <span class="orange-text">Aggregation</span> Examples</h2>
+  <div class="three-col" style="margin-top: 1rem;">
+    <div class="col">
+      <h3 style="color: var(--cyan);">&#9992;&#65039; Airline &amp; Airplanes</h3>
+      <p style="font-size: 0.95rem;">Airline goes bankrupt &rarr; planes are sold to another airline. Planes <strong>survive</strong>.</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">&#128218; Library &amp; Books</h3>
+      <p style="font-size: 0.95rem;">Close the library &rarr; books are donated. Books <strong>exist independently</strong>.</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">&#127891; University &amp; Students</h3>
+      <p style="font-size: 0.95rem;">Students can belong to <strong>multiple</strong> organizations. Not exclusive.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Aggregation in <span class="orange-text">Python</span></h2>
+  <div class="two-col">
+    <div>
+      <pre><span class="kw">class</span> <span class="cls">Book</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, title):
+        <span class="par">self</span>.title = title
+
+
+<span class="kw">class</span> <span class="cls">Library</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>.name = name
+        <span class="par">self</span>.books = []
+
+    <span class="kw">def</span> <span class="fn">add_book</span>(<span class="par">self</span>, book):
+        <span class="par">self</span>.books.<span class="fn">append</span>(book)</pre>
+    </div>
+    <div>
+      <ul style="margin-top: 1rem;">
+        <li>Books are <strong>created outside</strong> the Library</li>
+        <li>They're <strong>passed in</strong> via <code>add_book()</code></li>
+        <li>Deleting the library <strong>doesn't destroy</strong> the books</li>
+      </ul>
+      <pre style="margin-top: 1rem;"><span class="cm"># Usage</span>
+b1 = <span class="cls">Book</span>(<span class="str">"Python 101"</span>)
+b2 = <span class="cls">Book</span>(<span class="str">"Clean Code"</span>)
+
+lib = <span class="cls">Library</span>(<span class="str">"City Library"</span>)
+lib.<span class="fn">add_book</span>(b1)
+lib.<span class="fn">add_book</span>(b2)
+
+<span class="kw">del</span> lib
+<span class="fn">print</span>(b1.title)  <span class="cm"># Python 101 still exists!</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== COMPARISON ====== -->
+<div class="slide">
+  <h2>Composition <span class="accent">vs</span> Aggregation</h2>
+  <table class="access-table" style="margin-top: 1rem;">
+    <tr>
+      <th></th>
+      <th style="color: var(--accent);">Composition</th>
+      <th style="color: var(--orange);">Aggregation</th>
+    </tr>
+    <tr>
+      <td><strong>Relationship</strong></td>
+      <td>Strong "has-a"</td>
+      <td>Weak "has-a"</td>
+    </tr>
+    <tr>
+      <td><strong>Ownership</strong></td>
+      <td>Exclusive</td>
+      <td>Shared</td>
+    </tr>
+    <tr>
+      <td><strong>Lifecycle</strong></td>
+      <td>Parts die with owner</td>
+      <td>Parts live independently</td>
+    </tr>
+    <tr>
+      <td><strong>Creation</strong></td>
+      <td>Created inside owner</td>
+      <td>Passed in from outside</td>
+    </tr>
+    <tr>
+      <td><strong>Coupling</strong></td>
+      <td>Tight</td>
+      <td>Loose</td>
+    </tr>
+    <tr>
+      <td><strong>Example</strong></td>
+      <td>House &amp; Rooms</td>
+      <td>Team &amp; Players</td>
+    </tr>
+  </table>
+</div>
+
+<div class="slide">
+  <h2>Side by Side in <span class="accent">Code</span></h2>
+  <div class="two-col">
+    <div>
+      <h3 style="color: var(--accent);">Composition</h3>
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">House</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="cm"># Created INSIDE</span>
+        <span class="par">self</span>.rooms = [
+            <span class="cls">Room</span>(<span class="str">"kitchen"</span>),
+            <span class="cls">Room</span>(<span class="str">"bedroom"</span>),
+            <span class="cls">Room</span>(<span class="str">"bathroom"</span>),
+        ]
+
+house = <span class="cls">House</span>()
+<span class="kw">del</span> house
+<span class="cm"># rooms are gone too</span></pre>
+    </div>
+    <div>
+      <h3 style="color: var(--orange);">Aggregation</h3>
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">Library</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>.books = []
+
+    <span class="kw">def</span> <span class="fn">add_book</span>(<span class="par">self</span>, book):
+        <span class="cm"># Passed in from OUTSIDE</span>
+        <span class="par">self</span>.books.<span class="fn">append</span>(book)
+
+book = <span class="cls">Book</span>(<span class="str">"Python 101"</span>)
+lib = <span class="cls">Library</span>()
+lib.<span class="fn">add_book</span>(book)
+<span class="kw">del</span> lib
+<span class="fn">print</span>(book.title)  <span class="cm"># still exists!</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== COUPLING ====== -->
+<div class="slide center">
+  <p style="color: var(--purple); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Part 3</p>
+  <h1 style="background: linear-gradient(135deg, var(--heading) 0%, var(--purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Coupling</h1>
+  <p class="subtitle">How tightly objects depend on each other</p>
+</div>
+
+<div class="slide">
+  <h2>Tight <span class="accent">vs</span> Loose Coupling</h2>
+  <div class="two-col" style="max-width: 900px;">
+    <div class="col" style="border-color: var(--accent);">
+      <h3 style="color: var(--accent);">&#128295; Tight Coupling</h3>
+      <ul>
+        <li>Classes <strong>depend directly</strong> on each other's internals</li>
+        <li>Changing one class <strong>forces changes</strong> in others</li>
+        <li><strong>Hard to test</strong> in isolation</li>
+        <li>Difficult to <strong>reuse</strong></li>
+      </ul>
+    </div>
+    <div class="col" style="border-color: var(--green);">
+      <h3 style="color: var(--green);">&#128268; Loose Coupling</h3>
+      <ul>
+        <li>Classes interact through <strong>interfaces</strong></li>
+        <li>Changes are <strong>localized</strong></li>
+        <li><strong>Easy to test</strong> and mock</li>
+        <li>Highly <strong>reusable</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 1.5rem;"><strong>Goal:</strong> aim for loose coupling wherever possible &mdash; it makes your code maintainable, flexible, and testable</div>
+</div>
+
+<div class="slide">
+  <h2>Tight Coupling <span class="accent">Example</span></h2>
+  <div class="layout">
+    <div class="text">
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">MySQLDatabase</span>:
+    <span class="kw">def</span> <span class="fn">query</span>(<span class="par">self</span>, sql):
+        <span class="kw">return</span> <span class="str">f"MySQL: {sql}"</span>
+
+
+<span class="kw">class</span> <span class="cls">UserService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>.db = <span class="cls">MySQLDatabase</span>()
+
+    <span class="kw">def</span> <span class="fn">get_user</span>(<span class="par">self</span>, id):
+        <span class="kw">return</span> <span class="par">self</span>.db.<span class="fn">query</span>(
+            <span class="str">f"SELECT * FROM users WHERE id={id}"</span>
+        )</pre>
+    </div>
+    <div class="visual" style="flex-direction: column;">
+      <ul>
+        <li><code>UserService</code> <strong>creates</strong> <code>MySQLDatabase</code> internally</li>
+        <li>Want to switch to PostgreSQL? Must <strong>rewrite</strong> UserService</li>
+        <li>Can't test without a <strong>real MySQL</strong> instance</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Loose Coupling <span class="green-text">Example</span></h2>
+  <div class="layout">
+    <div class="text">
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">UserService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, db):
+        <span class="par">self</span>.db = db
+
+    <span class="kw">def</span> <span class="fn">get_user</span>(<span class="par">self</span>, id):
+        <span class="kw">return</span> <span class="par">self</span>.db.<span class="fn">query</span>(
+            <span class="str">f"SELECT * FROM users WHERE id={id}"</span>
+        )
+
+<span class="cm"># Easy to swap implementations</span>
+svc = <span class="cls">UserService</span>(<span class="cls">MySQLDatabase</span>())
+svc = <span class="cls">UserService</span>(<span class="cls">PostgresDatabase</span>())
+svc = <span class="cls">UserService</span>(<span class="cls">MockDatabase</span>())</pre>
+    </div>
+    <div class="visual" style="flex-direction: column;">
+      <ul>
+        <li>Database is <strong>passed in</strong>, not created inside</li>
+        <li>Easy to <strong>swap</strong> implementations</li>
+        <li>Easy to <strong>test</strong> with mocks</li>
+        <li>This is <strong>aggregation</strong> at work!</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== COMPOSITION OVER INHERITANCE ====== -->
+<div class="slide center">
+  <p style="color: var(--green); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Part 4</p>
+  <h1 style="background: linear-gradient(135deg, var(--heading) 0%, var(--green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Composition over Inheritance</h1>
+  <p class="subtitle">Prefer composing objects over deep class hierarchies</p>
+</div>
+
+<div class="slide">
+  <h2>Composition over Inheritance</h2>
+  <p style="color: var(--heading); font-size: 1.1rem; margin-bottom: 1rem;">A principle suggesting classes should achieve polymorphism through <strong>composition</strong> rather than inheritance</p>
+  <div class="two-col">
+    <div>
+      <ul>
+        <li>Instead of inheriting properties from a parent class...</li>
+        <li>...a class should be <strong>composed of other classes</strong> that provide desired behavior</li>
+        <li>More <strong>flexible</strong> &mdash; can change behavior at runtime</li>
+        <li>Avoids <strong>fragile base class</strong> problem</li>
+      </ul>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--accent); padding: 0.8rem 1rem; border-radius: 0 8px 8px 0;">
+        <strong style="color: var(--accent);">Inheritance:</strong> <span style="color: var(--muted);">Manager <em>is-a</em> Employee</span>
+      </div>
+      <div style="background: rgba(52, 211, 153, 0.1); border-left: 3px solid var(--green); padding: 0.8rem 1rem; border-radius: 0 8px 8px 0;">
+        <strong style="color: var(--green);">Composition:</strong> <span style="color: var(--muted);">Employee <em>has-a</em> Role</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2><span class="accent">Misuse</span> of Inheritance</h2>
+  <div class="layout">
+    <div class="text">
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">Employee</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>.name = name
+
+<span class="kw">class</span> <span class="cls">Manager</span>(<span class="cls">Employee</span>):
+    <span class="kw">def</span> <span class="fn">generate_report</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Manager report"</span>
+
+<span class="kw">class</span> <span class="cls">Technician</span>(<span class="cls">Employee</span>):
+    <span class="kw">def</span> <span class="fn">repair_equipment</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Equipment repaired"</span></pre>
+    </div>
+    <div class="visual" style="flex-direction: column;">
+      <ul>
+        <li>Adding new roles = new <strong>subclasses</strong> &rarr; bloated hierarchy</li>
+        <li>Changing an employee's role means creating a <strong>new instance</strong></li>
+        <li>Shared behaviors across roles = <strong>duplication</strong> or more complex inheritance</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2><span class="green-text">Correcting</span> with Composition</h2>
+  <p style="color: var(--heading); font-size: 1rem; margin-bottom: 1rem;">Employee <em>has a</em> Role &mdash; roles are pluggable objects</p>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.78rem;"><span class="kw">class</span> <span class="cls">ManagerRole</span>:
+    <span class="kw">def</span> <span class="fn">perform_duty</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Manager report"</span>
+
+<span class="kw">class</span> <span class="cls">TechnicianRole</span>:
+    <span class="kw">def</span> <span class="fn">perform_duty</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Equipment repaired"</span>
+
+<span class="kw">class</span> <span class="cls">Employee</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, role=<span class="kw">None</span>):
+        <span class="par">self</span>.name = name
+        <span class="par">self</span>.role = role
+
+    <span class="kw">def</span> <span class="fn">perform_duty</span>(<span class="par">self</span>):
+        <span class="kw">if</span> <span class="par">self</span>.role:
+            <span class="kw">return</span> <span class="par">self</span>.role.<span class="fn">perform_duty</span>()
+        <span class="kw">return</span> <span class="str">"No specific duty"</span></pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.78rem;"><span class="cm"># Create roles independently</span>
+mgr_role = <span class="cls">ManagerRole</span>()
+tech_role = <span class="cls">TechnicianRole</span>()
+
+<span class="cm"># Assign to employees</span>
+alice = <span class="cls">Employee</span>(<span class="str">"Alice"</span>, mgr_role)
+bob = <span class="cls">Employee</span>(<span class="str">"Bob"</span>, tech_role)
+
+<span class="fn">print</span>(alice.<span class="fn">perform_duty</span>())
+<span class="cm"># Manager report</span>
+
+<span class="fn">print</span>(bob.<span class="fn">perform_duty</span>())
+<span class="cm"># Equipment repaired</span>
+
+<span class="cm"># Change role at runtime!</span>
+alice.role = tech_role
+<span class="fn">print</span>(alice.<span class="fn">perform_duty</span>())
+<span class="cm"># Equipment repaired</span></pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Benefits of <span class="green-text">Composition</span> over Inheritance</h2>
+  <div class="two-col" style="margin-top: 1rem;">
+    <div class="col">
+      <h3 style="color: var(--green);">&#9889; Flexibility</h3>
+      <p style="font-size: 0.95rem;">Change behavior at <strong>runtime</strong> by swapping components</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--cyan);">&#128230; No Hierarchy Bloat</h3>
+      <p style="font-size: 0.95rem;">New behaviors = new <strong>components</strong>, not new subclasses</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">&#129514; Testability</h3>
+      <p style="font-size: 0.95rem;">Test each component <strong>independently</strong></p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--purple);">&#128257; Reusability</h3>
+      <p style="font-size: 0.95rem;">Components can be <strong>shared</strong> across different classes</p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 1.5rem;"><strong>Rule of thumb:</strong> Use inheritance for genuine "is-a" relationships. Use composition for "has-a" or when you need flexibility.</div>
+</div>
+
+<!-- ====== DEPENDENCY ====== -->
+<div class="slide center">
+  <p style="color: var(--cyan); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Part 5</p>
+  <h1 style="background: linear-gradient(135deg, var(--heading) 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Dependency</h1>
+  <p class="subtitle">When one class uses methods of another temporarily</p>
+</div>
+
+<div class="slide">
+  <h2>What Is a <span class="cyan-text">Dependency</span>?</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>Class A <strong>uses methods</strong> of Class B</li>
+        <li>A <strong>temporary</strong> relationship &mdash; no ownership</li>
+        <li>B is not stored as an attribute of A</li>
+        <li>Typically passed as a <strong>method parameter</strong></li>
+        <li>The <strong>weakest</strong> form of coupling</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 280 160" width="280">
+        <rect x="10" y="50" width="100" height="40" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="60" y="75" text-anchor="middle" fill="var(--cyan)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Class A</text>
+        <rect x="170" y="50" width="100" height="40" rx="8" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="220" y="75" text-anchor="middle" fill="var(--green)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Class B</text>
+        <line x1="110" y1="70" x2="165" y2="70" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="6 3"/>
+        <polygon points="165,70 158,65 158,75" fill="var(--muted)"/>
+        <text x="140" y="55" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">uses</text>
+        <text x="140" y="130" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">A uses B's methods, but doesn't own B</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Dependency in <span class="cyan-text">Python</span></h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">Printer</span>:
+    <span class="kw">def</span> <span class="fn">print_document</span>(<span class="par">self</span>, text):
+        <span class="fn">print</span>(<span class="str">f"Printing: {text}"</span>)
+
+
+<span class="kw">class</span> <span class="cls">Report</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, content):
+        <span class="par">self</span>.content = content
+
+    <span class="kw">def</span> <span class="fn">send_to_printer</span>(<span class="par">self</span>, printer):
+        printer.<span class="fn">print_document</span>(<span class="par">self</span>.content)</pre>
+    </div>
+    <div>
+      <ul>
+        <li><code>Report</code> doesn't <strong>own</strong> the <code>Printer</code></li>
+        <li>Printer is only used <strong>temporarily</strong> in the method call</li>
+        <li>After the method returns, the relationship <strong>ends</strong></li>
+      </ul>
+      <pre style="margin-top: 1rem;"><span class="cm"># Usage</span>
+printer = <span class="cls">Printer</span>()
+report = <span class="cls">Report</span>(<span class="str">"Q1 Results"</span>)
+report.<span class="fn">send_to_printer</span>(printer)
+<span class="cm"># Report has no reference to printer</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== DEPENDENCY INJECTION ====== -->
+<div class="slide center">
+  <p style="color: var(--blue); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Part 6</p>
+  <h1 style="background: linear-gradient(135deg, var(--heading) 0%, var(--blue) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Dependency Injection</h1>
+  <p class="subtitle">Providing dependencies from outside instead of creating them inside</p>
+</div>
+
+<div class="slide">
+  <h2><span class="accent">Think:</span> Amazon Delivery</h2>
+  <p style="color: var(--heading); font-size: 1.1rem; margin-bottom: 1.5rem;">You order from Amazon. How does it get to you?</p>
+  <div style="display: flex; align-items: center; gap: 1rem; justify-content: center; margin-top: 1rem;">
+    <div style="text-align: center; position: relative;">
+      <div style="font-size: 1.3rem; position: absolute; top: -1.6rem; left: 50%; transform: translateX(-50%); animation: pkgStep1 4s ease-in-out infinite;">&#128230;</div>
+      <div style="font-size: 2rem;">&#128722;</div>
+      <p style="font-size: 0.8rem; color: var(--muted);">Order</p>
+    </div>
+    <span style="color: var(--accent); font-size: 1.5rem;">&rarr;</span>
+    <div style="text-align: center; position: relative;">
+      <div style="font-size: 1.3rem; position: absolute; top: -1.6rem; left: 50%; transform: translateX(-50%); animation: pkgStep2 4s ease-in-out infinite;">&#128230;</div>
+      <div style="font-size: 2rem;">&#127970;</div>
+      <p style="font-size: 0.8rem; color: var(--muted);">Warehouse</p>
+    </div>
+    <span style="color: var(--accent); font-size: 1.5rem;">&rarr;</span>
+    <div style="text-align: center; position: relative;">
+      <div style="font-size: 1.3rem; position: absolute; top: -1.6rem; left: 50%; transform: translateX(-50%); animation: pkgStep3 4s ease-in-out infinite;">&#128230;</div>
+      <div style="font-size: 2rem;">&#9992;&#65039; / &#128674; / &#128666;</div>
+      <p style="font-size: 0.8rem; color: var(--muted);">Transport</p>
+    </div>
+    <span style="color: var(--accent); font-size: 1.5rem;">&rarr;</span>
+    <div style="text-align: center; position: relative;">
+      <div style="font-size: 1.3rem; position: absolute; top: -1.6rem; left: 50%; transform: translateX(-50%); animation: pkgStep4 4s ease-in-out infinite;">&#128230;</div>
+      <div style="font-size: 2rem;">&#127968;</div>
+      <p style="font-size: 0.8rem; color: var(--muted);">You</p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 2rem;">Amazon doesn't build its own planes and trucks &mdash; it <strong>injects</strong> different delivery services depending on distance, cost, speed</div>
+</div>
+
+<div class="slide">
+  <h2>What Is <span style="color: var(--blue);">Dependency Injection</span>?</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>A technique where dependencies are <strong>provided from outside</strong></li>
+        <li>Instead of a class creating its own dependencies...</li>
+        <li>...they are <strong>injected</strong> via constructor or method parameters</li>
+        <li>Promotes <strong>loose coupling</strong></li>
+        <li>Makes code <strong>testable</strong> and <strong>swappable</strong></li>
+      </ul>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 280 200" width="260">
+        <rect x="90" y="70" width="100" height="40" rx="8" fill="var(--code-bg)" stroke="var(--blue)" stroke-width="2"/>
+        <text x="140" y="95" text-anchor="middle" fill="var(--blue)" font-size="11" font-weight="700" font-family="JetBrains Mono, monospace">Service</text>
+        <rect x="10" y="10" width="80" height="30" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="50" y="30" text-anchor="middle" fill="var(--cyan)" font-size="9" font-weight="600">Dep A</text>
+        <rect x="100" y="10" width="80" height="30" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="140" y="30" text-anchor="middle" fill="var(--green)" font-size="9" font-weight="600">Dep B</text>
+        <rect x="190" y="10" width="80" height="30" rx="6" fill="var(--code-bg)" stroke="var(--orange)" stroke-width="1.5"/>
+        <text x="230" y="30" text-anchor="middle" fill="var(--orange)" font-size="9" font-weight="600">Dep C</text>
+        <line x1="50" y1="40" x2="120" y2="70" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/>
+        <line x1="140" y1="40" x2="140" y2="70" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/>
+        <line x1="230" y1="40" x2="160" y2="70" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="140" y="145" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">Dependencies injected from outside</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Without DI <span class="accent">(Tight Coupling)</span></h2>
+  <pre style="font-size: 0.85rem; max-width: 700px;"><span class="kw">class</span> <span class="cls">OrderService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>.shipper = <span class="cls">Omniva</span>()  <span class="cm"># hardcoded!</span>
+
+    <span class="kw">def</span> <span class="fn">ship_order</span>(<span class="par">self</span>, order):
+        <span class="par">self</span>.shipper.<span class="fn">deliver</span>(order)</pre>
+  <div class="two-col" style="margin-top: 1.5rem;">
+    <div class="col" style="border-color: var(--accent);">
+      <h3 style="color: var(--accent);">Problems</h3>
+      <ul>
+        <li>Locked to <strong>Omniva</strong> &mdash; can't easily switch</li>
+        <li>Must modify class to use DHL or LP Express</li>
+        <li>Hard to test without real Omniva API</li>
+      </ul>
+    </div>
+    <div class="col" style="border-color: var(--muted);">
+      <h3>What if...</h3>
+      <p style="font-size: 0.95rem;">...we could <strong>inject</strong> any shipping provider? The <code>OrderService</code> shouldn't care <em>which</em> carrier delivers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>With DI <span class="green-text">(Loose Coupling)</span></h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">Omniva</span>:
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>, order):
+        <span class="kw">return</span> <span class="str">f"Omniva ships {order}"</span>
+
+<span class="kw">class</span> <span class="cls">LPExpress</span>:
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>, order):
+        <span class="kw">return</span> <span class="str">f"LP Express ships {order}"</span>
+
+<span class="kw">class</span> <span class="cls">OrderService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, shipper):
+        <span class="par">self</span>.shipper = shipper
+
+    <span class="kw">def</span> <span class="fn">ship_order</span>(<span class="par">self</span>, order):
+        <span class="kw">return</span> <span class="par">self</span>.shipper.<span class="fn">deliver</span>(order)</pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.82rem;"><span class="cm"># Inject Omniva</span>
+svc = <span class="cls">OrderService</span>(<span class="cls">Omniva</span>())
+<span class="fn">print</span>(svc.<span class="fn">ship_order</span>(<span class="str">"Laptop"</span>))
+<span class="cm"># Omniva ships Laptop</span>
+
+<span class="cm"># Inject LP Express instead</span>
+svc = <span class="cls">OrderService</span>(<span class="cls">LPExpress</span>())
+<span class="fn">print</span>(svc.<span class="fn">ship_order</span>(<span class="str">"Laptop"</span>))
+<span class="cm"># LP Express ships Laptop</span>
+
+<span class="cm"># Inject a mock for testing</span>
+svc = <span class="cls">OrderService</span>(<span class="cls">MockShipper</span>())
+<span class="fn">print</span>(svc.<span class="fn">ship_order</span>(<span class="str">"Laptop"</span>))
+<span class="cm"># MockShipper ships Laptop</span></pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Three Types of <span style="color: var(--blue);">Injection</span></h2>
+  <div class="three-col" style="margin-top: 1rem;">
+    <div class="col">
+      <h3 style="color: var(--cyan);">&#128679; Constructor Injection</h3>
+      <p style="font-size: 0.9rem;">Passed via <code>__init__</code>. Most common.</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">App</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, db):
+        <span class="par">self</span>.db = db</pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">&#128296; Setter Injection</h3>
+      <p style="font-size: 0.9rem;">Assigned after creation via a method.</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">App</span>:
+    <span class="kw">def</span> <span class="fn">set_db</span>(<span class="par">self</span>, db):
+        <span class="par">self</span>.db = db</pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">&#128232; Method Injection</h3>
+      <p style="font-size: 0.9rem;">Passed per method call. Temporary.</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">App</span>:
+    <span class="kw">def</span> <span class="fn">query</span>(<span class="par">self</span>, db):
+        db.<span class="fn">execute</span>()</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>DI with <span style="color: var(--blue);">Abstract Base Class</span></h2>
+  <p style="color: var(--heading); font-size: 1rem; margin-bottom: 1rem;">Combine DI with ABC for a proper contract</p>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.78rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Shipper</span>(ABC):
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>, order):
+        <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">Omniva</span>(<span class="cls">Shipper</span>):
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>, order):
+        <span class="kw">return</span> <span class="str">f"Omniva: {order}"</span>
+
+<span class="kw">class</span> <span class="cls">DHL</span>(<span class="cls">Shipper</span>):
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>, order):
+        <span class="kw">return</span> <span class="str">f"DHL: {order}"</span></pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.78rem;"><span class="kw">class</span> <span class="cls">OrderService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, shipper: <span class="cls">Shipper</span>):
+        <span class="par">self</span>.shipper = shipper
+
+    <span class="kw">def</span> <span class="fn">ship</span>(<span class="par">self</span>, order):
+        <span class="kw">return</span> <span class="par">self</span>.shipper.<span class="fn">deliver</span>(order)</pre>
+      <ul style="margin-top: 1rem;">
+        <li><code>Shipper</code> ABC defines the <strong>contract</strong></li>
+        <li>Any class implementing <code>deliver()</code> can be injected</li>
+        <li>Combines <strong>polymorphism + DI</strong> for maximum flexibility</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SUMMARY: ALL RELATIONSHIP TYPES ====== -->
+<div class="slide">
+  <h2>All Relationship Types <span class="accent">Summary</span></h2>
+  <table class="access-table" style="margin-top: 1rem; font-size: 0.9rem;">
+    <tr>
+      <th>Type</th>
+      <th>Strength</th>
+      <th>Lifecycle</th>
+      <th>Example</th>
+    </tr>
+    <tr>
+      <td><strong style="color: var(--cyan);">Inheritance</strong></td>
+      <td>is-a</td>
+      <td>Bound to parent type</td>
+      <td>Dog is-a Animal</td>
+    </tr>
+    <tr>
+      <td><strong style="color: var(--accent);">Composition</strong></td>
+      <td>Strong has-a</td>
+      <td>Parts die with owner</td>
+      <td>House has Rooms</td>
+    </tr>
+    <tr>
+      <td><strong style="color: var(--orange);">Aggregation</strong></td>
+      <td>Weak has-a</td>
+      <td>Parts survive</td>
+      <td>Team has Players</td>
+    </tr>
+    <tr>
+      <td><strong style="color: var(--green);">Dependency</strong></td>
+      <td>Uses</td>
+      <td>Temporary</td>
+      <td>Report uses Printer</td>
+    </tr>
+  </table>
+  <div class="callout" style="margin-top: 1.5rem;">Choose the <strong>weakest relationship</strong> that satisfies your requirements &mdash; this maximizes flexibility</div>
+</div>
+
+<!-- ====== LECTURE 05 QUIZZES ====== -->
+
+<!-- Quiz 7: Composition vs Aggregation -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 05)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">A <code style="color: var(--accent);">House</code> creates its <code>Room</code> objects inside <code>__init__</code>. When the house is deleted, the rooms are gone. What is this?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>A) Composition</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) Aggregation</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) Dependency</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Inheritance</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><strong>Composition</strong> &mdash; parts are created inside the owner and share its lifecycle. Filled diamond &#9830;&#65039; in UML.</p>
+</div>
+
+<!-- Quiz 8: Identify the relationship -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 05)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">What relationship does this code show?</p>
+  <pre style="max-width: 500px; font-size: 0.85rem; margin-bottom: 1.5rem;"><span class="kw">class</span> <span class="cls">Team</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>.name = name
+        <span class="par">self</span>.members = []
+
+    <span class="kw">def</span> <span class="fn">add_member</span>(<span class="par">self</span>, person):
+        <span class="par">self</span>.members.<span class="fn">append</span>(person)</pre>
+  <div class="two-col quiz-answers" style="max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Composition</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) Aggregation</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) Dependency</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Inheritance</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><strong>Aggregation</strong> &mdash; <code>person</code> is created outside and passed in. Members survive if the team is deleted.</p>
+</div>
+
+<!-- Quiz 9: Coupling -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 05)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">Which snippet shows <strong>tight coupling</strong>?</p>
+  <div class="two-col quiz-answers" style="margin-top: 1rem; max-width: 800px;">
+    <div class="col quiz-answer correct" style="text-align: left;">
+      <p style="font-size: 0.9rem; color: var(--green); margin-bottom: 0.5rem;"><strong>A)</strong></p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">App</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>.db = <span class="cls">MySQL</span>()</pre>
+    </div>
+    <div class="col quiz-answer" style="text-align: left;">
+      <p style="font-size: 0.9rem; color: var(--green); margin-bottom: 0.5rem;">B)</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">App</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, db):
+        <span class="par">self</span>.db = db</pre>
+    </div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><strong>A)</strong> is tight coupling &mdash; the class creates its own dependency. <strong>B)</strong> injects it from outside, making it easy to swap and test.</p>
+</div>
+
+<!-- Quiz 10: Identify the pattern -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 05)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">What relationship does this code show?</p>
+  <pre style="max-width: 500px; font-size: 0.85rem; margin-bottom: 1.5rem;"><span class="kw">class</span> <span class="cls">Report</span>:
+    <span class="kw">def</span> <span class="fn">export</span>(<span class="par">self</span>, formatter):
+        <span class="kw">return</span> formatter.<span class="fn">format</span>(<span class="par">self</span>.data)</pre>
+  <div class="two-col quiz-answers" style="max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Composition</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) Aggregation</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>C) Dependency</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Inheritance</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><strong>Dependency</strong> &mdash; <code>formatter</code> is passed as a method parameter, used temporarily, and not stored. The weakest form of coupling.</p>
+</div>
+
+<!-- Common Mistakes -->
+<div class="slide">
+  <h2>&#9888;&#65039; Common Mistake: <span class="accent">It Depends on Context</span></h2>
+  <p style="color: var(--heading); font-size: 1.1rem; margin-bottom: 1.5rem;">Is Car &rarr; Engine <strong>composition</strong> or <strong>aggregation</strong>?</p>
+  <div class="two-col" style="max-width: 800px;">
+    <div class="col" style="border-color: var(--accent);">
+      <h3 style="color: var(--accent);">&#9830;&#65039; Composition</h3>
+      <p style="font-size: 0.95rem;">Car factory <strong>builds the engine inside</strong> the car. Engine is exclusive to this car.</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">Car</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>.engine = <span class="cls">Engine</span>(<span class="num">200</span>)</pre>
+    </div>
+    <div class="col" style="border-color: var(--orange);">
+      <h3 style="color: var(--orange);">&#9674; Aggregation</h3>
+      <p style="font-size: 0.95rem;">Engine is <strong>sourced from a supplier</strong> and installed. Can be swapped out.</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">Car</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, engine):
+        <span class="par">self</span>.engine = engine</pre>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 1.5rem;">The relationship type depends on <strong>who creates and owns</strong> the part &mdash; not the domain objects themselves</div>
+</div>
+
+<!-- When to Use What -->
+<div class="slide">
+  <h2>&#129518; When to Use What?</h2>
+  <div style="max-width: 700px; margin-top: 1.5rem;">
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <span style="font-size: 1.5rem;">&#10102;</span>
+      <div>
+        <p style="color: var(--heading); font-size: 1.05rem; font-weight: 600;">Does the owner create and destroy the part?</p>
+        <p style="color: var(--accent); font-size: 0.95rem;">&rarr; <strong>Composition</strong> &mdash; House creates Rooms</p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <span style="font-size: 1.5rem;">&#10103;</span>
+      <div>
+        <p style="color: var(--heading); font-size: 1.05rem; font-weight: 600;">Does the part exist independently and get passed in?</p>
+        <p style="color: var(--orange); font-size: 0.95rem;">&rarr; <strong>Aggregation</strong> &mdash; Library receives Books</p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <span style="font-size: 1.5rem;">&#10104;</span>
+      <div>
+        <p style="color: var(--heading); font-size: 1.05rem; font-weight: 600;">Is it only used temporarily in a method call?</p>
+        <p style="color: var(--cyan); font-size: 0.95rem;">&rarr; <strong>Dependency</strong> &mdash; Report uses Printer</p>
+      </div>
+    </div>
+  </div>
+  <div class="callout">When in doubt, choose the <strong>weakest relationship</strong> that works &mdash; it keeps your code flexible</div>
+</div>
+
+<!-- ====== LIVE CODING ====== -->
+<div class="slide center">
+  <p style="color: var(--green); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Live Coding</p>
+  <h1><span style="background: none; -webkit-text-fill-color: initial;">&#9917;</span> <span style="background: linear-gradient(135deg, var(--heading) 0%, var(--green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Football World</span></h1>
+  <p class="subtitle">Composition + Aggregation side by side</p>
+  <div class="two-col" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col" style="border-color: var(--accent);">
+      <h3 style="color: var(--accent);">&#9830;&#65039; Composition</h3>
+      <p style="font-size: 0.9rem;">Stadium <strong>creates</strong> its Pitch &amp; Seats</p>
+      <p style="font-size: 0.85rem; color: var(--muted);">Delete stadium &rarr; pitch is gone</p>
+    </div>
+    <div class="col" style="border-color: var(--orange);">
+      <h3 style="color: var(--orange);">&#9674; Aggregation</h3>
+      <p style="font-size: 0.9rem;">Teams have <strong>Players</strong> passed in</p>
+      <p style="font-size: 0.85rem; color: var(--muted);">Messi plays for club + country</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== KEY TAKEAWAYS ====== -->
+<div class="slide">
+  <h2>Key Takeaways</h2>
+  <div style="max-width: 700px;">
+    <ul>
+      <li>&#9830;&#65039; <strong>Composition</strong> = strong has-a, owner creates &amp; destroys parts</li>
+      <li>&#9674; <strong>Aggregation</strong> = weak has-a, parts exist independently</li>
+      <li>&#128279; <strong>Dependency</strong> = temporary use, no ownership</li>
+      <li>&#128268; Prefer <strong>loose coupling</strong> for maintainability &amp; testability</li>
+      <li>&#9889; <strong>Composition over inheritance</strong> when you need flexibility</li>
+      <li>&#128137; <strong>Dependency injection</strong> = provide dependencies from outside</li>
+      <li>&#128221; <strong>Coursework</strong>: start early, register by 2026-03-30!</li>
+    </ul>
+  </div>
+  <p style="color: var(--muted); margin-top: 2.5rem; font-size: 1.1rem;">Next up: <strong style="color: var(--accent);">SOLID Principles</strong></p>
+</div>
+
+<div class="nav">
+  <button id="skip-quiz" class="skip-quiz" onclick="skipQuiz()">Skip Quiz &nbsp;&#9654;</button>
+  <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size: 1.2rem;">&#9788;</button>
+  <button id="prev" onclick="navigate(-1)">&lsaquo;</button>
+  <span class="counter" id="counter"></span>
+  <button id="next" onclick="navigate(1)">&rsaquo;</button>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

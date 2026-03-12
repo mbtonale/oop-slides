@@ -14,7 +14,7 @@ Interactive HTML presentations for the **Python Object-Oriented Programming** co
 | 02 | Encapsulation & Access Control | planned |
 | 03 | Inheritance | ready |
 | 04 | Polymorphism & PEP 8 | ready |
-| 05 | Composition & Aggregation | planned |
+| 05 | Composition & Aggregation | ready |
 | 06 | SOLID Principles | planned |
 | 07 | UML & Design Patterns | planned |
 | 08 | Design Patterns (2nd part) | planned |
@@ -32,6 +32,7 @@ shared.js               # navigation, theme toggle, quiz mechanics
 03-inheritance.html     # lecture 3 slides
 04-polymorphism.html    # lecture 4 slides
 04-live-coding-shapes.md # exercise guide for lecture 4
+05-composition.html     # lecture 5 slides
 ```
 
 Each presentation is a single HTML file that imports `shared.css` and `shared.js`, with only lecture-specific animations defined inline.
