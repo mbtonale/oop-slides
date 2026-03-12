@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classes & Objects: Course 1 — Python OOP</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  @keyframes blueprintDraw {
+    from { stroke-dashoffset: 200; opacity: 0; }
+    to { stroke-dashoffset: 0; opacity: 1; }
+  }
+  @keyframes stampIn {
+    from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+    to { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+  @keyframes mirrorPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  .blueprint-line {
+    stroke-dasharray: 200;
+    animation: blueprintDraw 1s ease forwards;
+  }
+  .stamp-node { animation: stampIn 0.5s ease backwards; }
+  .stamp-node:nth-child(2) { animation-delay: 0.2s; }
+  .stamp-node:nth-child(3) { animation-delay: 0.4s; }
+  .stamp-node:nth-child(4) { animation-delay: 0.6s; }
+  .mirror-glow { animation: mirrorPulse 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="mobile-warning">
+  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+  </svg>
+  <h2>Please use a larger screen</h2>
+  <p>This presentation is designed for desktop or projector displays.</p>
+  <a href="index.html">&larr; Back to curriculum</a>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<div class="visma-logo" style="display: flex; align-items: center; gap: 16px;">
+  <svg width="100" height="24" viewBox="30 75 165 45" xmlns="http://www.w3.org/2000/svg">
+    <path d="M32.228 81.327c8.803.852 18.458 5.253 23.996 11.643 7.099 8.093 4.686 16.187-5.396 18.032-10.081 1.988-23.996-3.123-31.095-11.217-5.396-6.248-5.253-12.495-.284-15.902l27.971 20.73-15.192-23.286z" fill="#c92043"/>
+    <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z" fill="var(--heading)"/>
+  </svg>
+  <span style="color: var(--border); font-size: 1.2rem;">|</span>
+  <img src="vgtu.jpg" alt="VILNIUS TECH" height="28" style="border-radius: 4px;">
+</div>
+
+<!-- ====== 1. TITLE ====== -->
+<div class="slide active center">
+  <p style="color: var(--accent); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">PYTHON OOP &mdash; COURSE 1</p>
+  <h1>Classes &amp; Objects</h1>
+  <p class="subtitle">Blueprints, instantiation, self &amp; magic methods</p>
+  <div style="margin-top: 3rem;">
+    <svg viewBox="0 0 340 150" width="360">
+      <rect x="120" y="5" width="100" height="32" rx="6" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+      <text x="170" y="26" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Class</text>
+      <line x1="170" y1="37" x2="60" y2="75" stroke="var(--muted)" stroke-width="1.2"/>
+      <line x1="170" y1="37" x2="170" y2="75" stroke="var(--muted)" stroke-width="1.2"/>
+      <line x1="170" y1="37" x2="280" y2="75" stroke="var(--muted)" stroke-width="1.2"/>
+      <rect x="20" y="75" width="80" height="30" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+      <text x="60" y="95" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">obj_1</text>
+      <rect x="130" y="75" width="80" height="30" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+      <text x="170" y="95" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">obj_2</text>
+      <rect x="240" y="75" width="80" height="30" rx="6" fill="var(--code-bg)" stroke="var(--orange)" stroke-width="1.5"/>
+      <text x="280" y="95" text-anchor="middle" fill="var(--orange)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">obj_3</text>
+      <text x="170" y="130" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">One blueprint, many objects</text>
+    </svg>
+  </div>
+  <p style="color: var(--muted); font-size: 0.9rem; margin-top: 2rem;">
+    <span class="tag">&larr;</span> <span class="tag">&rarr;</span> to navigate
+  </p>
+</div>
+
+<!-- ====== 2. CURRICULUM ====== -->
+<div class="slide">
+  <h2>Course Curriculum</h2>
+  <p style="color: var(--heading); margin-bottom: 1.5rem;">Where we are in the journey</p>
+  <ul class="curriculum-list">
+    <li class="current" style="color: var(--accent); font-weight: 600;">1. Classes &amp; Objects</li>
+    <li>2. Encapsulation &amp; Access Control</li>
+    <li>3. Inheritance</li>
+    <li>4. Polymorphism &amp; PEP 8</li>
+    <li>5. Composition &amp; Aggregation</li>
+    <li>6. Exception Handling &amp; Logging</li>
+    <li>7. SOLID Principles</li>
+    <li>8. UML &amp; Design Patterns</li>
+    <li>9. Design Patterns (2nd part)</li>
+    <li>10. Testing &amp; TDD</li>
+    <li>11. Libraries &amp; Frameworks</li>
+    <li>12. Recap &amp; Consultation</li>
+  </ul>
+</div>
+
+<!-- ====== 3. AGENDA ====== -->
+<div class="slide">
+  <h2>Agenda</h2>
+  <ul>
+    <li><strong>Why classes?</strong> &mdash; limitations of procedural code</li>
+    <li><strong>Real-world objects</strong> &mdash; attributes &amp; actions</li>
+    <li><strong>Class basics &amp; syntax</strong> &mdash; creating classes in Python</li>
+    <li><strong>Creating objects</strong> &mdash; instantiation</li>
+    <li><strong>The self parameter</strong> &mdash; how objects refer to themselves</li>
+    <li><strong>Special methods</strong> &mdash; magic methods (__init__, __str__, etc.)</li>
+    <li><strong>Why OOP?</strong> &mdash; benefits of object-oriented programming</li>
+    <li><strong>Recap</strong> &mdash; key takeaways</li>
+  </ul>
+</div>
+
+<!-- ====== SECTION 2: MOTIVATION ====== -->
+
+<!-- ====== 4. SIMPLE TASK ====== -->
+<div class="slide">
+  <h2>A Simple Task: Display Book Info</h2>
+  <div class="layout">
+    <div class="text">
+      <p style="margin-bottom: 1rem;">Let's store and display information about a book:</p>
+      <ul>
+        <li>Store the title, author, and year</li>
+        <li>Print a formatted summary</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre>title = <span class="str">"Clean Code"</span>
+author = <span class="str">"Robert Martin"</span>
+year = <span class="num">2008</span>
+
+<span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span>title<span class="str">}</span> <span class="str">by</span> <span class="str">{</span>author<span class="str">}</span> <span class="str">(</span><span class="str">{</span>year<span class="str">}</span><span class="str">)"</span>)</pre>
+    </div>
+  </div>
+  <div class="callout">This works fine for a single book.</div>
+</div>
+
+<!-- ====== 5. WHAT ABOUT 10 BOOKS? ====== -->
+<div class="slide">
+  <h2>What About 10 Books?</h2>
+  <div class="layout">
+    <div class="text">
+      <p style="margin-bottom: 1rem;">Parallel lists quickly become unwieldy:</p>
+      <ul>
+        <li>Data is <strong>scattered</strong> across separate lists</li>
+        <li>Easy to mix up <strong>indices</strong></li>
+        <li>No clear connection between related data</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre>titles = [<span class="str">"Clean Code"</span>, <span class="str">"Refactoring"</span>, ...]
+authors = [<span class="str">"Robert Martin"</span>, <span class="str">"Martin Fowler"</span>, ...]
+years = [<span class="num">2008</span>, <span class="num">1999</span>, ...]
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(titles)):
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span>titles[i]<span class="str">}</span> <span class="str">by</span> <span class="str">{</span>authors[i]<span class="str">}</span><span class="str">"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 6. ADDING FUNCTIONALITY ====== -->
+<div class="slide">
+  <h2>What If We Need to Add Functionality?</h2>
+  <div class="layout">
+    <div class="text">
+      <p style="margin-bottom: 1rem;">Adding features means more parallel structures:</p>
+      <ul>
+        <li>New list for each new attribute</li>
+        <li>Functions need <strong>more and more parameters</strong></li>
+        <li>Hard to <strong>maintain</strong> and <strong>debug</strong></li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre>pages = [<span class="num">464</span>, <span class="num">431</span>, ...]
+ratings = [<span class="num">4.7</span>, <span class="num">4.5</span>, ...]
+is_available = [<span class="kw">True</span>, <span class="kw">False</span>, ...]
+
+<span class="kw">def</span> <span class="fn">display_book</span>(title, author,
+                 year, pages, rating):
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span>title<span class="str">}</span> <span class="str">by</span> <span class="str">{</span>author<span class="str">}</span><span class="str">"</span>)
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span>pages<span class="str">}</span> <span class="str">pages, rated</span> <span class="str">{</span>rating<span class="str">}</span><span class="str">"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 7. SECTION DIVIDER ====== -->
+<div class="slide center">
+  <p style="color: var(--muted); font-size: 1.1rem; margin-bottom: 1rem;">What if code could be this simple?</p>
+  <pre style="font-size: 1.1rem; display: inline-block; text-align: left;">book1 = <span class="cls">Book</span>(<span class="str">"Clean Code"</span>, <span class="str">"Robert Martin"</span>, <span class="num">2008</span>)
+book1.<span class="fn">display_info</span>()</pre>
+  <p style="color: var(--muted); font-size: 1rem; margin-top: 2rem;">Data and behavior &mdash; bundled together.</p>
+</div>
+
+<!-- ====== 8. PROCEDURAL HAS ITS PLACE ====== -->
+<div class="slide">
+  <h2>Procedural Programming Has Its Place</h2>
+  <div class="two-col">
+    <div class="col">
+      <h3 style="color: var(--green);">Good for</h3>
+      <ul>
+        <li>Simple scripts</li>
+        <li>Quick prototypes</li>
+        <li>Data pipelines</li>
+        <li>Small automation tasks</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--accent);">Struggles with</h3>
+      <ul>
+        <li>Large codebases</li>
+        <li>Complex data relationships</li>
+        <li>Team collaboration</li>
+        <li>Long-term maintenance</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">OOP helps us organize code around <strong>real-world concepts</strong>.</div>
+</div>
+
+<!-- ====== 9. DICTIONARIES: A MIDDLE GROUND ====== -->
+<div class="slide">
+  <h2>Dictionaries: A Middle Ground?</h2>
+  <div class="layout">
+    <div class="text">
+      <p style="margin-bottom: 1rem;">We could group data with dicts:</p>
+      <ul>
+        <li>Data is <strong>grouped</strong>, but no behavior</li>
+        <li>No <strong>validation</strong> or structure</li>
+        <li>Typo in key name? No error, just a bug</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre>book = {
+    <span class="str">"title"</span>: <span class="str">"Clean Code"</span>,
+    <span class="str">"author"</span>: <span class="str">"Robert Martin"</span>,
+    <span class="str">"year"</span>: <span class="num">2008</span>
+}
+
+<span class="fn">print</span>(book[<span class="str">"titel"</span>])  <span class="cm"># KeyError!</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 10. TRANSITION ====== -->
+<div class="slide center">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem;">Section</p>
+  <h1>Real-World Objects</h1>
+  <p class="subtitle">Everything around us is an object</p>
+</div>
+
+<!-- ====== SECTION 3: REAL-WORLD OBJECTS ====== -->
+
+<!-- ====== 11. REAL-WORLD OBJECTS INTRO ====== -->
+<div class="slide">
+  <h2>Real-World Objects</h2>
+  <p style="margin-bottom: 1.5rem;">Look around you. Everything is an object with <strong>attributes</strong> (what it has) and <strong>actions</strong> (what it does).</p>
+  <div class="three-col">
+    <div class="col">
+      <h3 style="color: var(--cyan);">Car</h3>
+      <p style="font-size: 0.95rem;"><strong>Has:</strong> color, speed, fuel</p>
+      <p style="font-size: 0.95rem;"><strong>Does:</strong> accelerate, brake, turn</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">Student</h3>
+      <p style="font-size: 0.95rem;"><strong>Has:</strong> name, grade, courses</p>
+      <p style="font-size: 0.95rem;"><strong>Does:</strong> study, take exam, enroll</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">Coffee Machine</h3>
+      <p style="font-size: 0.95rem;"><strong>Has:</strong> water level, beans</p>
+      <p style="font-size: 0.95rem;"><strong>Does:</strong> brew, grind, dispense</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 12. BOOK EXAMPLE ====== -->
+<div class="slide">
+  <h2>Object Example: Book</h2>
+  <div class="layout">
+    <div class="text">
+      <h3 style="color: var(--cyan);">Attributes (what it has)</h3>
+      <ul>
+        <li>Title</li>
+        <li>Author</li>
+        <li>Number of pages</li>
+        <li>ISBN</li>
+      </ul>
+      <h3 style="color: var(--green); margin-top: 1.5rem;">Actions (what it does)</h3>
+      <ul>
+        <li>Open</li>
+        <li>Read a page</li>
+        <li>Bookmark</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 280 220" width="300">
+        <rect x="90" y="5" width="100" height="32" rx="6" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="115" y="25" fill="var(--accent)" font-size="12" font-weight="600" font-family="Outfit">&#128214; Book</text>
+        <line x1="140" y1="37" x2="70" y2="80" stroke="var(--muted)" stroke-width="1.2"/>
+        <line x1="140" y1="37" x2="210" y2="80" stroke="var(--muted)" stroke-width="1.2"/>
+        <rect x="10" y="80" width="120" height="120" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="70" y="100" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600" font-family="Outfit">Attributes</text>
+        <text x="25" y="118" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">title</text>
+        <text x="25" y="134" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">author</text>
+        <text x="25" y="150" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">pages</text>
+        <text x="25" y="166" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">isbn</text>
+        <rect x="150" y="80" width="120" height="120" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="210" y="100" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600" font-family="Outfit">Actions</text>
+        <text x="165" y="118" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">open()</text>
+        <text x="165" y="134" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">read_page()</text>
+        <text x="165" y="150" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">bookmark()</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 13. SMARTPHONE EXAMPLE ====== -->
+<div class="slide">
+  <h2>Object Example: Smartphone</h2>
+  <div class="layout">
+    <div class="text">
+      <h3 style="color: var(--cyan);">Attributes</h3>
+      <ul>
+        <li>Brand</li>
+        <li>Color</li>
+        <li>Battery percentage</li>
+      </ul>
+      <h3 style="color: var(--green); margin-top: 1.5rem;">Actions</h3>
+      <ul>
+        <li>Make a call</li>
+        <li>Send a text</li>
+        <li>Browse the web</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 280 220" width="300">
+        <rect x="65" y="5" width="150" height="32" rx="6" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="90" y="25" fill="var(--accent)" font-size="12" font-weight="600" font-family="Outfit">&#128241; Smartphone</text>
+        <line x1="140" y1="37" x2="70" y2="80" stroke="var(--muted)" stroke-width="1.2"/>
+        <line x1="140" y1="37" x2="210" y2="80" stroke="var(--muted)" stroke-width="1.2"/>
+        <rect x="10" y="80" width="120" height="110" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="70" y="100" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600" font-family="Outfit">Attributes</text>
+        <text x="25" y="118" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">brand</text>
+        <text x="25" y="134" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">color</text>
+        <text x="25" y="150" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">battery_pct</text>
+        <rect x="150" y="80" width="120" height="110" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="210" y="100" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600" font-family="Outfit">Actions</text>
+        <text x="165" y="118" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">make_call()</text>
+        <text x="165" y="134" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">send_text()</text>
+        <text x="165" y="150" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">browse()</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 14. THINK IN TERMS ====== -->
+<div class="slide center">
+  <h2>Think in Terms of Attributes &amp; Actions</h2>
+  <p style="color: var(--muted); font-size: 1.1rem; margin-bottom: 2rem;">Every object in the real world has <strong>properties</strong> and <strong>behaviors</strong>.</p>
+  <div class="two-col" style="max-width: 600px;">
+    <div class="col" style="text-align: center;">
+      <h3 style="color: var(--cyan);">Attributes</h3>
+      <p>What the object <strong>has</strong></p>
+      <p style="font-size: 0.95rem;">&#8594; variables</p>
+    </div>
+    <div class="col" style="text-align: center;">
+      <h3 style="color: var(--green);">Actions</h3>
+      <p>What the object <strong>does</strong></p>
+      <p style="font-size: 0.95rem;">&#8594; methods (functions)</p>
+    </div>
+  </div>
+  <p style="color: var(--muted); font-size: 1rem; margin-top: 2rem;">Now let's translate this into Python code.</p>
+</div>
+
+<!-- ====== SECTION 4: CLASSES = BLUEPRINTS ====== -->
+
+<!-- ====== 15. CLASSES INTRO ====== -->
+<div class="slide center">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem;">Section</p>
+  <h1>Classes: The Blueprint</h1>
+  <p class="subtitle">A class describes what something IS and what it CAN DO</p>
+</div>
+
+<!-- ====== 16. CLASS DEFINES ====== -->
+<div class="slide">
+  <h2>What Does a Class Define?</h2>
+  <div class="two-col">
+    <div class="col">
+      <h3 style="color: var(--cyan);">Attributes</h3>
+      <p>The <strong>data</strong> each object will hold</p>
+      <pre><span class="par">self</span>.title = title
+<span class="par">self</span>.author = author
+<span class="par">self</span>.year = year</pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">Methods</h3>
+      <p>The <strong>behavior</strong> each object can perform</p>
+      <pre><span class="kw">def</span> <span class="fn">display_info</span>(<span class="par">self</span>):
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span><span class="par">self</span>.title<span class="str">}</span><span class="str">"</span>)</pre>
+    </div>
+  </div>
+  <div class="callout">A class is a <strong>template</strong>. It doesn't represent a tangible item until we create an <strong>Object</strong>.</div>
+</div>
+
+<!-- ====== 17. BLUEPRINT DIAGRAM ====== -->
+<div class="slide center">
+  <h2>From Blueprint to Objects</h2>
+  <svg viewBox="0 0 500 180" width="520">
+    <rect x="180" y="5" width="140" height="40" rx="6" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="210" y="30" fill="var(--accent)" font-size="12" font-weight="600" font-family="Outfit">&#128736; Blueprint</text>
+    <text x="250" y="65" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit">creates</text>
+    <line x1="250" y1="45" x2="80" y2="100" stroke="var(--muted)" stroke-width="1.2"/>
+    <line x1="250" y1="45" x2="250" y2="100" stroke="var(--muted)" stroke-width="1.2"/>
+    <line x1="250" y1="45" x2="420" y2="100" stroke="var(--muted)" stroke-width="1.2"/>
+    <rect class="stamp-node" x="20" y="100" width="120" height="40" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+    <text x="80" y="125" text-anchor="middle" fill="var(--cyan)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">book_1</text>
+    <rect class="stamp-node" x="190" y="100" width="120" height="40" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+    <text x="250" y="125" text-anchor="middle" fill="var(--green)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">book_2</text>
+    <rect class="stamp-node" x="360" y="100" width="120" height="40" rx="6" fill="var(--code-bg)" stroke="var(--orange)" stroke-width="1.5"/>
+    <text x="420" y="125" text-anchor="middle" fill="var(--orange)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">book_3</text>
+    <text x="250" y="165" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit">Each object has its own data, but shares the same structure</text>
+  </svg>
+</div>
+
+<!-- ====== SECTION 5: CREATING CLASSES IN PYTHON ====== -->
+
+<!-- ====== 18. CREATING CLASSES ====== -->
+<div class="slide">
+  <h2>Creating Classes in Python</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li><span class="tag">class</span> keyword defines a new class</li>
+        <li><span class="tag green">__init__</span> is the constructor</li>
+        <li><span class="tag purple">self</span> refers to the current instance</li>
+        <li><span class="tag cyan">Methods</span> define object behavior</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre><span class="kw">class</span> <span class="cls">Book</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, title, author, year):
+        <span class="par">self</span>.title = title
+        <span class="par">self</span>.author = author
+        <span class="par">self</span>.year = year
+
+    <span class="kw">def</span> <span class="fn">display_info</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span><span class="par">self</span>.title<span class="str">}</span> <span class="str">by</span> <span class="str">{</span><span class="par">self</span>.author<span class="str">}</span> <span class="str">(</span><span class="str">{</span><span class="par">self</span>.year<span class="str">}</span><span class="str">)"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 19. SMARTPHONE CLASS ====== -->
+<div class="slide">
+  <h2>Smartphone Class</h2>
+  <pre><span class="kw">class</span> <span class="cls">Smartphone</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, brand, color, battery_pct):
+        <span class="par">self</span>.brand = brand
+        <span class="par">self</span>.color = color
+        <span class="par">self</span>.battery_pct = battery_pct
+
+    <span class="kw">def</span> <span class="fn">make_call</span>(<span class="par">self</span>, number):
+        <span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span><span class="par">self</span>.brand<span class="str">}</span> <span class="str">calling</span> <span class="str">{</span>number<span class="str">}</span><span class="str">..."</span>)
+
+    <span class="kw">def</span> <span class="fn">check_battery</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"Battery:</span> <span class="str">{</span><span class="par">self</span>.battery_pct<span class="str">}</span><span class="str">%"</span>)</pre>
+</div>
+
+<!-- ====== 20. BICYCLE CLASS ====== -->
+<div class="slide">
+  <h2>Bicycle Class</h2>
+  <pre><span class="kw">class</span> <span class="cls">Bicycle</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, brand, gear_count):
+        <span class="par">self</span>.brand = brand
+        <span class="par">self</span>.gear_count = gear_count
+        <span class="par">self</span>.current_gear = <span class="num">1</span>
+
+    <span class="kw">def</span> <span class="fn">shift_up</span>(<span class="par">self</span>):
+        <span class="kw">if</span> <span class="par">self</span>.current_gear < <span class="par">self</span>.gear_count:
+            <span class="par">self</span>.current_gear += <span class="num">1</span>
+            <span class="fn">print</span>(<span class="str">f"Shifted to gear</span> <span class="str">{</span><span class="par">self</span>.current_gear<span class="str">}</span><span class="str">"</span>)
+
+    <span class="kw">def</span> <span class="fn">shift_down</span>(<span class="par">self</span>):
+        <span class="kw">if</span> <span class="par">self</span>.current_gear > <span class="num">1</span>:
+            <span class="par">self</span>.current_gear -= <span class="num">1</span>
+            <span class="fn">print</span>(<span class="str">f"Shifted to gear</span> <span class="str">{</span><span class="par">self</span>.current_gear<span class="str">}</span><span class="str">"</span>)</pre>
+</div>
+
+<!-- ====== 21. CREATING OBJECTS ====== -->
+<div class="slide">
+  <h2>Creating Objects (Instantiation)</h2>
+  <div class="layout">
+    <div class="text">
+      <p style="margin-bottom: 1rem;">Syntax:</p>
+      <pre style="font-size: 1rem;">object_name = <span class="cls">ClassName</span>(parameters)</pre>
+      <p style="margin-top: 1.5rem; margin-bottom: 1rem;">Example:</p>
+      <pre>book1 = <span class="cls">Book</span>(<span class="str">"Clean Code"</span>, <span class="str">"Robert Martin"</span>, <span class="num">2008</span>)
+book2 = <span class="cls">Book</span>(<span class="str">"Refactoring"</span>, <span class="str">"Martin Fowler"</span>, <span class="num">1999</span>)</pre>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 260 160" width="280">
+        <rect x="70" y="5" width="120" height="32" rx="6" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="130" y="26" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Book</text>
+        <line x1="130" y1="37" x2="65" y2="75" stroke="var(--muted)" stroke-width="1.2"/>
+        <line x1="130" y1="37" x2="195" y2="75" stroke="var(--muted)" stroke-width="1.2"/>
+        <rect class="stamp-node" x="10" y="75" width="110" height="55" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+        <text x="65" y="95" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">book1</text>
+        <text x="65" y="115" text-anchor="middle" fill="var(--muted)" font-size="8" font-family="JetBrains Mono, monospace">"Clean Code"</text>
+        <rect class="stamp-node" x="140" y="75" width="110" height="55" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="195" y="95" text-anchor="middle" fill="var(--green)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">book2</text>
+        <text x="195" y="115" text-anchor="middle" fill="var(--muted)" font-size="8" font-family="JetBrains Mono, monospace">"Refactoring"</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SECTION 6: INTERACTING WITH OBJECTS ====== -->
+
+<!-- ====== 22. DOT NOTATION ====== -->
+<div class="slide">
+  <h2>Dot Notation</h2>
+  <div class="two-col">
+    <div class="col">
+      <h3 style="color: var(--green);">Calling Methods</h3>
+      <pre>object_name.<span class="fn">method_name</span>(params)</pre>
+      <p style="font-size: 0.95rem; margin-top: 0.5rem;">Asks the object to <strong>do</strong> something</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--cyan);">Accessing Attributes</h3>
+      <pre>object_name.attribute</pre>
+      <p style="font-size: 0.95rem; margin-top: 0.5rem;">Reads the object's <strong>data</strong></p>
+    </div>
+  </div>
+  <div class="callout">The <strong>dot</strong> is the bridge between you and the object's internals.</div>
+</div>
+
+<!-- ====== 23. INTERACTING EXAMPLE ====== -->
+<div class="slide">
+  <h2>Interacting with a Smartphone Object</h2>
+  <pre>phone = <span class="cls">Smartphone</span>(<span class="str">"iPhone"</span>, <span class="str">"black"</span>, <span class="num">85</span>)
+
+phone.<span class="fn">make_call</span>(<span class="str">"555-1234"</span>)      <span class="cm"># iPhone calling 555-1234...</span>
+phone.<span class="fn">check_battery</span>()            <span class="cm"># Battery: 85%</span>
+
+<span class="fn">print</span>(phone.brand)                <span class="cm"># iPhone</span>
+<span class="fn">print</span>(phone.color)                <span class="cm"># black</span></pre>
+</div>
+
+<!-- ====== 24. WARNING: DIRECT MODIFICATION ====== -->
+<div class="slide">
+  <h2>Direct Attribute Modification</h2>
+  <div class="layout">
+    <div class="text">
+      <p style="margin-bottom: 1rem;">Python allows direct access to attributes:</p>
+      <pre>phone.battery_pct = <span class="num">-50</span>  <span class="cm"># No error!</span></pre>
+      <p style="margin-top: 1rem;">This can lead to <strong>invalid states</strong>.</p>
+      <ul>
+        <li>No validation</li>
+        <li>No control over who changes what</li>
+        <li>Bugs are hard to trace</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <div class="callout" style="border-left-color: var(--orange);">
+        <p style="color: var(--orange); font-weight: 600;">We'll learn how to protect attributes in the next lecture: <strong>Encapsulation &amp; Access Control</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SECTION 7: UNDERSTANDING SELF ====== -->
+
+<!-- ====== 25. SELF INTRO ====== -->
+<div class="slide center">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem;">Section</p>
+  <h1>Understanding self</h1>
+  <p class="subtitle">How objects refer to themselves</p>
+  <p style="color: var(--muted); font-size: 1rem; margin-top: 2rem;">Think of <code style="color: var(--pink);">self</code> like a person talking about themselves.<br>When you say "my name is...", <code style="color: var(--pink);">self</code> is the "my".</p>
+</div>
+
+<!-- ====== 26. PERSON CLASS ====== -->
+<div class="slide">
+  <h2>self in Action: Person Class</h2>
+  <div class="layout">
+    <div class="text">
+      <pre><span class="kw">class</span> <span class="cls">Person</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, age):
+        <span class="par">self</span>.name = name
+        <span class="par">self</span>.age = age
+
+    <span class="kw">def</span> <span class="fn">introduce</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"Hi, I'm</span> <span class="str">{</span><span class="par">self</span>.name<span class="str">}</span><span class="str">, age</span> <span class="str">{</span><span class="par">self</span>.age<span class="str">}</span><span class="str">"</span>)</pre>
+    </div>
+    <div class="visual">
+      <pre>person1 = <span class="cls">Person</span>(<span class="str">"Alice"</span>, <span class="num">25</span>)
+person2 = <span class="cls">Person</span>(<span class="str">"Bob"</span>, <span class="num">30</span>)
+
+person1.<span class="fn">introduce</span>()
+<span class="cm"># Hi, I'm Alice, age 25</span>
+
+person2.<span class="fn">introduce</span>()
+<span class="cm"># Hi, I'm Bob, age 30</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 27. COMPARE AGE ====== -->
+<div class="slide">
+  <h2>self vs Other: Comparing Objects</h2>
+  <pre><span class="kw">class</span> <span class="cls">Person</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, age):
+        <span class="par">self</span>.name = name
+        <span class="par">self</span>.age = age
+
+    <span class="kw">def</span> <span class="fn">compare_age</span>(<span class="par">self</span>, other_person):
+        <span class="kw">if</span> <span class="par">self</span>.age > other_person.age:
+            <span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span><span class="par">self</span>.name<span class="str">}</span> <span class="str">is older than</span> <span class="str">{</span>other_person.name<span class="str">}</span><span class="str">"</span>)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span><span class="par">self</span>.name<span class="str">}</span> <span class="str">is not older than</span> <span class="str">{</span>other_person.name<span class="str">}</span><span class="str">"</span>)
+
+alice = <span class="cls">Person</span>(<span class="str">"Alice"</span>, <span class="num">25</span>)
+bob = <span class="cls">Person</span>(<span class="str">"Bob"</span>, <span class="num">30</span>)
+alice.<span class="fn">compare_age</span>(bob)   <span class="cm"># Alice is not older than Bob</span></pre>
+</div>
+
+<!-- ====== 28. SELF TAKEAWAY ====== -->
+<div class="slide">
+  <h2>Key Takeaway: self</h2>
+  <div class="two-col">
+    <div class="col">
+      <h3 style="color: var(--pink);">self = the specific instance</h3>
+      <ul>
+        <li>Always the <strong>first parameter</strong> in methods</li>
+        <li>Refers to the object that <strong>called</strong> the method</li>
+        <li>Python passes it <strong>automatically</strong></li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--cyan);">When you write:</h3>
+      <pre>person1.<span class="fn">introduce</span>()</pre>
+      <h3 style="color: var(--green); margin-top: 1rem;">Python sees:</h3>
+      <pre><span class="cls">Person</span>.<span class="fn">introduce</span>(person1)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SECTION 8: SPECIAL METHODS ====== -->
+
+<!-- ====== 29. SPECIAL METHODS INTRO ====== -->
+<div class="slide center">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem;">Section</p>
+  <h1>Special Methods</h1>
+  <p class="subtitle">Magic methods with double underscores</p>
+  <p style="color: var(--muted); font-size: 1rem; margin-top: 2rem;">They let you define how your objects behave with <strong>built-in operations</strong>.</p>
+</div>
+
+<!-- ====== 30. __init__ RECAP ====== -->
+<div class="slide">
+  <h2>You Already Know One: __init__</h2>
+  <div class="layout">
+    <div class="text">
+      <p style="margin-bottom: 1rem;">The <strong>constructor</strong> &mdash; called automatically when you create an object.</p>
+      <ul>
+        <li>Sets up initial <strong>attributes</strong></li>
+        <li>Runs <strong>once</strong> per object creation</li>
+        <li>Always takes <code style="color: var(--pink);">self</code> as first parameter</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre><span class="kw">class</span> <span class="cls">Book</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, title, author):
+        <span class="par">self</span>.title = title
+        <span class="par">self</span>.author = author
+
+book = <span class="cls">Book</span>(<span class="str">"Clean Code"</span>, <span class="str">"Martin"</span>)
+<span class="cm"># __init__ called automatically</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 31. __len__ AND __add__ OVERVIEW ====== -->
+<div class="slide">
+  <h2>Common Magic Methods</h2>
+  <div class="three-col">
+    <div class="col">
+      <h3 style="color: var(--green);">__len__</h3>
+      <p style="font-size: 0.95rem;">Called by <code style="color: var(--green);">len(obj)</code></p>
+      <p style="font-size: 0.95rem;">Returns length/size of object</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">__add__</h3>
+      <p style="font-size: 0.95rem;">Called by <code style="color: var(--orange);">obj1 + obj2</code></p>
+      <p style="font-size: 0.95rem;">Defines addition behavior</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--cyan);">__str__ / __repr__</h3>
+      <p style="font-size: 0.95rem;">Called by <code style="color: var(--cyan);">print(obj)</code></p>
+      <p style="font-size: 0.95rem;">String representation</p>
+    </div>
+  </div>
+  <div class="callout">These methods let your classes work with Python's built-in operators and functions.</div>
+</div>
+
+<!-- ====== 32. __len__ EXAMPLE ====== -->
+<div class="slide">
+  <h2>__len__: MusicPlaylist</h2>
+  <pre><span class="kw">class</span> <span class="cls">MusicPlaylist</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name):
+        <span class="par">self</span>.name = name
+        <span class="par">self</span>.tracks = []
+
+    <span class="kw">def</span> <span class="fn">add_track</span>(<span class="par">self</span>, track):
+        <span class="par">self</span>.tracks.<span class="fn">append</span>(track)
+
+    <span class="kw">def</span> <span class="fn">__len__</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="fn">len</span>(<span class="par">self</span>.tracks)
+
+playlist = <span class="cls">MusicPlaylist</span>(<span class="str">"Road Trip"</span>)
+playlist.<span class="fn">add_track</span>(<span class="str">"Bohemian Rhapsody"</span>)
+playlist.<span class="fn">add_track</span>(<span class="str">"Hotel California"</span>)
+<span class="fn">print</span>(<span class="fn">len</span>(playlist))  <span class="cm"># 2</span></pre>
+</div>
+
+<!-- ====== 33. __add__ PLAYLIST ====== -->
+<div class="slide">
+  <h2>__add__: Combining Playlists</h2>
+  <pre><span class="kw">class</span> <span class="cls">MusicPlaylist</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, tracks=<span class="kw">None</span>):
+        <span class="par">self</span>.name = name
+        <span class="par">self</span>.tracks = tracks <span class="kw">or</span> []
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(<span class="par">self</span>, other):
+        combined_name = <span class="str">f"</span><span class="str">{</span><span class="par">self</span>.name<span class="str">}</span> <span class="str">+</span> <span class="str">{</span>other.name<span class="str">}</span><span class="str">"</span>
+        combined_tracks = <span class="par">self</span>.tracks + other.tracks
+        <span class="kw">return</span> <span class="cls">MusicPlaylist</span>(combined_name, combined_tracks)
+
+rock = <span class="cls">MusicPlaylist</span>(<span class="str">"Rock"</span>, [<span class="str">"Stairway"</span>, <span class="str">"Smoke"</span>])
+pop = <span class="cls">MusicPlaylist</span>(<span class="str">"Pop"</span>, [<span class="str">"Thriller"</span>])
+combined = rock + pop  <span class="cm"># MusicPlaylist("Rock + Pop", [...])</span></pre>
+</div>
+
+<!-- ====== 34. __add__ VECTOR ====== -->
+<div class="slide">
+  <h2>__add__: Vector Math</h2>
+  <div class="layout">
+    <div class="text">
+      <pre><span class="kw">class</span> <span class="cls">Vector</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, x, y):
+        <span class="par">self</span>.x = x
+        <span class="par">self</span>.y = y
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(<span class="par">self</span>, other):
+        <span class="kw">return</span> <span class="cls">Vector</span>(
+            <span class="par">self</span>.x + other.x,
+            <span class="par">self</span>.y + other.y
+        )</pre>
+    </div>
+    <div class="visual">
+      <pre>v1 = <span class="cls">Vector</span>(<span class="num">3</span>, <span class="num">4</span>)
+v2 = <span class="cls">Vector</span>(<span class="num">4</span>, <span class="num">6</span>)
+v3 = v1 + v2
+
+<span class="fn">print</span>(v3.x, v3.y)
+<span class="cm"># 7 10</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 35. __str__ vs __repr__ ====== -->
+<div class="slide">
+  <h2>__str__ vs __repr__</h2>
+  <div class="two-col">
+    <div class="col">
+      <h3 style="color: var(--green);">__str__</h3>
+      <p style="font-size: 0.95rem;">For <strong>end users</strong></p>
+      <p style="font-size: 0.95rem;">Called by <code style="color: var(--green);">print()</code> and <code style="color: var(--green);">str()</code></p>
+      <p style="font-size: 0.95rem;">Readable, friendly output</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--orange);">__repr__</h3>
+      <p style="font-size: 0.95rem;">For <strong>developers</strong></p>
+      <p style="font-size: 0.95rem;">Called in <code style="color: var(--orange);">REPL</code> and <code style="color: var(--orange);">repr()</code></p>
+      <p style="font-size: 0.95rem;">Unambiguous, often recreatable</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 36. DATE CLASS EXAMPLE ====== -->
+<div class="slide">
+  <h2>__str__ vs __repr__: Date Example</h2>
+  <pre><span class="kw">class</span> <span class="cls">Date</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, year, month, day):
+        <span class="par">self</span>.year = year
+        <span class="par">self</span>.month = month
+        <span class="par">self</span>.day = day
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">f"</span><span class="str">{</span><span class="par">self</span>.day<span class="str">}</span><span class="str">/</span><span class="str">{</span><span class="par">self</span>.month<span class="str">}</span><span class="str">/</span><span class="str">{</span><span class="par">self</span>.year<span class="str">}</span><span class="str">"</span>
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">f"Date(</span><span class="str">{</span><span class="par">self</span>.year<span class="str">}</span><span class="str">,</span> <span class="str">{</span><span class="par">self</span>.month<span class="str">}</span><span class="str">,</span> <span class="str">{</span><span class="par">self</span>.day<span class="str">}</span><span class="str">)"</span>
+
+d = <span class="cls">Date</span>(<span class="num">2026</span>, <span class="num">3</span>, <span class="num">12</span>)
+<span class="fn">print</span>(d)       <span class="cm"># 12/3/2026        (calls __str__)</span>
+<span class="fn">print</span>(<span class="fn">repr</span>(d)) <span class="cm"># Date(2026, 3, 12) (calls __repr__)</span></pre>
+</div>
+
+<!-- ====== 37. isinstance() ====== -->
+<div class="slide">
+  <h2>isinstance(): Check Object Type</h2>
+  <div class="layout">
+    <div class="text">
+      <p style="margin-bottom: 1rem;">Check if an object is an instance of a specific class:</p>
+      <pre>book = <span class="cls">Book</span>(<span class="str">"Clean Code"</span>, <span class="str">"Martin"</span>)
+
+<span class="fn">print</span>(<span class="fn">isinstance</span>(book, <span class="cls">Book</span>))  <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">isinstance</span>(book, <span class="cls">str</span>))   <span class="cm"># False</span></pre>
+    </div>
+    <div class="visual">
+      <pre><span class="kw">def</span> <span class="fn">process_data</span>(item):
+    <span class="kw">if</span> <span class="fn">isinstance</span>(item, <span class="cls">Book</span>):
+        item.<span class="fn">display_info</span>()
+    <span class="kw">elif</span> <span class="fn">isinstance</span>(item, <span class="cls">str</span>):
+        <span class="fn">print</span>(item)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"Unknown type"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SECTION 9: WHY OOP? ====== -->
+
+<!-- ====== 38. SECTION DIVIDER ====== -->
+<div class="slide center">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem;">Section</p>
+  <h1>Why Choose OOP?</h1>
+  <p class="subtitle">Seven reasons to think in objects</p>
+</div>
+
+<!-- ====== 39. MODULARITY ====== -->
+<div class="slide">
+  <span class="big-number">1</span>
+  <h2>Modularity</h2>
+  <p style="margin-bottom: 1.5rem;">Break your program into <strong>self-contained units</strong>.</p>
+  <div class="two-col" style="max-width: 700px;">
+    <div class="col">
+      <h3 style="color: var(--cyan);">Each class is a module</h3>
+      <p style="font-size: 0.95rem;">Has its own data and logic. Can be developed and tested <strong>independently</strong>.</p>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">Easy to locate bugs</h3>
+      <p style="font-size: 0.95rem;">If the payment fails, check the <strong>Payment</strong> class &mdash; not the entire codebase.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 40. REUSABILITY ====== -->
+<div class="slide">
+  <span class="big-number">2</span>
+  <h2>Reusability</h2>
+  <p style="margin-bottom: 1.5rem;">Create once, use <strong>many times</strong>.</p>
+  <pre><span class="kw">class</span> <span class="cls">Customer</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, name, email):
+        <span class="par">self</span>.name = name
+        <span class="par">self</span>.email = email
+
+c1 = <span class="cls">Customer</span>(<span class="str">"Alice"</span>, <span class="str">"alice@example.com"</span>)
+c2 = <span class="cls">Customer</span>(<span class="str">"Bob"</span>, <span class="str">"bob@example.com"</span>)
+c3 = <span class="cls">Customer</span>(<span class="str">"Charlie"</span>, <span class="str">"charlie@example.com"</span>)</pre>
+  <p style="color: var(--muted); margin-top: 1rem;">One class, unlimited objects.</p>
+</div>
+
+<!-- ====== 41. MAINTAINABILITY ====== -->
+<div class="slide">
+  <span class="big-number">3</span>
+  <h2>Maintainability</h2>
+  <p style="margin-bottom: 1.5rem;">Change <strong>one class</strong>, all objects reflect the update.</p>
+  <div class="two-col" style="max-width: 700px;">
+    <div class="col">
+      <h3 style="color: var(--orange);">Before</h3>
+      <pre style="font-size: 0.8rem;"><span class="kw">def</span> <span class="fn">display_info</span>(<span class="par">self</span>):
+    <span class="fn">print</span>(<span class="par">self</span>.title)</pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">After</h3>
+      <pre style="font-size: 0.8rem;"><span class="kw">def</span> <span class="fn">display_info</span>(<span class="par">self</span>):
+    <span class="fn">print</span>(<span class="str">f"</span><span class="str">{</span><span class="par">self</span>.title<span class="str">}</span> <span class="str">(</span><span class="str">{</span><span class="par">self</span>.year<span class="str">}</span><span class="str">)"</span>)</pre>
+    </div>
+  </div>
+  <p style="color: var(--muted); margin-top: 1rem;">Every Book object now shows the year &mdash; no other code changed.</p>
+</div>
+
+<!-- ====== 42. ABSTRACTION ====== -->
+<div class="slide">
+  <span class="big-number">4</span>
+  <h2>Abstraction</h2>
+  <p style="margin-bottom: 1.5rem;">Hide complexity, expose a <strong>simple interface</strong>.</p>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>You don't need to know <strong>how</strong> an engine works to drive a car</li>
+        <li>Users of your class only see <strong>public methods</strong></li>
+        <li>Implementation can change without breaking callers</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre>car.<span class="fn">start_engine</span>()
+<span class="cm"># Simple interface</span>
+<span class="cm"># Complex internals hidden</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 43. ENCAPSULATION ====== -->
+<div class="slide">
+  <span class="big-number">5</span>
+  <h2>Encapsulation</h2>
+  <p style="margin-bottom: 1.5rem;">Protect data, <strong>controlled access</strong>.</p>
+  <div class="two-col" style="max-width: 700px;">
+    <div class="col">
+      <h3 style="color: var(--accent);">Without</h3>
+      <pre style="font-size: 0.8rem;">account.balance = <span class="num">-1000</span>
+<span class="cm"># Anyone can break it</span></pre>
+    </div>
+    <div class="col">
+      <h3 style="color: var(--green);">With</h3>
+      <pre style="font-size: 0.8rem;">account.<span class="fn">withdraw</span>(<span class="num">100</span>)
+<span class="cm"># Validated, controlled</span></pre>
+    </div>
+  </div>
+  <p style="color: var(--muted); margin-top: 1rem;">We'll dive deep into this in <strong>Lecture 2</strong>.</p>
+</div>
+
+<!-- ====== 44. POLYMORPHISM ====== -->
+<div class="slide">
+  <span class="big-number">6</span>
+  <h2>Polymorphism</h2>
+  <p style="margin-bottom: 1.5rem;">Same method name, <strong>different behavior</strong>.</p>
+  <pre><span class="kw">for</span> shape <span class="kw">in</span> [circle, rectangle, triangle]:
+    shape.<span class="fn">area</span>()  <span class="cm"># Each calculates differently</span></pre>
+  <p style="color: var(--muted); margin-top: 1rem;">We'll explore this in <strong>Lecture 4</strong>.</p>
+</div>
+
+<!-- ====== 45. REAL-WORLD MODELING ====== -->
+<div class="slide">
+  <span class="big-number">7</span>
+  <h2>Real-World Modeling</h2>
+  <p style="margin-bottom: 1.5rem;">Objects in code correspond to <strong>real entities</strong>.</p>
+  <div class="three-col">
+    <div class="col" style="text-align: center;">
+      <h3 style="color: var(--cyan);">Customer</h3>
+      <p style="font-size: 0.95rem;">name, email, orders</p>
+    </div>
+    <div class="col" style="text-align: center;">
+      <h3 style="color: var(--green);">Product</h3>
+      <p style="font-size: 0.95rem;">name, price, stock</p>
+    </div>
+    <div class="col" style="text-align: center;">
+      <h3 style="color: var(--orange);">Order</h3>
+      <p style="font-size: 0.95rem;">items, total, status</p>
+    </div>
+  </div>
+  <p style="color: var(--muted); margin-top: 1.5rem;">Your code structure mirrors the <strong>problem domain</strong>.</p>
+</div>
+
+<!-- ====== SECTION 10: QUIZZES ====== -->
+
+<!-- ====== 46. QUIZ 1 ====== -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Classes)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What is a class?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) An object</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) A blueprint for creating objects</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) A variable</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) A function</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">A class is a <strong>blueprint</strong> (template) that defines the attributes and methods objects of that type will have</p>
+</div>
+
+<!-- ====== 47. QUIZ 2 ====== -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Instantiation)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What is instantiation?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Deleting an object</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) Creating a class</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>C) Creating an object from a class</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Calling a method</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><strong>Instantiation</strong> is the process of creating a concrete object from a class blueprint</p>
+</div>
+
+<!-- ====== 48. QUIZ 3 ====== -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Magic Methods)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What does the __len__ method do?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Returns string representation</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) Returns the length of the object</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) Adds two objects together</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Initializes an object</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><strong>__len__</strong> is called by the built-in <code style="color: var(--green);">len()</code> function and should return the length of the object</p>
+</div>
+
+<!-- ====== 49. QUIZ 4 ====== -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Syntax)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">Which is correct syntax to create an object?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Book.create("title")</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) new Book("title")</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>C) Book("title")</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) create Book("title")</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">In Python, you create objects by calling the <strong>class name</strong> directly with parentheses &mdash; no <code>new</code> keyword needed</p>
+</div>
+
+<!-- ====== 50. QUIZ 5 ====== -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(self)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What does self refer to?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) The class itself</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) The current instance of the class</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) The parent class</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) A global variable</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><strong>self</strong> refers to the specific object instance that called the method &mdash; each object has its own <code style="color: var(--pink);">self</code></p>
+</div>
+
+<!-- ====== 51. QUIZ 6 ====== -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(__str__ vs __repr__)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What is the difference between __str__ and __repr__?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) They are identical</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) __str__ is for users, __repr__ is for developers</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) __repr__ is for users, __str__ is for developers</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) __str__ returns int, __repr__ returns string</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;"><strong>__str__</strong> provides a human-readable representation, while <strong>__repr__</strong> provides an unambiguous developer-oriented representation</p>
+</div>
+
+<!-- ====== SECTION 11: RECAP ====== -->
+
+<!-- ====== 52. RECAP ====== -->
+<div class="slide">
+  <h2>Key Takeaways</h2>
+  <div style="max-width: 700px;">
+    <ul>
+      <li><strong>Classes</strong> are blueprints that define attributes and methods</li>
+      <li><strong>Objects</strong> are instances created from classes</li>
+      <li><strong>self</strong> refers to the current instance that called the method</li>
+      <li><strong>__init__</strong> is the constructor &mdash; sets up initial state</li>
+      <li><strong>Magic methods</strong> (__str__, __len__, __add__) customize object behavior</li>
+      <li><strong>isinstance()</strong> checks if an object belongs to a class</li>
+      <li><strong>OOP</strong> brings modularity, reusability, and real-world modeling</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====== 53. CURRICULUM NEXT ====== -->
+<div class="slide">
+  <h2>Course Curriculum</h2>
+  <p style="color: var(--heading); margin-bottom: 1.5rem;">What's next</p>
+  <ul class="curriculum-list">
+    <li style="color: var(--green); font-weight: 600;">&#10003; 1. Classes &amp; Objects</li>
+    <li class="current" style="color: var(--accent); font-weight: 600;">2. Encapsulation &amp; Access Control</li>
+    <li>3. Inheritance</li>
+    <li>4. Polymorphism &amp; PEP 8</li>
+    <li>5. Composition &amp; Aggregation</li>
+    <li>6. Exception Handling &amp; Logging</li>
+    <li>7. SOLID Principles</li>
+    <li>8. UML &amp; Design Patterns</li>
+    <li>9. Design Patterns (2nd part)</li>
+    <li>10. Testing &amp; TDD</li>
+    <li>11. Libraries &amp; Frameworks</li>
+    <li>12. Recap &amp; Consultation</li>
+  </ul>
+  <p style="color: var(--muted); margin-top: 2rem; font-size: 1.1rem;">Next up: <strong style="color: var(--accent);">Encapsulation &amp; Access Control</strong></p>
+</div>
+
+<!-- ====== 54. THANK YOU ====== -->
+<div class="slide center">
+  <h1>Thank You!</h1>
+  <p class="subtitle">Questions?</p>
+  <p style="color: var(--muted); font-size: 1rem; margin-top: 2rem;">See you next lecture for <strong style="color: var(--accent);">Encapsulation &amp; Access Control</strong></p>
+</div>
+
+<div class="nav">
+  <button id="skip-quiz" class="skip-quiz" onclick="skipQuiz()">Skip Quiz &nbsp;&#9654;</button>
+  <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size: 1.2rem;">&#9788;</button>
+  <button id="prev" onclick="navigate(-1)">&lsaquo;</button>
+  <span class="counter" id="counter"></span>
+  <button id="next" onclick="navigate(1)">&rsaquo;</button>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>
