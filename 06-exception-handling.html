@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exception Handling & Logging: Course 6 — Python OOP</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="vgtu.jpg">
+<link rel="stylesheet" href="shared.css">
+<style>
+  @keyframes errorPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    50% { box-shadow: 0 0 20px 4px rgba(239, 68, 68, 0.3); }
+  }
+  @keyframes flowArrow {
+    from { stroke-dashoffset: 20; }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes shieldPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+  .error-pulse { animation: errorPulse 2s ease-in-out infinite; }
+  .flow-arrow { stroke-dasharray: 8 4; animation: flowArrow 1s linear infinite; }
+  .shield-pulse { animation: shieldPulse 2s ease-in-out infinite; }
+  .reveal-slide .reveal-blocks .reveal-block { opacity: 0; transform: translateY(8px); transition: opacity 0.4s, transform 0.4s; }
+  .reveal-slide.step-1 .reveal-blocks .reveal-block:nth-child(1) { opacity: 1; transform: translateY(0); }
+  .reveal-slide.step-2 .reveal-blocks .reveal-block:nth-child(-n+2) { opacity: 1; transform: translateY(0); }
+  .reveal-slide.step-3 .reveal-blocks .reveal-block { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="mobile-warning">
+  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+  </svg>
+  <h2>Please use a larger screen</h2>
+  <p>This presentation is designed for desktop or projector displays.</p>
+  <a href="index.html">&larr; Back to curriculum</a>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<div class="visma-logo" style="display: flex; align-items: center; gap: 16px;">
+  <svg width="100" height="24" viewBox="30 75 165 45" xmlns="http://www.w3.org/2000/svg">
+    <path d="M32.228 81.327c8.803.852 18.458 5.253 23.996 11.643 7.099 8.093 4.686 16.187-5.396 18.032-10.081 1.988-23.996-3.123-31.095-11.217-5.396-6.248-5.253-12.495-.284-15.902l27.971 20.73-15.192-23.286z" fill="#c92043"/>
+    <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z" fill="var(--heading)"/>
+  </svg>
+  <span style="color: var(--border); font-size: 1.2rem;">|</span>
+  <img src="vgtu.jpg" alt="VILNIUS TECH" height="28" style="border-radius: 4px;">
+</div>
+
+<!-- ====== 1. TITLE ====== -->
+<div class="slide active center">
+  <p style="color: var(--accent); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Python Object Oriented Programming</p>
+  <h1>Exception Handling &amp; Logging</h1>
+  <p class="subtitle">Course 6</p>
+  <div style="margin-top: 3rem;">
+    <svg viewBox="0 0 180 190" width="180">
+      <rect x="40" y="5" width="100" height="30" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+      <text x="90" y="25" text-anchor="middle" fill="var(--green)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">try</text>
+      <line x1="90" y1="35" x2="90" y2="50" stroke="var(--muted)" stroke-width="1.2"/>
+      <polygon points="90,55 86,48 94,48" fill="var(--muted)"/>
+      <rect x="40" y="58" width="100" height="30" rx="6" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+      <text x="90" y="78" text-anchor="middle" fill="var(--accent)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">except</text>
+      <line x1="90" y1="88" x2="90" y2="103" stroke="var(--muted)" stroke-width="1.2"/>
+      <polygon points="90,108 86,101 94,101" fill="var(--muted)"/>
+      <rect x="40" y="111" width="100" height="30" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="1.5"/>
+      <text x="90" y="131" text-anchor="middle" fill="var(--cyan)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">finally</text>
+      <text x="90" y="165" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">Graceful error handling in Python</text>
+    </svg>
+  </div>
+  <p style="color: var(--muted); font-size: 0.9rem; margin-top: 2rem;">
+    <span class="tag">&larr;</span> <span class="tag">&rarr;</span> to navigate
+  </p>
+</div>
+
+<!-- ====== 2. CURRICULUM ====== -->
+<div class="slide">
+  <h2>Course Curriculum</h2>
+  <p style="color: var(--heading); margin-bottom: 1.5rem;">Where we are in the journey</p>
+  <ul class="curriculum-list">
+    <li style="color: var(--muted);">0. Introduction to the course</li>
+    <li style="color: var(--muted);">1. Classes vs. Objects</li>
+    <li style="color: var(--muted);">2. Encapsulation &amp; Access Control</li>
+    <li style="color: var(--muted);">3. Inheritance</li>
+    <li style="color: var(--muted);">4. Polymorphism &amp; PEP 8</li>
+    <li style="color: var(--muted);">5. Composition &amp; Aggregation</li>
+    <li class="current" style="color: var(--accent); font-weight: 600;">6. Exception Handling &amp; Logging</li>
+    <li>7. SOLID Principles</li>
+    <li>8. UML &amp; Design Patterns</li>
+    <li>9. Design Patterns (2nd part)</li>
+    <li>10. Testing &amp; TDD</li>
+    <li>11. Libraries &amp; Frameworks</li>
+    <li>12. Recap &amp; Consultation</li>
+  </ul>
+</div>
+
+<!-- ====== RECAP QUIZZES (last 3 lectures: 03, 04, 05) ====== -->
+
+<!-- Quiz 1: Inheritance (Lecture 03) -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 03)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">Can a Python class inherit from multiple parent classes?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) No, Python only supports single inheritance</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) Yes, Python supports multiple inheritance</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) Only with abstract base classes</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Only if the parents have no shared methods</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">Python supports multiple inheritance &mdash; a class can inherit from several parents. The <strong>MRO</strong> (Method Resolution Order) determines which parent method is called first.</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 03</p>
+  <h2>Inheritance: <span class="accent">MRO</span> &amp; Multiple Parents</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>A child class can have <strong>multiple parents</strong>: <code style="color: var(--accent);">class C(A, B)</code></li>
+        <li>Python uses the <strong>MRO</strong> (C3 linearization) to resolve conflicts</li>
+        <li>Check the order with <code style="color: var(--accent);">ClassName.__mro__</code></li>
+        <li>Useful for <strong>mixins</strong> &mdash; small classes that add specific behavior</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">Flyable</span>:
+    <span class="kw">def</span> <span class="fn">move</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Flying"</span>
+
+<span class="kw">class</span> <span class="cls">Swimmable</span>:
+    <span class="kw">def</span> <span class="fn">move</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Swimming"</span>
+
+<span class="kw">class</span> <span class="cls">Duck</span>(<span class="cls">Flyable</span>, <span class="cls">Swimmable</span>):
+    <span class="kw">pass</span>
+
+<span class="fn">print</span>(<span class="cls">Duck</span>().<span class="fn">move</span>())  <span class="cm"># "Flying" (MRO)</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 2: Polymorphism (Lecture 04) -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 04)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What is polymorphism in OOP?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) Hiding data inside a class</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) Creating multiple constructors</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>C) Same interface, different behavior</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) Copying objects from one class to another</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">Polymorphism lets different classes share the same method name but provide their own implementation &mdash; "many forms"</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 04</p>
+  <h2>Polymorphism: <span class="accent">Many Forms</span></h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>Different classes can share the <strong>same method name</strong></li>
+        <li>Each class provides its <strong>own implementation</strong></li>
+        <li>Enables writing code that works with <strong>any subclass</strong></li>
+        <li>Key to the <strong>Open/Closed Principle</strong></li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">Cat</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Meow!"</span>
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Woof!"</span>
+
+<span class="kw">for</span> animal <span class="kw">in</span> [<span class="cls">Cat</span>(), <span class="cls">Dog</span>()]:
+    <span class="fn">print</span>(animal.<span class="fn">speak</span>())</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 3: Composition (Lecture 05) -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 05)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What happens to composed parts when the owner is destroyed?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) They move to another owner</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">B) They continue to exist independently</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>C) They are destroyed too</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) They become global variables</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">In composition, parts are <strong>owned</strong> by the parent &mdash; when the owner is destroyed, so are all its composed parts</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 05</p>
+  <h2>Composition vs Aggregation</h2>
+  <div class="two-col" style="margin-top: 1rem;">
+    <div class="col" style="border-color: var(--accent);">
+      <h3 style="color: var(--accent);">Composition</h3>
+      <ul>
+        <li><strong>Strong</strong> has-a relationship</li>
+        <li>Parts created <strong>inside</strong> the owner</li>
+        <li>Parts <strong>die</strong> with the owner</li>
+        <li>Example: House &amp; Rooms</li>
+      </ul>
+    </div>
+    <div class="col" style="border-color: var(--orange);">
+      <h3 style="color: var(--orange);">Aggregation</h3>
+      <ul>
+        <li><strong>Weak</strong> has-a relationship</li>
+        <li>Parts <strong>passed in</strong> from outside</li>
+        <li>Parts <strong>survive</strong> independently</li>
+        <li>Example: Team &amp; Players</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== AGENDA ====== -->
+<div class="slide">
+  <h2>Agenda for <span class="accent">Today</span></h2>
+  <div style="max-width: 600px; margin-top: 1rem;">
+    <ul>
+      <li>&#128165; Errors and/vs <strong>exceptions</strong></li>
+      <li>&#128737;&#65039; <strong>Handling</strong> exceptions</li>
+      <li>&#9757;&#65039; <strong>Raising</strong> exceptions</li>
+      <li>&#128161; Advanced topics &amp; <strong>best practices</strong></li>
+      <li>&#128220; <strong>Logging</strong></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====== REAL-WORLD ANALOGY ====== -->
+<div class="slide">
+  <h2>Exception handling in <span class="accent">real-world</span></h2>
+  <div class="layout">
+    <div class="text">
+      <p>A <strong>circuit breaker</strong> in an electrical system is designed to cut off the flow of electricity when there is an overload or a short circuit, preventing fires and equipment damage.</p>
+      <p style="margin-top: 1rem;">Similarly, exception handling acts as a circuit breaker for your code, stopping the execution flow in the case of an error but also preventing further damage and allowing for a safe recovery or shutdown.</p>
+    </div>
+    <div class="visual">
+      <img src="circuit-breaker.png" alt="Circuit breaker" style="max-height: 300px; border-radius: 8px;">
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Exception handling in <span class="accent">real-world</span></h2>
+  <div class="layout">
+    <div class="text">
+      <p>Imagine exception handling as the <strong>emergency services</strong> (fire department, paramedics, police) in a city.</p>
+      <p style="margin-top: 1rem;">Just as these services respond to <strong>unexpected situations</strong> (fires, medical emergencies, crimes), exception handling in programming allows a system to respond to unexpected errors.</p>
+      <p style="margin-top: 1rem;">Without emergency services ready to respond, situations could escalate quickly, much like unhandled exceptions can cause a program to crash or behave unpredictably.</p>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 200 200" width="200">
+        <rect x="60" y="20" width="80" height="60" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+        <text x="100" y="45" text-anchor="middle" fill="var(--cyan)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">Program</text>
+        <text x="100" y="60" text-anchor="middle" fill="var(--muted)" font-size="8" font-family="Outfit, sans-serif">(the city)</text>
+        <text x="100" y="105" text-anchor="middle" fill="var(--accent)" font-size="20">&#128680;</text>
+        <text x="100" y="125" text-anchor="middle" fill="var(--accent)" font-size="9" font-weight="600" font-family="Outfit, sans-serif">Exception occurs!</text>
+        <rect x="30" y="140" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="60" y="155" text-anchor="middle" fill="var(--green)" font-size="7" font-weight="600" font-family="JetBrains Mono, monospace">except</text>
+        <text x="60" y="167" text-anchor="middle" fill="var(--muted)" font-size="7" font-family="Outfit, sans-serif">handle it</text>
+        <rect x="110" y="140" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--orange)" stroke-width="1.5"/>
+        <text x="140" y="155" text-anchor="middle" fill="var(--orange)" font-size="7" font-weight="600" font-family="JetBrains Mono, monospace">finally</text>
+        <text x="140" y="167" text-anchor="middle" fill="var(--muted)" font-size="7" font-family="Outfit, sans-serif">clean up</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Key <span class="accent">Principles</span></h2>
+  <div style="max-width: 750px;">
+    <ol style="list-style: none; padding: 0; counter-reset: principles;">
+      <li style="margin-bottom: 1.2rem; padding-left: 2.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--accent); font-weight: 700; font-size: 1.3rem;">1.</span><strong>Detection</strong>: Identifying that something has gone wrong or is outside the expected operating parameters.</li>
+      <li style="margin-bottom: 1.2rem; padding-left: 2.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--accent); font-weight: 700; font-size: 1.3rem;">2.</span><strong>Containment</strong>: Preventing the initial problem from causing further damage or system-wide failure.</li>
+      <li style="margin-bottom: 1.2rem; padding-left: 2.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--accent); font-weight: 700; font-size: 1.3rem;">3.</span><strong>Alternative Action</strong>: Having a pre-defined way to respond to the error, whether it's a fallback mechanism, alerting a user, or attempting to recover.</li>
+      <li style="padding-left: 2.5rem; position: relative;"><span style="position: absolute; left: 0; color: var(--accent); font-weight: 700; font-size: 1.3rem;">4.</span><strong>Logging/Reporting</strong>: Recording the error for later analysis and debugging.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== WHAT IS EXCEPTION HANDLING ====== -->
+<div class="slide">
+  <h2>What is <span class="accent">Exception Handling</span>?</h2>
+  <div class="layout">
+    <div class="text">
+      <p>Exception handling is a programming mechanism that enables developers to <strong style="color: var(--accent);">manage errors</strong> and anomalies that arise <strong>during the execution of a program.</strong></p>
+      <p style="margin-top: 1.5rem;">In essence, it allows a program to <strong>continue running</strong> or <strong>gracefully terminate</strong> when it encounters unexpected situations, rather than crashing abruptly.</p>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 200 180" width="220">
+        <rect x="50" y="10" width="100" height="40" rx="8" fill="var(--code-bg)" stroke="var(--green)" stroke-width="2"/>
+        <text x="100" y="35" text-anchor="middle" fill="var(--green)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Program</text>
+        <line x1="100" y1="50" x2="100" y2="70" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <rect x="50" y="70" width="100" height="40" rx="8" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="2" class="error-pulse"/>
+        <text x="100" y="95" text-anchor="middle" fill="var(--accent)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Error!</text>
+        <line x1="100" y1="110" x2="100" y2="130" stroke="var(--muted)" stroke-width="1.5"/>
+        <rect x="40" y="130" width="120" height="40" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+        <text x="100" y="155" text-anchor="middle" fill="var(--cyan)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Handle &amp; recover</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Purpose of Exception Handling</h2>
+  <div style="max-width: 700px;">
+    <p>The purpose of exception handling is not just to prevent software crashes but also to:</p>
+    <ul style="margin-top: 1.5rem;">
+      <li>&#128027; Deal with <strong>logical errors</strong></li>
+      <li>&#128172; Provide <strong>meaningful error messages</strong> to users</li>
+      <li>&#128682; Ensure the program <strong>exits safely</strong> if needed</li>
+    </ul>
+    <p style="margin-top: 1.5rem;">It is a fundamental aspect of writing robust, reliable software that can handle the unpredictable nature of real-world operation.</p>
+  </div>
+</div>
+
+<!-- ====== QUOTE ====== -->
+<div class="slide center" style="background: var(--surface);">
+  <p style="font-size: 2.4rem; color: var(--muted); margin-bottom: 0;">&ldquo;</p>
+  <p style="font-size: 1.6rem; color: var(--heading); font-style: italic; line-height: 1.6;">Roses are Red,<br>Violets are Blue,<br>Unexpected '{'<br>on line 32.</p>
+  <p style="font-size: 2.4rem; color: var(--muted); margin-top: 0;">&rdquo;</p>
+</div>
+
+<!-- ====== ERRORS ====== -->
+<div class="slide">
+  <h2><span class="accent">Errors</span></h2>
+  <div style="max-width: 750px;">
+    <p>When writing a program, we, more often than not, will encounter errors.</p>
+    <p style="margin-top: 1rem;">Error caused by not following the proper structure (syntax) of the language is called a <strong>syntax error</strong> or <strong>parsing error</strong>.</p>
+    <p style="margin-top: 1rem;">Syntax errors are detected by the interpreter <strong style="color: var(--accent);">during the parsing stage</strong>, before the execution begins. Examples include missing colons, incorrect indentation, or unmatched parentheses.</p>
+    <div class="callout" style="margin-top: 1.5rem;">Errors need to be fixed in the code; they <strong>cannot be handled</strong> by exception handling mechanisms because they prevent the program from running correctly in the first place.</div>
+  </div>
+</div>
+
+<!-- Syntax Error Example 1 -->
+<div class="slide reveal-slide">
+  <h2>Syntax error <span class="accent">Example 1</span></h2>
+  <div class="reveal-blocks">
+    <div class="reveal-block">
+      <p style="color: var(--muted); margin-bottom: 0.5rem;">Incorrect version:</p>
+      <pre><span class="kw">if</span> <span class="num">True</span>
+    <span class="fn">print</span>(<span class="str">"This will cause a syntax error because the colon is missing."</span>)</pre>
+    </div>
+    <div class="reveal-block">
+      <p style="color: var(--muted); margin-top: 1rem; margin-bottom: 0.5rem;">Error Message:</p>
+      <pre>  File <span class="str">"&lt;stdin&gt;"</span>, line <span class="num">1</span>
+    <span class="kw">if</span> <span class="num">True</span>
+         ^
+<span class="kw">SyntaxError</span>: invalid syntax</pre>
+    </div>
+    <div class="reveal-block">
+      <p style="color: var(--muted); margin-top: 1rem; margin-bottom: 0.5rem;">Corrected version:</p>
+      <pre><span class="kw">if</span> <span class="num">True</span>:
+    <span class="fn">print</span>(<span class="str">"This will cause a syntax error because the colon is missing."</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Syntax Error Example 2 -->
+<div class="slide reveal-slide">
+  <h2>Syntax error <span class="accent">Example 2</span></h2>
+  <div class="reveal-blocks">
+    <div class="reveal-block">
+      <p style="color: var(--muted); margin-bottom: 0.5rem;">Incorrect version:</p>
+      <pre><span class="kw">def</span> <span class="fn">my_function</span>():
+<span class="fn">print</span>(<span class="str">"Hello"</span>)  <span class="cm"># This line should be indented.</span></pre>
+    </div>
+    <div class="reveal-block">
+      <p style="color: var(--muted); margin-top: 1rem; margin-bottom: 0.5rem;">Error Message:</p>
+      <pre>  File <span class="str">"&lt;stdin&gt;"</span>, line <span class="num">2</span>
+    <span class="fn">print</span>(<span class="str">"Hello"</span>)
+    ^
+<span class="kw">IndentationError</span>: expected an indented block</pre>
+    </div>
+    <div class="reveal-block">
+      <p style="color: var(--muted); margin-top: 1rem; margin-bottom: 0.5rem;">Corrected version:</p>
+      <pre><span class="kw">def</span> <span class="fn">my_function</span>():
+    <span class="fn">print</span>(<span class="str">"Hello"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LOGICAL ERRORS ====== -->
+<div class="slide reveal-slide">
+  <h2>Logical Errors: <span class="accent">Explanation</span></h2>
+  <div class="reveal-blocks">
+    <div class="reveal-block">
+      <div class="layout">
+        <div class="text">
+          <p>These are mistakes in the program's logic that lead to <strong>incorrect behavior</strong> or <strong>results</strong>.</p>
+          <p style="margin-top: 1rem;">Logical errors do not prevent the code from running but can lead to unexpected outcomes.</p>
+        </div>
+        <div class="visual">
+          <pre style="font-size: 0.8rem;"><span class="cm"># Incorrect: overwrites instead of accumulating</span>
+total = <span class="num">10</span>
+prices = [<span class="num">2</span>, <span class="num">5</span>, <span class="num">8</span>]
+<span class="kw">for</span> price <span class="kw">in</span> prices:
+    total = price
+<span class="fn">print</span>(<span class="str">f"Total: {total}"</span>)  <span class="cm"># 8, not 25!</span></pre>
+        </div>
+      </div>
+    </div>
+    <div class="reveal-block">
+      <div class="layout" style="margin-top: 1.5rem;">
+        <div class="text">
+          <p style="color: var(--green); font-weight: 600;">Corrected version:</p>
+          <p style="margin-top: 0.5rem;">Use <code style="color: var(--accent);">+=</code> to accumulate instead of <code style="color: var(--accent);">=</code> which overwrites.</p>
+        </div>
+        <div class="visual">
+          <pre style="font-size: 0.8rem;"><span class="cm"># Corrected: accumulates properly</span>
+total = <span class="num">10</span>
+prices = [<span class="num">2</span>, <span class="num">5</span>, <span class="num">8</span>]
+<span class="kw">for</span> price <span class="kw">in</span> prices:
+    total += price
+<span class="fn">print</span>(<span class="str">f"Total: {total}"</span>)  <span class="cm"># 25</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== EXCEPTIONS ====== -->
+<div class="slide">
+  <h2>Exceptions<span class="accent">?!</span></h2>
+  <div style="max-width: 700px;">
+    <p style="color: var(--accent); font-weight: 600;">Definition:</p>
+    <p style="margin-top: 0.5rem;">Exceptions are events that occur <strong>during the execution of a program</strong>, <strong>disrupting its normal flow</strong>.</p>
+    <p style="margin-top: 1rem;">They often arise from errors in the program's logic or unexpected conditions, such as:</p>
+    <ul style="margin-top: 0.5rem;">
+      <li>&#128194; A file not being found</li>
+      <li>&#9888;&#65039; An invalid input</li>
+      <li>&#10060; A division by zero</li>
+    </ul>
+    <p style="margin-top: 1.5rem; color: var(--accent); font-weight: 600;">Nature of Exceptions:</p>
+    <p style="margin-top: 0.5rem;">Unlike syntax errors, which are identified before the program runs, exceptions can happen <strong>at any time during execution</strong>. They need to be <strong>explicitly handled</strong> to maintain the stability and reliability of the software.</p>
+  </div>
+</div>
+
+<!-- Exception Examples -->
+<div class="slide">
+  <h2>Exceptions. <span class="accent">ZeroDivisionError</span></h2>
+  <p style="color: var(--muted); margin-bottom: 1rem;">Raised when you divide a value or variable with zero</p>
+  <p style="color: var(--muted); margin-bottom: 0.5rem;">Incorrect version:</p>
+  <pre><span class="fn">print</span>(<span class="num">1</span> / <span class="num">0</span>)</pre>
+  <p style="color: var(--muted); margin-top: 1.5rem; margin-bottom: 0.5rem;">Error Message:</p>
+  <pre><span class="kw">ZeroDivisionError</span>: division by zero</pre>
+</div>
+
+<div class="slide">
+  <h2>Exceptions. <span class="accent">NameError</span></h2>
+  <p style="color: var(--muted); margin-bottom: 1rem;">Raised when a variable is not found in the local or global scope.</p>
+  <p style="color: var(--muted); margin-bottom: 0.5rem;">Incorrect version:</p>
+  <pre><span class="fn">print</span>(undefined_variable)</pre>
+  <p style="color: var(--muted); margin-top: 1.5rem; margin-bottom: 0.5rem;">Error Message:</p>
+  <pre><span class="kw">NameError</span>: name <span class="str">'undefined_variable'</span> is not defined</pre>
+</div>
+
+<!-- Built-in Exceptions -->
+<div class="slide">
+  <h2><span class="accent">Built-in</span> Python Exceptions</h2>
+  <div class="two-col" style="font-size: 0.9rem;">
+    <div>
+      <ol style="list-style: decimal; padding-left: 1.5rem;">
+        <li style="padding-left: 0.3rem;"><strong>AssertionError</strong>: assert statement fails</li>
+        <li style="padding-left: 0.3rem;"><strong>EOFError</strong>: input() meets end-of-file</li>
+        <li style="padding-left: 0.3rem;"><strong>AttributeError</strong>: attribute assignment fails</li>
+        <li style="padding-left: 0.3rem;"><strong>ImportError</strong>: importing a module fails</li>
+        <li style="padding-left: 0.3rem;"><strong>IndexError</strong>: sequence index out of range</li>
+        <li style="padding-left: 0.3rem;"><strong>KeyboardInterrupt</strong>: Ctrl+C pressed</li>
+        <li style="padding-left: 0.3rem;"><strong>RuntimeError</strong>: no category fits</li>
+        <li style="padding-left: 0.3rem;"><strong>NameError</strong>: variable not found</li>
+      </ol>
+    </div>
+    <div>
+      <ol start="9" style="list-style: decimal; padding-left: 1.5rem;">
+        <li style="padding-left: 0.3rem;"><strong>MemoryError</strong>: out of memory</li>
+        <li style="padding-left: 0.3rem;"><strong>ValueError</strong>: right type, wrong value</li>
+        <li style="padding-left: 0.3rem;"><strong>ZeroDivisionError</strong>: division by zero</li>
+        <li style="padding-left: 0.3rem;"><strong>SyntaxError</strong>: invalid Python syntax</li>
+        <li style="padding-left: 0.3rem;"><strong>IndentationError</strong>: wrong indentation</li>
+        <li style="padding-left: 0.3rem;"><strong>SystemError</strong>: internal interpreter error</li>
+        <li style="padding-left: 0.3rem;"><strong>TypeError</strong>: operation on wrong type</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ====== HOW EXCEPTIONS WORK ====== -->
+<div class="slide">
+  <h2><span class="accent">How</span> Exceptions Work in Python<span class="accent">?!</span></h2>
+  <div style="max-width: 700px;">
+    <p>After learning about errors and exceptions, we will learn to handle them by using <code style="color: var(--green);">try</code>, <code style="color: var(--accent);">except</code>, <code style="color: var(--cyan);">else</code>, and <code style="color: var(--orange);">finally</code> blocks.</p>
+    <p style="margin-top: 1.5rem;">So, what do we mean by <strong>handling them</strong>?</p>
+    <p style="margin-top: 0.5rem;">In normal circumstances, these errors will stop the code execution and <strong>display the error message</strong>.</p>
+    <p style="margin-top: 1rem;">To create stable systems, we need to anticipate these errors and come up with alternative solutions or warning messages.</p>
+  </div>
+</div>
+
+<!-- try / except -->
+<div class="slide center">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span>: Flow</h2>
+  <svg viewBox="0 0 600 300" width="700" style="margin-top: 1rem;">
+    <rect x="10" y="10" width="240" height="120" rx="10" fill="var(--code-bg)" stroke="var(--green)" stroke-width="2"/>
+    <text x="30" y="38" fill="var(--green)" font-size="16" font-weight="700" font-family="JetBrains Mono, monospace">try:</text>
+    <text x="50" y="62" fill="var(--cyan)" font-size="12" font-family="JetBrains Mono, monospace">result = 10 / x</text>
+    <text x="50" y="82" fill="var(--cyan)" font-size="12" font-family="JetBrains Mono, monospace">data = load_file()</text>
+    <text x="50" y="102" fill="var(--cyan)" font-size="12" font-family="JetBrains Mono, monospace">process(data)</text>
+    <circle cx="345" cy="70" r="30" fill="var(--accent-glow)" stroke="var(--accent)" stroke-width="2.5"/>
+    <path d="M333,58 L357,82 M357,58 L333,82" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round"/>
+    <text x="345" y="120" text-anchor="middle" fill="var(--muted)" font-size="11" font-family="Outfit, sans-serif">Exception raised!</text>
+    <path d="M250,65 L312,65" fill="none" stroke="var(--border)" stroke-width="2"/>
+    <polygon points="312,65 304,61 304,69" fill="var(--border)"/>
+    <path d="M345,100 Q345,150 180,160" fill="none" stroke="var(--border)" stroke-width="2"/>
+    <polygon points="180,160 188,156 186,164" fill="var(--border)"/>
+    <rect x="10" y="160" width="240" height="120" rx="10" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="2"/>
+    <text x="30" y="190" fill="var(--accent)" font-size="16" font-weight="700" font-family="JetBrains Mono, monospace">except:</text>
+    <text x="50" y="214" fill="var(--cyan)" font-size="12" font-family="JetBrains Mono, monospace">log_error(e)</text>
+    <text x="50" y="234" fill="var(--cyan)" font-size="12" font-family="JetBrains Mono, monospace">show_message()</text>
+    <text x="50" y="254" fill="var(--cyan)" font-size="12" font-family="JetBrains Mono, monospace">use_fallback()</text>
+    <rect x="340" y="170" width="240" height="100" rx="10" fill="var(--code-bg)" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <text x="360" y="198" fill="var(--muted)" font-size="12" font-family="Outfit, sans-serif">Instead of <tspan font-weight="700" fill="var(--accent)">crashing</tspan>,</text>
+    <text x="360" y="218" fill="var(--muted)" font-size="12" font-family="Outfit, sans-serif">your code moves on to</text>
+    <text x="360" y="242" fill="var(--green)" font-size="14" font-weight="700" font-family="Outfit, sans-serif">alternative solutions.</text>
+    <path d="M250,230 L337,220" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="337,220 329,218 331,226" fill="var(--border)"/>
+  </svg>
+</div>
+
+<!-- try/except: Simple example -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span>: Simple example</h2>
+  <div style="max-width: 750px;">
+    <p style="margin-bottom: 1rem;">In this example, we will try to print the undefined <code style="color: var(--accent);">x</code> variable.</p>
+    <pre><span class="kw">try</span>:
+    <span class="fn">print</span>(x)
+
+<span class="kw">except</span>:
+    <span class="fn">print</span>(<span class="str">"An exception has occurred!"</span>)</pre>
+    <ul style="margin-top: 1.5rem;">
+      <li>The program will run the code under the <code style="color: var(--green);">try</code> statement</li>
+      <li>As we know that <code style="color: var(--accent);">x</code> is not defined, it will run the except statement and print the warning</li>
+    </ul>
+  </div>
+</div>
+
+<!-- try/except: Specific error -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span>: Specific error example</h2>
+  <pre><span class="kw">try</span>:
+    result = <span class="num">10</span> / <span class="num">0</span>
+
+<span class="kw">except</span> <span class="cls">ZeroDivisionError</span>:
+    <span class="fn">print</span>(<span class="str">"Caught a division by zero error!"</span>)</pre>
+  <ul style="margin-top: 1.5rem;">
+    <li>The code in the <code style="color: var(--green);">try</code> block attempts to divide 10 by 0, which raises a <code style="color: var(--accent);">ZeroDivisionError</code></li>
+    <li>The <code style="color: var(--accent);">except</code> block catches this <strong>specific error</strong> and prints a message, preventing the program from crashing</li>
+  </ul>
+</div>
+
+<!-- try/except: Multiple except -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span>: Multiple except</h2>
+  <pre><span class="kw">try</span>:
+    x = <span class="num">1</span>
+    result = <span class="num">10</span> / x
+
+<span class="kw">except</span> <span class="cls">ZeroDivisionError</span>:
+    <span class="fn">print</span>(<span class="str">"Caught a division by zero error!"</span>)
+
+<span class="kw">except</span>:
+    <span class="fn">print</span>(<span class="str">"Something else went wrong"</span>)</pre>
+  <ul style="margin-top: 1.5rem;">
+    <li>If a <code style="color: var(--accent);">ZeroDivisionError</code> is raised, the program will print "You cannot divide a value with zero."</li>
+    <li>For the rest of the exceptions, it will print "Something else went wrong."</li>
+  </ul>
+</div>
+
+<!-- try/except: Loading file -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span>: Loading the file example</h2>
+  <pre><span class="kw">try</span>:
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="str">'data.csv'</span>) <span class="kw">as</span> file:
+        read_data = file.<span class="fn">read</span>()
+<span class="kw">except</span> <span class="cls">FileNotFoundError</span> <span class="kw">as</span> fnf_error:
+    <span class="fn">print</span>(fnf_error)
+    <span class="fn">print</span>(<span class="str">"Explanation: We cannot load the 'data.csv' file"</span>)</pre>
+  <p style="margin-top: 1rem; color: var(--muted); font-size: 0.95rem;">Output:</p>
+  <pre>[Errno <span class="num">2</span>] No such file <span class="kw">or</span> directory: <span class="str">'data.csv'</span>
+Explanation: We cannot load the <span class="str">'data.csv'</span> file</pre>
+  <p style="margin-top: 1rem;">We can print default error messages without breaking the execution.</p>
+</div>
+
+<!-- try/except: Multiple in single block -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span>: Catching multiple in a single block</h2>
+  <pre style="font-size: 0.8rem;"><span class="kw">try</span>:
+    choice = <span class="fn">input</span>(<span class="str">"Enter '1' for ValueError, '2' for TypeError: "</span>)
+    <span class="kw">if</span> choice == <span class="str">'1'</span>:
+        <span class="fn">int</span>(<span class="str">'xyz'</span>)
+    <span class="kw">elif</span> choice == <span class="str">'2'</span>:
+        <span class="fn">sum</span>(<span class="str">'123'</span>)
+
+<span class="kw">except</span> (<span class="cls">ValueError</span>, <span class="cls">TypeError</span>) <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Caught an exception: {e}"</span>)</pre>
+  <ul style="margin-top: 1.5rem;">
+    <li>Depending on the input, the program raises the chosen type of exception</li>
+    <li>The <code style="color: var(--accent);">except</code> block catches either a <code style="color: var(--cyan);">ValueError</code> or a <code style="color: var(--cyan);">TypeError</code></li>
+  </ul>
+</div>
+
+<!-- ====== try / except / else ====== -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span> / <span class="cyan-text">else</span></h2>
+  <div class="layout">
+    <div class="visual" style="flex: 1; max-width: 500px;">
+      <svg viewBox="0 0 400 280" width="100%">
+        <rect x="120" y="5" width="160" height="45" rx="10" fill="var(--code-bg)" stroke="var(--green)" stroke-width="2.5"/>
+        <text x="200" y="34" text-anchor="middle" fill="var(--green)" font-size="20" font-weight="700" font-family="JetBrains Mono, monospace">try</text>
+
+        <line x1="155" y1="50" x2="85" y2="88" stroke="var(--green)" stroke-width="2"/>
+        <circle cx="85" cy="108" r="20" fill="rgba(52,211,153,0.15)" stroke="var(--green)" stroke-width="2"/>
+        <path d="M76,108 L82,116 L94,103" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="85" y1="128" x2="85" y2="165" stroke="var(--green)" stroke-width="2"/>
+        <polygon points="85,170 81,162 89,162" fill="var(--green)"/>
+
+        <line x1="245" y1="50" x2="315" y2="88" stroke="var(--accent)" stroke-width="2"/>
+        <circle cx="315" cy="108" r="20" fill="var(--accent-glow)" stroke="var(--accent)" stroke-width="2"/>
+        <path d="M307,100 L323,116 M323,100 L307,116" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="315" y1="128" x2="315" y2="165" stroke="var(--accent)" stroke-width="2"/>
+        <polygon points="315,170 311,162 319,162" fill="var(--accent)"/>
+
+        <rect x="10" y="170" width="150" height="45" rx="10" fill="var(--code-bg)" stroke="var(--blue)" stroke-width="2.5"/>
+        <text x="85" y="199" text-anchor="middle" fill="var(--blue)" font-size="17" font-weight="700" font-family="JetBrains Mono, monospace">else</text>
+        <text x="85" y="233" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">No exception? Run after try</text>
+
+        <rect x="240" y="170" width="150" height="45" rx="10" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="2.5"/>
+        <text x="315" y="199" text-anchor="middle" fill="var(--accent)" font-size="17" font-weight="700" font-family="JetBrains Mono, monospace">except</text>
+        <text x="315" y="233" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">Exception? Handle it here</text>
+      </svg>
+    </div>
+    <div class="text" style="flex: 1;">
+      <pre style="font-size: 0.82rem;"><span class="kw">try</span>:
+    value = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter a number: "</span>))
+
+<span class="kw">except</span> <span class="cls">ValueError</span>:
+    <span class="fn">print</span>(<span class="str">"You must enter a valid integer."</span>)
+
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">f"You entered {value}..."</span>)</pre>
+      <ul style="margin-top: 1rem;">
+        <li><code style="color: var(--green);">try</code> block: code that might fail</li>
+        <li><code style="color: var(--blue);">else</code> runs only if <strong>no exception</strong></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== try / except / finally ====== -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span> / <span class="orange-text">finally</span></h2>
+  <div class="layout">
+    <div class="visual" style="flex: 1; max-width: 500px;">
+      <svg viewBox="0 0 400 340" width="100%">
+        <rect x="120" y="5" width="160" height="45" rx="10" fill="var(--code-bg)" stroke="var(--green)" stroke-width="2.5"/>
+        <text x="200" y="34" text-anchor="middle" fill="var(--green)" font-size="20" font-weight="700" font-family="JetBrains Mono, monospace">try</text>
+
+        <line x1="155" y1="50" x2="85" y2="78" stroke="var(--green)" stroke-width="2"/>
+        <circle cx="85" cy="98" r="18" fill="rgba(52,211,153,0.15)" stroke="var(--green)" stroke-width="2"/>
+        <path d="M77,98 L82,105 L93,92" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="85" y1="116" x2="85" y2="145" stroke="var(--green)" stroke-width="2"/>
+        <polygon points="85,150 81,142 89,142" fill="var(--green)"/>
+
+        <line x1="245" y1="50" x2="315" y2="78" stroke="var(--accent)" stroke-width="2"/>
+        <circle cx="315" cy="98" r="18" fill="var(--accent-glow)" stroke="var(--accent)" stroke-width="2"/>
+        <path d="M308,91 L322,105 M322,91 L308,105" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="315" y1="116" x2="315" y2="145" stroke="var(--accent)" stroke-width="2"/>
+        <polygon points="315,150 311,142 319,142" fill="var(--accent)"/>
+
+        <rect x="10" y="150" width="150" height="42" rx="10" fill="var(--code-bg)" stroke="var(--blue)" stroke-width="2.5"/>
+        <text x="85" y="177" text-anchor="middle" fill="var(--blue)" font-size="16" font-weight="700" font-family="JetBrains Mono, monospace">else</text>
+
+        <rect x="240" y="150" width="150" height="42" rx="10" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="2.5"/>
+        <text x="315" y="177" text-anchor="middle" fill="var(--accent)" font-size="16" font-weight="700" font-family="JetBrains Mono, monospace">except</text>
+
+        <line x1="85" y1="192" x2="155" y2="232" stroke="var(--orange)" stroke-width="2" stroke-dasharray="5 3"/>
+        <polygon points="155,232 148,225 150,233" fill="var(--orange)"/>
+        <line x1="315" y1="192" x2="245" y2="232" stroke="var(--orange)" stroke-width="2" stroke-dasharray="5 3"/>
+        <polygon points="245,232 252,225 250,233" fill="var(--orange)"/>
+
+        <rect x="120" y="232" width="160" height="45" rx="10" fill="var(--code-bg)" stroke="var(--orange)" stroke-width="2.5" stroke-dasharray="6 3"/>
+        <text x="200" y="261" text-anchor="middle" fill="var(--orange)" font-size="17" font-weight="700" font-family="JetBrains Mono, monospace">finally</text>
+        <text x="200" y="300" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Always runs, no matter what.</text>
+      </svg>
+    </div>
+    <div class="text" style="flex: 1;">
+      <p>The <code style="color: var(--orange);">finally</code> keyword in the try-except block is <strong>always executed</strong>, irrespective of whether there is an exception or not.</p>
+      <p style="margin-top: 1rem;">It is quite useful in <strong>cleaning up</strong> resources and closing the object, especially closing the files.</p>
+      <pre style="font-size: 0.82rem; margin-top: 1rem;"><span class="kw">try</span>:
+    <span class="cm"># Code that might raise an exception</span>
+<span class="kw">except</span> <span class="cls">ExceptionType</span>:
+    <span class="cm"># Code that runs if an exception occurs</span>
+<span class="kw">finally</span>:
+    <span class="cm"># Cleanup code that runs no matter what</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- finally: closing a file -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span> / <span class="orange-text">finally</span> <span style="color: var(--cyan); font-size: 1.2rem;">Closing a File</span></h2>
+  <pre><span class="kw">try</span>:
+    file = <span class="fn">open</span>(<span class="str">"example.txt"</span>, <span class="str">"r"</span>)
+    data = file.<span class="fn">read</span>()
+    <span class="fn">print</span>(data)
+<span class="kw">except</span> <span class="cls">FileNotFoundError</span>:
+    <span class="fn">print</span>(<span class="str">"The file was not found."</span>)
+<span class="kw">finally</span>:
+    file.<span class="fn">close</span>()
+    <span class="fn">print</span>(<span class="str">"File closed."</span>)</pre>
+  <p style="margin-top: 1rem;">Whether or not the file is found and read, the <code style="color: var(--orange);">finally</code> block ensures that the file is attempted to be closed, avoiding a potential resource leak.</p>
+</div>
+
+<!-- finally: control flow -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="accent">except</span> / <span class="orange-text">finally</span> <span style="color: var(--cyan); font-size: 1.2rem;">Control flow</span></h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.78rem;"><span class="kw">def</span> <span class="fn">example_function</span>():
+    <span class="kw">try</span>:
+        <span class="fn">print</span>(<span class="str">"Inside try block"</span>)
+        <span class="kw">return</span> <span class="str">"Return from try block"</span>
+    <span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="str">f"Exception occurred: {e}"</span>)
+        <span class="kw">return</span> <span class="str">"Return from except block"</span>
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"Inside else block"</span>)
+        <span class="kw">return</span> <span class="str">"Return from else block"</span>
+    <span class="kw">finally</span>:
+        <span class="fn">print</span>(<span class="str">"This is the finally block."</span>)
+
+<span class="fn">print</span>(<span class="fn">example_function</span>())</pre>
+    </div>
+    <div>
+      <p style="color: var(--muted); margin-bottom: 0.5rem;">Output:</p>
+      <pre>Inside try block
+This is the finally block.
+Return from try block</pre>
+      <p style="margin-top: 1rem;">The <code style="color: var(--orange);">finally</code> block is executed even if the <code style="color: var(--green);">try</code> block has a return statement.</p>
+    </div>
+  </div>
+</div>
+
+<!-- finally without except -->
+<div class="slide">
+  <h2><span class="green-text">try</span> / <span class="orange-text">finally</span> <span style="color: var(--cyan); font-size: 1.2rem;">without except</span></h2>
+  <pre><span class="kw">try</span>:
+    <span class="fn">print</span>(<span class="str">"Performing an operation that doesn't specifically need exception handling."</span>)
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="str">"This cleanup code runs no matter what."</span>)</pre>
+  <p style="margin-top: 1.5rem;">This will ensure that no matter what happens in the <code style="color: var(--green);">try</code> block, the cleanup code in the <code style="color: var(--orange);">finally</code> block will always run.</p>
+  <div class="callout" style="margin-top: 1.5rem;">You don't always need an <code style="color: var(--accent);">except</code> block &mdash; sometimes you only care about <strong>cleanup</strong>, not about catching the exception.</div>
+</div>
+
+<!-- ====== NESTED EXCEPTIONS ====== -->
+<div class="slide">
+  <h2><span class="accent">Nested</span> exceptions</h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.72rem;"><span class="kw">def</span> <span class="fn">divide</span>(a, b):
+
+    <span class="kw">try</span>:
+        result = a / b
+
+        <span class="kw">try</span>:
+            <span class="fn">print</span>(<span class="str">f"Opening non-existent file."</span>)
+            <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"non_existent_file.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> file:
+                data = file.<span class="fn">read</span>()
+        <span class="kw">except</span> <span class="cls">FileNotFoundError</span> <span class="kw">as</span> fnf_error:
+            <span class="fn">print</span>(<span class="str">f"File error: {fnf_error}"</span>)
+
+    <span class="kw">except</span> <span class="cls">ZeroDivisionError</span> <span class="kw">as</span> zde_error:
+        <span class="fn">print</span>(<span class="str">f"Math error: {zde_error}"</span>)
+
+<span class="fn">divide</span>(<span class="num">10</span>, <span class="num">0</span>)
+<span class="fn">divide</span>(<span class="num">10</span>, <span class="num">2</span>)</pre>
+    </div>
+    <div>
+      <p><strong style="color: var(--accent);">Outer Try-Except Block</strong>: Handles division operations. Catches <code style="color: var(--cyan);">ZeroDivisionError</code> if b is zero.</p>
+      <p style="margin-top: 1rem;"><strong style="color: var(--green);">Inner Try-Except Block</strong>: Inside the successful division, attempts to open a non-existent file. Catches <code style="color: var(--cyan);">FileNotFoundError</code>.</p>
+      <p style="margin-top: 1rem;">Depending on the inputs, different exceptions can be caught at different levels.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== RAISING EXCEPTIONS ====== -->
+<div class="slide">
+  <h2><span class="accent">Raising</span> Exceptions in Python</h2>
+  <div style="max-width: 700px;">
+    <p>As a Python developer, you have the option to <strong>throw an exception</strong> if certain conditions are met.</p>
+    <p style="margin-top: 1rem;">It allows you to interrupt the program based on your requirement.</p>
+    <p style="margin-top: 1.5rem;">To throw an exception, we have to use the <code style="color: var(--accent);">raise</code> keyword followed by an exception name:</p>
+    <pre style="text-align: center; margin-top: 1rem;"><span class="kw">raise</span> <span class="cls">ExceptionType</span>(<span class="str">"Error message"</span>)</pre>
+  </div>
+</div>
+
+<!-- Raising: Example 1 -->
+<div class="slide">
+  <h2>Raising exceptions: <span class="accent">Example 1</span></h2>
+  <pre><span class="kw">try</span>:
+    <span class="kw">if</span> age &lt; <span class="num">0</span>:
+        <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">"Age cannot be negative."</span>)
+    <span class="fn">print</span>(<span class="str">f"Age set to {age}"</span>)
+
+<span class="kw">except</span> <span class="cls">ValueError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(e)</pre>
+  <p style="margin-top: 1.5rem;">This example raises a <code style="color: var(--cyan);">ValueError</code> if a negative age is passed, which is then caught and handled in the <code style="color: var(--accent);">try-except</code> block.</p>
+</div>
+
+<!-- Raising: with function -->
+<div class="slide">
+  <h2>Raising exceptions: <span class="accent">Example with function</span></h2>
+  <pre><span class="kw">def</span> <span class="fn">set_age</span>(age):
+    <span class="kw">if</span> age &lt; <span class="num">0</span>:
+        <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">"Age cannot be negative."</span>)
+    <span class="fn">print</span>(<span class="str">f"Age set to {age}"</span>)
+
+<span class="kw">try</span>:
+    <span class="fn">set_age</span>(-<span class="num">1</span>)
+<span class="kw">except</span> <span class="cls">ValueError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(e)</pre>
+  <p style="margin-top: 1.5rem;">This example raises a <code style="color: var(--cyan);">ValueError</code> if a negative age is passed, which is then caught and handled in the <code style="color: var(--accent);">try-except</code> block.</p>
+</div>
+
+<!-- WHEN to raise -->
+<div class="slide">
+  <h2><span class="accent">WHEN (?!)</span> to raise exceptions</h2>
+  <div style="max-width: 700px;">
+    <p style="margin-bottom: 1rem;">&#9989; <strong>Validation</strong>: To enforce certain conditions or validate inputs. If a function requires a positive integer, you can raise an exception if a negative value is passed.</p>
+    <p style="margin-bottom: 1rem;">&#128227; <strong>Error Reporting</strong>: To signal errors in a way that's consistent with Python's error handling model, making your code more intuitive to other Python developers.</p>
+    <p>&#128256; <strong>Control Flow</strong>: In complex functions, to signal that an error condition has occurred, leading to an early exit from a function or triggering specific error handling logic.</p>
+  </div>
+</div>
+
+<!-- WHY to raise -->
+<div class="slide">
+  <h2><span class="accent">WHY (?!)</span> to raise exceptions</h2>
+  <div style="max-width: 700px;">
+    <p style="margin-bottom: 0.5rem;">Use exceptions to communicate that something unexpected has happened, to enforce correct usage of functions, and to make your code more robust and maintainable.</p>
+    <ul style="margin-top: 1.5rem;">
+      <li>&#128270; <strong>Clarity</strong>: Makes your intent clear to anyone reading your code, indicating that a specific situation is considered an error state</li>
+      <li>&#129513; <strong>Consistency</strong>: Keeps your error handling consistent with that of Python itself, making your code more predictable</li>
+      <li>&#128170; <strong>Robustness</strong>: Allows upstream code to handle errors gracefully instead of failing silently or crashing</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Re-raising exceptions -->
+<div class="slide">
+  <h2><span class="accent">Re-raising</span> exceptions</h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.75rem;"><span class="kw">def</span> <span class="fn">divide</span>(a, b):
+    <span class="kw">try</span>:
+        result = a / b
+    <span class="kw">except</span> <span class="cls">ZeroDivisionError</span>:
+        <span class="fn">print</span>(<span class="str">"Logging: Attempted to divide by zero."</span>)
+        <span class="kw">raise</span>  <span class="cm"># Reraising the exception</span>
+    <span class="kw">return</span> result
+
+<span class="kw">try</span>:
+    divide_result = <span class="fn">divide</span>(<span class="num">1</span>, <span class="num">0</span>)
+<span class="kw">except</span> <span class="cls">ZeroDivisionError</span>:
+    <span class="fn">print</span>(<span class="str">"Caught in the outer try-except block."</span>)</pre>
+    </div>
+    <div>
+      <p style="color: var(--muted); margin-bottom: 0.5rem;">Output:</p>
+      <pre style="font-size: 0.82rem;">Logging: Attempted to divide by zero.
+Caught in the outer try-except block.</pre>
+      <p style="margin-top: 1rem;">The <code style="color: var(--accent);">except</code> block catches the exception, prints a logging message, and then uses <code style="color: var(--accent);">raise</code> to reraise it.</p>
+      <p style="margin-top: 0.5rem;">The reraised exception is propagated upwards, until it reaches the outer <code style="color: var(--green);">try-except</code> block.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== EVERYTHING IS AN OBJECT ====== -->
+<div class="slide center" style="background: var(--surface);">
+  <p style="font-size: 1.8rem; color: var(--text); font-style: italic; line-height: 1.8;">In Python, <strong style="color: var(--heading); font-size: 2rem;">everything is an object</strong>,<br>including exceptions.</p>
+  <p style="color: var(--muted); margin-top: 1rem; font-size: 1rem;">This is a fundamental concept in Python's object-oriented programming model.</p>
+</div>
+
+<!-- Exception object -->
+<div class="slide">
+  <h2>Understanding Exception <span class="accent">object</span></h2>
+  <div style="max-width: 750px;">
+    <p>When an error occurs during the execution of a program, an exception object is instantiated from a corresponding exception class.</p>
+    <p style="margin-top: 1rem;">This object contains information about the error, including its type (class), a message, and a traceback detailing the point in the code at which the error occurred.</p>
+    <pre style="margin-top: 1.5rem;"><span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">"Invalid value"</span>)</pre>
+    <pre style="margin-top: 0.5rem;">exc = <span class="cls">ValueError</span>(<span class="str">"Invalid value"</span>)
+<span class="kw">raise</span> exc</pre>
+    <p style="margin-top: 1rem;">When you raise an exception, Python constructs an exception object that can be caught and handled by an except block.</p>
+  </div>
+</div>
+
+<!-- Exception hierarchy SVG -->
+<div class="slide center">
+  <h2>Exception <span class="accent">Hierarchy</span></h2>
+  <svg viewBox="-50 0 950 350" width="95%" style="max-width: 1100px; margin-top: 0.5rem;">
+    <rect x="350" y="10" width="200" height="55" rx="12" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="3"/>
+    <text x="450" y="45" text-anchor="middle" fill="var(--cyan)" font-size="20" font-weight="700" font-family="JetBrains Mono, monospace">Exception</text>
+
+    <line x1="450" y1="65" x2="90" y2="120" stroke="var(--accent)" stroke-width="2"/>
+    <line x1="450" y1="65" x2="270" y2="120" stroke="var(--accent)" stroke-width="2"/>
+    <line x1="450" y1="65" x2="450" y2="120" stroke="var(--accent)" stroke-width="2"/>
+    <line x1="450" y1="65" x2="630" y2="120" stroke="var(--accent)" stroke-width="2"/>
+    <line x1="450" y1="65" x2="810" y2="120" stroke="var(--accent)" stroke-width="2"/>
+
+    <rect x="10" y="120" width="160" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="90" y="149" text-anchor="middle" fill="var(--cyan)" font-size="13" font-weight="600" font-family="JetBrains Mono, monospace">ArithmeticError</text>
+
+    <rect x="190" y="120" width="160" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="270" y="149" text-anchor="middle" fill="var(--cyan)" font-size="13" font-weight="600" font-family="JetBrains Mono, monospace">NameError</text>
+
+    <rect x="370" y="120" width="160" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="450" y="149" text-anchor="middle" fill="var(--cyan)" font-size="13" font-weight="600" font-family="JetBrains Mono, monospace">ValueError</text>
+
+    <rect x="550" y="120" width="160" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="630" y="149" text-anchor="middle" fill="var(--cyan)" font-size="13" font-weight="600" font-family="JetBrains Mono, monospace">OSError</text>
+
+    <rect x="730" y="120" width="160" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="810" y="149" text-anchor="middle" fill="var(--cyan)" font-size="13" font-weight="600" font-family="JetBrains Mono, monospace">RuntimeError</text>
+
+    <line x1="90" y1="165" x2="45" y2="220" stroke="var(--accent)" stroke-width="1.5"/>
+    <line x1="90" y1="165" x2="175" y2="220" stroke="var(--accent)" stroke-width="1.5"/>
+
+    <rect x="-40" y="220" width="170" height="40" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="45" y="245" text-anchor="middle" fill="var(--muted)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">ZeroDivisionError</text>
+
+    <rect x="90" y="220" width="170" height="40" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="175" y="245" text-anchor="middle" fill="var(--muted)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">FloatingPointError</text>
+
+    <line x1="630" y1="165" x2="575" y2="220" stroke="var(--accent)" stroke-width="1.5"/>
+    <line x1="630" y1="165" x2="720" y2="220" stroke="var(--accent)" stroke-width="1.5"/>
+
+    <rect x="490" y="220" width="170" height="40" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="575" y="245" text-anchor="middle" fill="var(--muted)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">PermissionError</text>
+
+    <rect x="635" y="220" width="170" height="40" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="720" y="245" text-anchor="middle" fill="var(--muted)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">FileNotFoundError</text>
+
+    <text x="450" y="310" text-anchor="middle" fill="var(--muted)" font-size="14" font-family="Outfit, sans-serif">All exceptions inherit from the <tspan font-weight="700" fill="var(--cyan)">Exception</tspan> base class</text>
+    <text x="450" y="335" text-anchor="middle" fill="var(--muted)" font-size="12" font-family="Outfit, sans-serif">This is the same <tspan font-weight="700" fill="var(--accent)">inheritance</tspan> you learned in Lecture 03!</text>
+  </svg>
+</div>
+
+<!-- ====== OOP BRIDGE: Exceptions ARE OOP ====== -->
+<div class="slide">
+  <h2>Wait... this <span class="accent">IS</span> inheritance! <span style="color: var(--muted); font-size: 1rem;">(Lecture 03)</span></h2>
+  <div class="layout">
+    <div class="text">
+      <p>The exception hierarchy you just saw is <strong>the same inheritance</strong> you learned in Lecture 03:</p>
+      <ul style="margin-top: 1rem;">
+        <li><code style="color: var(--cyan);">ZeroDivisionError</code> <strong>is-a</strong> <code style="color: var(--cyan);">ArithmeticError</code></li>
+        <li><code style="color: var(--cyan);">ArithmeticError</code> <strong>is-a</strong> <code style="color: var(--cyan);">Exception</code></li>
+        <li>Catching <code style="color: var(--cyan);">ArithmeticError</code> also catches <code style="color: var(--cyan);">ZeroDivisionError</code> &mdash; just like a parent reference can hold a child object</li>
+      </ul>
+      <div class="callout" style="margin-top: 1rem;">Every time you write <code style="color: var(--accent);">except SomeError</code>, you're using <strong>inheritance</strong> to decide which errors to catch.</div>
+    </div>
+    <div class="visual">
+      <pre style="font-size: 0.8rem;"><span class="kw">try</span>:
+    <span class="num">1</span> / <span class="num">0</span>
+<span class="kw">except</span> <span class="cls">ArithmeticError</span>:
+    <span class="fn">print</span>(<span class="str">"Catches ZeroDivisionError too!"</span>)
+    <span class="fn">print</span>(<span class="str">"Because it inherits from"</span>)
+    <span class="fn">print</span>(<span class="str">"ArithmeticError"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Exceptions use <span class="accent">all</span> the OOP you've learned</h2>
+  <div class="three-col" style="margin-top: 1rem;">
+    <div class="col" style="border-color: var(--cyan);">
+      <h3 style="color: var(--cyan);">Encapsulation <span style="color: var(--muted); font-size: 0.8rem;">(Lec 02)</span></h3>
+      <p style="font-size: 0.95rem;">Custom exceptions <strong>bundle error data</strong> inside the object &mdash; <code style="color: var(--pink);">self</code>.message, <code style="color: var(--pink);">self</code>.value</p>
+      <pre style="font-size: 0.75rem; margin-top: 0.5rem;"><span class="kw">class</span> <span class="cls">ValidationError</span>(<span class="cls">Exception</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, msg, val):
+        <span class="par">self</span>.message = msg
+        <span class="par">self</span>.value = val</pre>
+    </div>
+    <div class="col" style="border-color: var(--green);">
+      <h3 style="color: var(--green);">Inheritance <span style="color: var(--muted); font-size: 0.8rem;">(Lec 03)</span></h3>
+      <p style="font-size: 0.95rem;">Every custom exception calls <code style="color: var(--accent);">super().__init__()</code> &mdash; same pattern as any child class</p>
+      <pre style="font-size: 0.75rem; margin-top: 0.5rem;"><span class="kw">class</span> <span class="cls">ValidationError</span>(<span class="cls">Exception</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, msg):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(msg)</pre>
+    </div>
+    <div class="col" style="border-color: var(--orange);">
+      <h3 style="color: var(--orange);">Polymorphism <span style="color: var(--muted); font-size: 0.8rem;">(Lec 04)</span></h3>
+      <p style="font-size: 0.95rem;">Multiple <code style="color: var(--accent);">except</code> blocks &mdash; <strong>same structure</strong>, different behavior based on exception <strong>type</strong></p>
+      <pre style="font-size: 0.75rem; margin-top: 0.5rem;"><span class="kw">except</span> <span class="cls">ValueError</span>:
+    <span class="fn">print</span>(<span class="str">"Bad value"</span>)
+<span class="kw">except</span> <span class="cls">TypeError</span>:
+    <span class="fn">print</span>(<span class="str">"Wrong type"</span>)</pre>
+    </div>
+  </div>
+  <div class="callout" style="margin-top: 1rem;"><strong>Composition</strong> (Lecture 05) also appears &mdash; a traceback object is <em>composed</em> of frame objects. Exceptions are OOP all the way down.</div>
+</div>
+
+<!-- ====== CUSTOM EXCEPTIONS ====== -->
+<div class="slide">
+  <h2>Creating <span class="accent">custom</span> exceptions</h2>
+  <div style="max-width: 700px;">
+    <p>Custom exceptions are defined by subclassing Python's built-in Exception class.</p>
+    <p style="margin-top: 1.5rem;">The simplest form:</p>
+    <pre style="margin-top: 0.5rem;"><span class="kw">class</span> <span class="cls">MyCustomError</span>(<span class="cls">Exception</span>):
+    <span class="kw">pass</span></pre>
+    <p style="margin-top: 1.5rem;">With a constructor:</p>
+    <pre style="margin-top: 0.5rem;"><span class="kw">class</span> <span class="cls">ValidationError</span>(<span class="cls">Exception</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, message, value):
+        <span class="par">self</span>.message = message
+        <span class="par">self</span>.value = value
+        <span class="fn">super</span>().<span class="fn">__init__</span>(message)</pre>
+  </div>
+</div>
+
+<!-- Using custom exceptions -->
+<div class="slide">
+  <h2>Using <span class="accent">custom</span> exceptions</h2>
+  <pre style="font-size: 0.82rem;"><span class="kw">class</span> <span class="cls">ValidationError</span>(<span class="cls">Exception</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, message, value):
+        <span class="par">self</span>.message = message
+        <span class="par">self</span>.value = value
+        <span class="fn">super</span>().<span class="fn">__init__</span>(message)</pre>
+  <pre style="font-size: 0.82rem; margin-top: 0.5rem;"><span class="kw">def</span> <span class="fn">validate_age</span>(age):
+    <span class="kw">if</span> age &lt; <span class="num">0</span>:
+        <span class="kw">raise</span> <span class="cls">ValidationError</span>(<span class="str">"Age cannot be negative"</span>, age)
+    <span class="fn">print</span>(<span class="str">f"Valid age: {age}"</span>)
+
+<span class="kw">try</span>:
+    <span class="fn">validate_age</span>(-<span class="num">1</span>)
+<span class="kw">except</span> <span class="cls">ValidationError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Error: {e.message} - Invalid Value: {e.value}"</span>)</pre>
+</div>
+
+<!-- Best practices for custom exceptions -->
+<div class="slide">
+  <h2>Best practices for <span class="accent">custom</span> exceptions</h2>
+  <div class="three-col" style="margin-top: 1.5rem;">
+    <div class="col" style="border-color: var(--green); text-align: center;">
+      <p style="font-size: 2.5rem; margin-bottom: 0.5rem;">&#127981;</p>
+      <h3 style="color: var(--green);">Inheritance</h3>
+      <p style="font-size: 0.95rem;">Always inherit from <code style="color: var(--cyan);">Exception</code> or its subclasses. Avoid <code style="color: var(--accent);">BaseException</code> directly.</p>
+      <pre style="font-size: 0.72rem; margin-top: 0.5rem; text-align: left;"><span class="kw">class</span> <span class="cls">MyError</span>(<span class="cls">Exception</span>):  <span class="cm"># good</span>
+    <span class="kw">pass</span></pre>
+    </div>
+    <div class="col" style="border-color: var(--orange); text-align: center;">
+      <p style="font-size: 2.5rem; margin-bottom: 0.5rem;">&#127991;&#65039;</p>
+      <h3 style="color: var(--orange);">Naming</h3>
+      <p style="font-size: 0.95rem;">End exception names with <strong>"Error"</strong> suffix. Makes intent immediately clear.</p>
+      <pre style="font-size: 0.72rem; margin-top: 0.5rem; text-align: left;"><span class="cls">ValidationError</span>  <span class="cm"># good</span>
+<span class="cls">InvalidInput</span>     <span class="cm"># unclear</span></pre>
+    </div>
+    <div class="col" style="border-color: var(--cyan); text-align: center;">
+      <p style="font-size: 2.5rem; margin-bottom: 0.5rem;">&#128196;</p>
+      <h3 style="color: var(--cyan);">Documentation</h3>
+      <p style="font-size: 0.95rem;">Add docstrings explaining <strong>when</strong> it's raised and any extra attributes.</p>
+      <pre style="font-size: 0.72rem; margin-top: 0.5rem; text-align: left;"><span class="kw">class</span> <span class="cls">AgeError</span>(<span class="cls">Exception</span>):
+    <span class="str">"""Raised for invalid age"""</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ASSERT ====== -->
+<div class="slide">
+  <h2><span class="accent">Assert</span> statement</h2>
+  <div style="max-width: 750px;">
+    <p>The <code style="color: var(--accent);">assert</code> statement in Python is a debugging aid that tests a condition as an internal self-check in your program.</p>
+    <p style="margin-top: 1rem;">It is intended as a <strong>debugging aid</strong>, not as a mechanism for handling run-time errors.</p>
+    <pre style="margin-top: 1.5rem; text-align: center;"><span class="kw">assert</span> condition, <span class="str">"Optional error message"</span></pre>
+    <ul style="margin-top: 1.5rem;">
+      <li><code style="color: var(--cyan);">condition</code>: If <code style="color: var(--green);">True</code>, nothing happens. If <code style="color: var(--accent);">False</code>, an <code style="color: var(--accent);">AssertionError</code> is raised</li>
+      <li>The error message is optional; if omitted, the <code style="color: var(--accent);">AssertionError</code> will be raised without a message</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Assert Example 1 -->
+<div class="slide">
+  <h2><span class="accent">Assert</span> statement: <span class="accent">Example 1</span></h2>
+  <pre><span class="kw">def</span> <span class="fn">calculate_age</span>(birth_year, current_year):
+    <span class="kw">assert</span> current_year >= birth_year, <span class="str">"Current year must be greater than or equal to birth year"</span>
+    <span class="kw">return</span> current_year - birth_year
+
+age = <span class="fn">calculate_age</span>(<span class="num">1990</span>, <span class="num">2022</span>)  <span class="cm"># This will pass</span>
+age = <span class="fn">calculate_age</span>(<span class="num">2022</span>, <span class="num">1990</span>)  <span class="cm"># This will raise an AssertionError</span></pre>
+  <p style="color: var(--muted); margin-top: 1rem; margin-bottom: 0.5rem;">Output:</p>
+  <pre><span class="kw">AssertionError</span>: Current year must be greater than or equal to birth year</pre>
+</div>
+
+<!-- Assert: When to use / Limitations -->
+<div class="slide">
+  <h2><span class="accent">Assert</span> statement: <span class="green-text">When</span> to use &amp; <span class="accent">Limitations</span></h2>
+  <div class="two-col">
+    <div class="col" style="border-color: var(--green);">
+      <h3 style="color: var(--green);">When to use</h3>
+      <ul>
+        <li><strong>Debugging:</strong> During development, to catch conditions that should never occur</li>
+        <li><strong>Self-checks:</strong> To perform sanity checks that verify your program's internal state</li>
+        <li><strong>Documenting Assumptions:</strong> To document and assert the assumptions your code makes</li>
+      </ul>
+    </div>
+    <div class="col" style="border-color: var(--accent);">
+      <h3 style="color: var(--accent);">Limitations</h3>
+      <ul>
+        <li><strong>Performance:</strong> Assertions can be globally disabled with the <code style="color: var(--accent);">-O</code> flag, which removes all <code style="color: var(--accent);">assert</code> statements</li>
+        <li><strong>Security:</strong> Do not use <code style="color: var(--accent);">assert</code> for validating data or security decisions &mdash; since it can be disabled, it could introduce vulnerabilities</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LOGGING ====== -->
+<div class="slide">
+  <h2><span class="accent">Logging</span> exceptions</h2>
+  <div style="max-width: 750px;">
+    <p>Logging exceptions is a crucial practice in software development, allowing developers to record errors that occur during the execution of a program.</p>
+    <p style="margin-top: 1rem;">This practice not only aids in debugging by providing a historical record of what went wrong and when, but it also helps in <strong>monitoring the health</strong> of applications in production.</p>
+    <pre style="margin-top: 1.5rem;"><span class="kw">import</span> logging
+
+<span class="kw">try</span>:
+    <span class="num">1</span> / <span class="num">0</span>
+<span class="kw">except</span> <span class="cls">ZeroDivisionError</span>:
+    logging.<span class="fn">exception</span>(<span class="str">"Exception occurred"</span>)</pre>
+    <p style="color: var(--muted); margin-top: 0.5rem; font-size: 0.9rem;">Output: <code>2023-04-04 12:30:55 - root - ERROR - Exception occurred</code></p>
+  </div>
+</div>
+
+<!-- Logging Levels -->
+<div class="slide">
+  <h2><span class="accent">Logging</span> Levels</h2>
+  <pre style="font-size: 0.75rem; margin-bottom: 1rem;"><span class="num">2023</span>-<span class="num">04</span>-<span class="num">01</span> <span class="num">09</span>:<span class="num">15</span>:<span class="num">30</span> - root - <span class="cls">DEBUG</span>    - This is a debug message
+<span class="num">2023</span>-<span class="num">04</span>-<span class="num">02</span> <span class="num">10</span>:<span class="num">20</span>:<span class="num">45</span> - root - <span class="green-text">INFO</span>     - This is an info message
+<span class="num">2023</span>-<span class="num">04</span>-<span class="num">03</span> <span class="num">11</span>:<span class="num">25</span>:<span class="num">50</span> - root - <span class="orange-text">WARNING</span>  - This is a warning message
+<span class="num">2023</span>-<span class="num">04</span>-<span class="num">04</span> <span class="num">12</span>:<span class="num">30</span>:<span class="num">55</span> - root - <span class="accent">ERROR</span>    - This is an error message
+<span class="num">2023</span>-<span class="num">04</span>-<span class="num">05</span> <span class="num">13</span>:<span class="num">35</span>:<span class="num">00</span> - root - <span class="kw">CRITICAL</span> - This is a critical message</pre>
+  <div style="max-width: 750px; font-size: 0.95rem;">
+    <ul>
+      <li><strong style="color: var(--cyan);">DEBUG</strong>: Detailed operational insights useful for development</li>
+      <li><strong style="color: var(--green);">INFO</strong>: Milestones such as successfully loading configuration and starting the web server</li>
+      <li><strong style="color: var(--orange);">WARNING</strong>: Potentially suspicious operations, such as unrecognized login attempts</li>
+      <li><strong style="color: var(--accent);">ERROR</strong>: Issues preventing a specific operation from completing correctly</li>
+      <li><strong>CRITICAL</strong>: Severe problems that affect the application's ability to function</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Logging: Real-world example -->
+<div class="slide">
+  <h2><span class="accent">Logging</span> in action</h2>
+  <pre style="font-size: 0.62rem; line-height: 1.7;"><span class="num">2023-04-06</span> <span class="num">08:00:00</span> - webapp - <span class="cls">INFO</span>     - Starting the web application.
+<span class="num">2023-04-06</span> <span class="num">08:00:05</span> - webapp - <span class="cls">DEBUG</span>    - Loading configuration from 'config.yaml'.
+<span class="num">2023-04-06</span> <span class="num">08:00:06</span> - webapp - <span class="cls">INFO</span>     - Configuration loaded successfully.
+<span class="num">2023-04-06</span> <span class="num">08:00:10</span> - webapp - <span class="cls">INFO</span>     - Web server is running on http://localhost:5000
+<span class="num">2023-04-06</span> <span class="num">08:00:10</span> - webapp - <span class="cls">DEBUG</span>    - Registered routes: /home, /login, /api/users, /api/orders
+<span class="num">2023-04-06</span> <span class="num">08:05:23</span> - webapp - <span class="cls">INFO</span>     - Received GET request for /home from 192.168.1.42
+<span class="num">2023-04-06</span> <span class="num">08:05:23</span> - webapp - <span class="cls">DEBUG</span>    - Serving page from template 'home.html'. Render time: 12ms.
+<span class="num">2023-04-06</span> <span class="num">08:10:37</span> - webapp - <span class="cls">INFO</span>     - Received POST request for /login from 192.168.1.42
+<span class="num">2023-04-06</span> <span class="num">08:10:38</span> - webapp - <span class="orange-text">WARNING</span>  - Login attempt with unrecognized username 'admin'.
+<span class="num">2023-04-06</span> <span class="num">08:10:39</span> - webapp - <span class="orange-text">WARNING</span>  - 3 failed login attempts from 192.168.1.42 in the last 5 minutes.
+<span class="num">2023-04-06</span> <span class="num">08:12:15</span> - webapp - <span class="cls">INFO</span>     - Received GET request for /api/orders from 192.168.1.50
+<span class="num">2023-04-06</span> <span class="num">08:12:15</span> - webapp - <span class="cls">DEBUG</span>    - Querying database: SELECT * FROM orders WHERE status='pending'
+<span class="num">2023-04-06</span> <span class="num">08:15:42</span> - webapp - <span class="accent">ERROR</span>    - Database connection error on query: SELECT * FROM users WHERE username='admin'.
+<span class="num">2023-04-06</span> <span class="num">08:15:42</span> - webapp - <span class="accent">ERROR</span>    - Retry 1/3 failed. Connection refused by db-server:5432.
+<span class="num">2023-04-06</span> <span class="num">08:15:43</span> - webapp - <span class="accent">ERROR</span>    - Retry 2/3 failed. Connection refused by db-server:5432.
+<span class="num">2023-04-06</span> <span class="num">08:15:44</span> - webapp - <span class="accent">ERROR</span>    - Retry 3/3 failed. Giving up.
+<span class="num">2023-04-06</span> <span class="num">08:15:44</span> - webapp - <span class="kw">CRITICAL</span> - Unable to handle request due to database failure. Shutting down web server.</pre>
+  <div class="callout" style="margin-top: 0.8rem;">Notice how the log tells a <strong>story</strong> &mdash; startup, config, normal traffic, suspicious login attempts, DB queries, retry failures, and critical shutdown. Each level adds context for debugging.</div>
+</div>
+
+<!-- Logging: Setup -->
+<div class="slide">
+  <h2>Setting up <span class="accent">logging</span></h2>
+  <div class="layout">
+    <div class="text">
+      <p>Configure logging with <code style="color: var(--accent);">basicConfig()</code> at the start of your program:</p>
+      <pre style="font-size: 0.8rem; margin-top: 1rem;"><span class="kw">import</span> logging
+
+logging.<span class="fn">basicConfig</span>(
+    level=logging.<span class="cls">DEBUG</span>,
+    format=<span class="str">"%(asctime)s - %(name)s - %(levelname)s - %(message)s"</span>,
+    filename=<span class="str">"app.log"</span>
+)</pre>
+      <ul style="margin-top: 1rem;">
+        <li><code style="color: var(--cyan);">level</code> &mdash; minimum severity to capture</li>
+        <li><code style="color: var(--cyan);">format</code> &mdash; structure of each log line</li>
+        <li><code style="color: var(--cyan);">filename</code> &mdash; write to file instead of console</li>
+      </ul>
+    </div>
+    <div class="visual" style="flex: 0 0 280px;">
+      <div style="font-size: 0.85rem;">
+        <p style="color: var(--heading); font-weight: 600; margin-bottom: 0.5rem;">&#128200; Severity levels (low to high):</p>
+        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+          <div style="background: var(--code-bg); border-left: 4px solid var(--purple); padding: 0.4rem 0.8rem; border-radius: 0 6px 6px 0;"><code style="color: var(--purple);">DEBUG</code> <span style="color: var(--muted);">= 10</span></div>
+          <div style="background: var(--code-bg); border-left: 4px solid var(--cyan); padding: 0.4rem 0.8rem; border-radius: 0 6px 6px 0;"><code style="color: var(--cyan);">INFO</code> <span style="color: var(--muted);">= 20</span></div>
+          <div style="background: var(--code-bg); border-left: 4px solid var(--orange); padding: 0.4rem 0.8rem; border-radius: 0 6px 6px 0;"><code style="color: var(--orange);">WARNING</code> <span style="color: var(--muted);">= 30</span></div>
+          <div style="background: var(--code-bg); border-left: 4px solid var(--accent); padding: 0.4rem 0.8rem; border-radius: 0 6px 6px 0;"><code style="color: var(--accent);">ERROR</code> <span style="color: var(--muted);">= 40</span></div>
+          <div style="background: var(--code-bg); border-left: 4px solid var(--pink); padding: 0.4rem 0.8rem; border-radius: 0 6px 6px 0;"><code style="color: var(--pink);">CRITICAL</code> <span style="color: var(--muted);">= 50</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Logging: Named loggers -->
+<div class="slide">
+  <h2>Named <span class="accent">loggers</span></h2>
+  <div style="max-width: 750px;">
+    <p>In real applications, use <code style="color: var(--accent);">getLogger(__name__)</code> instead of the root logger. This creates a logger named after your module:</p>
+    <pre style="margin-top: 1rem;"><span class="kw">import</span> logging
+
+logger = logging.<span class="fn">getLogger</span>(<span class="str">__name__</span>)
+
+<span class="kw">def</span> <span class="fn">process_order</span>(order_id):
+    logger.<span class="fn">info</span>(<span class="str">f"Processing order {order_id}"</span>)
+    <span class="kw">try</span>:
+        validate(order_id)
+    <span class="kw">except</span> <span class="cls">ValueError</span> <span class="kw">as</span> e:
+        logger.<span class="fn">error</span>(<span class="str">f"Invalid order {order_id}: {e}"</span>)
+        <span class="kw">raise</span></pre>
+    <ul style="margin-top: 1rem;">
+      <li>&#127981; Each module gets its <strong>own named logger</strong> &mdash; easy to filter</li>
+      <li>&#128270; Log output shows <strong>which module</strong> produced each message</li>
+      <li>&#128736;&#65039; You can configure different levels <strong>per module</strong></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Logging: print vs logging -->
+<div class="slide">
+  <h2><span class="accent">print()</span> vs <span class="green-text">logging</span></h2>
+  <table class="access-table" style="margin-top: 1.5rem;">
+    <tr>
+      <th></th>
+      <th style="color: var(--accent);">print()</th>
+      <th style="color: var(--green);">logging</th>
+    </tr>
+    <tr>
+      <td><strong>&#128200; Severity levels</strong></td>
+      <td>&#10060; None</td>
+      <td>&#9989; DEBUG, INFO, WARNING, ERROR, CRITICAL</td>
+    </tr>
+    <tr>
+      <td><strong>&#128196; Output to file</strong></td>
+      <td>&#10060; Manual redirect</td>
+      <td>&#9989; Built-in <code>filename</code> parameter</td>
+    </tr>
+    <tr>
+      <td><strong>&#9201;&#65039; Timestamps</strong></td>
+      <td>&#10060; Must add manually</td>
+      <td>&#9989; Automatic via format</td>
+    </tr>
+    <tr>
+      <td><strong>&#128683; Toggle on/off</strong></td>
+      <td>&#10060; Delete or comment out</td>
+      <td>&#9989; Change level to hide messages</td>
+    </tr>
+    <tr>
+      <td><strong>&#127891; Production use</strong></td>
+      <td>&#10060; Never</td>
+      <td>&#9989; Industry standard</td>
+    </tr>
+  </table>
+  <div class="callout" style="margin-top: 1.5rem;">Use <code style="color: var(--accent);">print()</code> for quick debugging during development. Use <code style="color: var(--green);">logging</code> for <strong>everything else</strong>.</div>
+</div>
+
+<!-- Logging: Best practices -->
+<div class="slide">
+  <h2><span class="accent">Best practices</span> for logging</h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li>&#127919; <strong>Use Appropriate Log Levels:</strong> Use <code style="color: var(--accent);">logging.exception</code> within <code style="color: var(--accent);">except</code> blocks to include the stack trace automatically</li>
+      <li>&#128269; <strong>Include Contextual Information:</strong> When logging exceptions, include as much context as possible &mdash; the <code style="color: var(--cyan);">logging</code> module allows you to insert variable data into your log messages</li>
+      <li>&#127760; <strong>Centralize Logging:</strong> In larger applications, aggregate logs from various parts of the application. This makes monitoring and analysis easier</li>
+      <li>&#128274; <strong>Secure Sensitive Information:</strong> Be cautious about logging sensitive information. Logs can contain user data, credentials, or internal details which could be exploited if exposed</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Best Practices: Do's -->
+<div class="slide">
+  <h2 style="color: var(--green);">do's</h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li>&#127919; <strong>Catch Specific Exceptions:</strong> Always target specific exceptions in your <code style="color: var(--accent);">except</code> blocks to avoid unintended side effects and make your error handling more precise</li>
+      <li>&#128683; <strong>Manage Resources with finally or Context Managers:</strong> Ensure resources are properly released or cleaned up, even when exceptions occur, by using <code style="color: var(--orange);">finally</code> blocks or context managers (<code style="color: var(--green);">with</code> statements)</li>
+      <li>&#9889; <strong>Use Exceptions for Exceptional Conditions:</strong> Exceptions should be used for handling error states or unexpected conditions, not as a part of normal program flow</li>
+      <li>&#128221; <strong>Provide Detailed Error Information:</strong> When raising an exception, include clear, descriptive messages and consider adding extra attributes for more context</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Best Practices: Don'ts -->
+<div class="slide">
+  <h2 style="color: var(--accent);">don'ts</h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li>&#128580; <strong>Avoid Catching General Exceptions:</strong> Refrain from using broad <code style="color: var(--accent);">except Exception:</code> clauses, which can catch more than you intend and obscure programming errors</li>
+      <li>&#128584; <strong>Don't Swallow Exceptions Silently:</strong> Never catch an exception and do nothing with it. At minimum, log the exception to aid in debugging</li>
+      <li>&#128683; <strong>Don't Use Exceptions for Control Flow:</strong> Exceptions should not replace control flow structures like loops or conditionals</li>
+      <li>&#128678; <strong>Don't Overuse Custom Exceptions:</strong> While custom exceptions can make error handling clearer, too many can clutter your code</li>
+      <li>&#128013; <strong>Follow Pythonic Error Handling Practices:</strong> Embrace the EAFP (Easier to Ask for Forgiveness than Permission) principle</li>
+    </ul>
+  </div>
+</div>
+
+<!-- EAFP Philosophy -->
+<div class="slide center" style="background: var(--surface);">
+  <h2>Python's <span class="accent">philosophy</span> on errors and exceptions</h2>
+  <p style="color: var(--muted); margin-top: 1rem;">Python's philosophy on errors and exceptions is encapsulated in the mantra:</p>
+  <p style="font-size: 2.4rem; color: var(--muted); margin-top: 1.5rem;">&ldquo;</p>
+  <p style="font-size: 1.6rem; color: var(--heading); font-style: italic; line-height: 1.6;">It's easier to ask for forgiveness<br>than permission.</p>
+  <p style="font-size: 2.4rem; color: var(--muted);">&rdquo;</p>
+  <p style="color: var(--muted); margin-top: 1rem; font-size: 0.95rem;">This approach, often abbreviated as "EAFP," is deeply ingrained in Python's design,<br>encouraging the use of try-except blocks for handling potential errors.</p>
+</div>
+
+<!-- ====== KEY TAKEAWAYS ====== -->
+<div class="slide">
+  <h2>Key Takeaways</h2>
+  <div style="max-width: 700px;">
+    <ul>
+      <li>&#9940; <strong>Syntax errors</strong> are caught before execution &mdash; fix them in code</li>
+      <li>&#128165; <strong>Exceptions</strong> happen at runtime &mdash; handle them with <code style="color: var(--green);">try</code>/<code style="color: var(--accent);">except</code></li>
+      <li>&#9989; Use <code style="color: var(--cyan);">else</code> for code that runs only when try succeeds</li>
+      <li>&#128683; Use <code style="color: var(--orange);">finally</code> for cleanup that <strong>always</strong> runs</li>
+      <li>&#9757;&#65039; <code style="color: var(--accent);">raise</code> to throw your own exceptions for validation &amp; control flow</li>
+      <li>&#129513; <strong>Custom exceptions</strong> inherit from <code style="color: var(--cyan);">Exception</code> &mdash; name them with "Error" suffix</li>
+      <li>&#128027; <code style="color: var(--accent);">assert</code> is for debugging, <strong>not</strong> production validation</li>
+      <li>&#128220; Use Python's <code style="color: var(--cyan);">logging</code> module instead of print for production apps</li>
+      <li>&#128013; Follow <strong>EAFP</strong> &mdash; Easier to Ask for Forgiveness than Permission</li>
+    </ul>
+  </div>
+  <p style="color: var(--muted); margin-top: 2.5rem; font-size: 1.1rem;">Next up: <strong style="color: var(--accent);">SOLID Principles</strong></p>
+</div>
+
+<div class="slide center" style="padding: 4rem 6rem 5rem; background: #000;">
+  <img src="hackathon.png" alt="AI Hackathon — Apr 18, 10AM-7PM at Visma Tech office" style="max-width: 100%; max-height: calc(100vh - 9rem); object-fit: contain;">
+</div>
+
+<div class="nav">
+  <button id="skip-quiz" class="skip-quiz" onclick="skipQuiz()">Skip Quiz &nbsp;&#9654;</button>
+  <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size: 1.2rem;">&#9788;</button>
+  <button id="prev" onclick="navigate(-1)">&lsaquo;</button>
+  <span class="counter" id="counter"></span>
+  <button id="next" onclick="navigate(1)">&rsaquo;</button>
+</div>
+
+<script src="shared.js"></script>
+<script>
+(function() {
+  var origShow = show;
+  show = function(i) {
+    origShow(i);
+    var s = document.querySelectorAll('.slide')[current];
+    if (s.classList.contains('reveal-slide') && !s.classList.contains('step-1')) {
+      s.classList.add('step-1');
+    }
+  };
+  var origNavigate = navigate;
+  navigate = function(d) {
+    var s = document.querySelectorAll('.slide')[current];
+    if (d === 1 && s.classList.contains('reveal-slide')) {
+      if (!s.classList.contains('step-2')) { s.classList.add('step-2'); return; }
+      if (!s.classList.contains('step-3')) { s.classList.add('step-3'); return; }
+    }
+    origNavigate(d);
+  };
+  var hash = parseInt(location.hash.replace('#', ''), 10);
+  if (hash > 0 && hash <= total) show(hash - 1);
+  window.addEventListener('hashchange', function() {
+    var h = parseInt(location.hash.replace('#', ''), 10);
+    if (h > 0 && h <= total) show(h - 1);
+  });
+  var origShow2 = show;
+  show = function(i) {
+    origShow2(i);
+    history.replaceState(null, '', '#' + (current + 1));
+  };
+})();
+</script>
+</body>
+</html>
