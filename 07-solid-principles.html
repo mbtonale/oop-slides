@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLID Principles: Course 7 — Python OOP</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="vgtu.jpg">
+<link rel="stylesheet" href="shared.css">
+<style>
+  @keyframes solidPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .solid-pulse { animation: solidPulse 2s ease-in-out infinite; }
+  .reveal-slide .reveal-blocks .reveal-block { opacity: 0; transform: translateY(8px); transition: opacity 0.4s, transform 0.4s; }
+  .reveal-slide.step-1 .reveal-blocks .reveal-block:nth-child(1) { opacity: 1; transform: translateY(0); }
+  .reveal-slide.step-2 .reveal-blocks .reveal-block:nth-child(-n+2) { opacity: 1; transform: translateY(0); }
+  .reveal-slide.step-3 .reveal-blocks .reveal-block { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="mobile-warning">
+  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+  </svg>
+  <h2>Please use a larger screen</h2>
+  <p>This presentation is designed for desktop or projector displays.</p>
+  <a href="index.html">&larr; Back to curriculum</a>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<div class="visma-logo" style="display: flex; align-items: center; gap: 16px;">
+  <svg width="100" height="24" viewBox="30 75 165 45" xmlns="http://www.w3.org/2000/svg">
+    <path d="M32.228 81.327c8.803.852 18.458 5.253 23.996 11.643 7.099 8.093 4.686 16.187-5.396 18.032-10.081 1.988-23.996-3.123-31.095-11.217-5.396-6.248-5.253-12.495-.284-15.902l27.971 20.73-15.192-23.286z" fill="#c92043"/>
+    <path d="M170.805 111.002l-3.549-14.199c-.428-1.703-.711-3.407-.994-4.969h-.143c-.283 1.704-.426 3.266-.852 5.111l-3.551 14.057h-6.105l8.094-29.533h4.828l8.52 29.533h-6.248zM77.663 81.469l3.55 14.198c.568 1.704.71 3.409.994 4.969h.142c.284-1.703.426-3.408.852-5.111l3.55-14.056h6.105l-8.093 29.533h-4.828l-8.519-29.533h6.247zM97.256 81.469h5.822v29.533h-5.822V81.469zM136.02 81.469L139 98.934l2.414-17.465h7.809l2.982 29.533h-5.963l-1.42-21.298-.994 7.241-2.414 14.057h-4.543l-2.84-14.199-.994-6.531v-.568h-.142l-.852 21.298h-6.248l2.557-29.533h7.668zM117.561 81.469c-.994.71-1.703 1.987-2.271 3.265-1.562 3.55.141 6.389 1.561 8.945.143.284.428.71.568 1.136 3.266 5.395 4.402 9.37 2.131 15.049l-.568 1.137h-7.1c.852-.711 1.703-1.703 2.129-2.84 1.705-3.834-.283-7.383-2.129-10.934-2.129-4.117-4.402-8.376-1.988-14.198.143-.568.711-1.562.711-1.562h6.956v.002z" fill="var(--heading)"/>
+  </svg>
+  <span style="color: var(--border); font-size: 1.2rem;">|</span>
+  <img src="vgtu.jpg" alt="VILNIUS TECH" height="28" style="border-radius: 4px;">
+</div>
+
+<!-- ====== 1. TITLE ====== -->
+<div class="slide active center">
+  <p style="color: var(--accent); font-size: 0.95rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem;">Python Object Oriented Programming</p>
+  <h1>SOLID Principles</h1>
+  <p class="subtitle">Course 7</p>
+  <div style="margin-top: 2.5rem;">
+    <svg viewBox="0 0 400 70" width="420">
+      <rect x="0" y="10" width="70" height="50" rx="8" fill="var(--code-bg)" stroke="#818cf8" stroke-width="2"/>
+      <text x="35" y="43" text-anchor="middle" fill="#818cf8" font-size="24" font-weight="800" font-family="Outfit, sans-serif">S</text>
+      <rect x="82" y="10" width="70" height="50" rx="8" fill="var(--code-bg)" stroke="#a78bfa" stroke-width="2"/>
+      <text x="117" y="43" text-anchor="middle" fill="#a78bfa" font-size="24" font-weight="800" font-family="Outfit, sans-serif">O</text>
+      <rect x="164" y="10" width="70" height="50" rx="8" fill="var(--code-bg)" stroke="#f472b6" stroke-width="2"/>
+      <text x="199" y="43" text-anchor="middle" fill="#f472b6" font-size="24" font-weight="800" font-family="Outfit, sans-serif">L</text>
+      <rect x="246" y="10" width="70" height="50" rx="8" fill="var(--code-bg)" stroke="#fbbf24" stroke-width="2"/>
+      <text x="281" y="43" text-anchor="middle" fill="#fbbf24" font-size="24" font-weight="800" font-family="Outfit, sans-serif">I</text>
+      <rect x="328" y="10" width="70" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
+      <text x="363" y="43" text-anchor="middle" fill="#34d399" font-size="24" font-weight="800" font-family="Outfit, sans-serif">D</text>
+    </svg>
+  </div>
+  <p style="color: var(--muted); font-size: 0.9rem; margin-top: 2rem;">
+    <span class="tag">&larr;</span> <span class="tag">&rarr;</span> to navigate
+  </p>
+</div>
+
+<!-- ====== 2. CURRICULUM ====== -->
+<div class="slide">
+  <h2>Course Curriculum</h2>
+  <p style="color: var(--heading); margin-bottom: 1.5rem;">Where we are in the journey</p>
+  <ul class="curriculum-list">
+    <li style="color: var(--muted);">0. Introduction to the course</li>
+    <li style="color: var(--muted);">1. Classes vs. Objects</li>
+    <li style="color: var(--muted);">2. Encapsulation &amp; Access Control</li>
+    <li style="color: var(--muted);">3. Inheritance</li>
+    <li style="color: var(--muted);">4. Polymorphism &amp; PEP 8</li>
+    <li style="color: var(--muted);">5. Composition &amp; Aggregation</li>
+    <li style="color: var(--muted);">6. Exception Handling &amp; Logging</li>
+    <li class="current" style="color: var(--accent); font-weight: 600;">7. SOLID Principles</li>
+    <li>8. UML &amp; Design Patterns</li>
+    <li>9. Design Patterns (2nd part)</li>
+    <li>10. Testing &amp; TDD</li>
+    <li>11. Libraries &amp; Frameworks</li>
+    <li>12. Recap &amp; Consultation</li>
+  </ul>
+</div>
+
+<!-- ====== RECAP QUIZZES (last 3 lectures: 04, 05, 06) ====== -->
+
+<!-- Quiz 1: Polymorphism (Lecture 04) -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 04)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What is the purpose of an <code style="color: var(--accent);">abstract class</code>?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">A) To create objects directly</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);"><strong>B) To define a common interface for subclasses</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">C) To make all methods private</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1.1rem; color: var(--green);">D) To prevent inheritance</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">Abstract classes define a <strong>contract</strong> &mdash; subclasses must implement the abstract methods, ensuring a consistent interface</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 04</p>
+  <h2>Polymorphism: <span class="accent">Abstract Classes</span></h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li>Abstract classes use <code style="color: var(--accent);">ABC</code> + <code style="color: var(--accent);">@abstractmethod</code></li>
+        <li><strong>Cannot be instantiated</strong> directly</li>
+        <li>Force subclasses to implement specific methods</li>
+        <li>Key to <strong>polymorphism</strong> &mdash; same interface, different behavior</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre style="font-size: 0.75rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC
+<span class="kw">from</span> abc <span class="kw">import</span> abstractmethod
+
+<span class="kw">class</span> <span class="cls">Shape</span>(ABC):
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">Circle</span>(<span class="cls">Shape</span>):
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="num">3.14</span> * <span class="par">self</span>.r**<span class="num">2</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 2: Composition (Lecture 05) -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 05)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">What is the key difference between composition and aggregation?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">A) Composition uses inheritance</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);"><strong>B) In composition, parts die with the owner</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">C) Aggregation is stronger than composition</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">D) There is no difference</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">Composition = <strong>strong ownership</strong> (parts created inside, die with owner). Aggregation = <strong>weak reference</strong> (parts passed in, survive independently).</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 05</p>
+  <h2>Composition: <span class="accent">has-a</span> Relationship</h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li><strong>Composition</strong>: parts created inside the owner, destroyed together</li>
+        <li><strong>Aggregation</strong>: parts passed in, can exist independently</li>
+        <li>Prefer <strong>composition over inheritance</strong> when there's no "is-a" relationship</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre style="font-size: 0.8rem;"><span class="kw">class</span> <span class="cls">Engine</span>:
+    <span class="kw">def</span> <span class="fn">start</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Vroom!"</span>
+
+<span class="kw">class</span> <span class="cls">Car</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>.engine = <span class="cls">Engine</span>()</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 3: Exception Handling (Lecture 06) -->
+<div class="slide quiz-slide">
+  <h2>Quiz Time! <span style="color: var(--muted); font-size: 1rem;">(Lecture 06)</span></h2>
+  <p style="color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem;">When does the <code style="color: var(--accent);">finally</code> block execute?</p>
+  <div class="two-col quiz-answers" style="margin-top: 2rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">A) Only when an exception occurs</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">B) Only when no exception occurs</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);"><strong>C) Always, regardless of exceptions</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">D) Only when except is missing</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 1rem; font-size: 0.9rem;">The <code>finally</code> block <strong>always executes</strong> &mdash; even if <code>try</code> has a <code>return</code> statement. Use it for cleanup (closing files, releasing resources).</p>
+</div>
+<div class="slide">
+  <p style="color: var(--accent); font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem;">Recap: Lecture 06</p>
+  <h2>Exception Handling: <span class="accent">try/except/finally</span></h2>
+  <div class="layout">
+    <div class="text">
+      <ul>
+        <li><code style="color: var(--green);">try</code> &mdash; code that might fail</li>
+        <li><code style="color: var(--accent);">except</code> &mdash; handle specific errors</li>
+        <li><code style="color: var(--cyan);">else</code> &mdash; runs if no exception</li>
+        <li><code style="color: var(--orange);">finally</code> &mdash; <strong>always runs</strong> (cleanup)</li>
+        <li><code style="color: var(--accent);">raise</code> &mdash; throw your own exceptions</li>
+      </ul>
+    </div>
+    <div class="visual">
+      <pre style="font-size: 0.8rem;"><span class="kw">try</span>:
+    file = <span class="fn">open</span>(<span class="str">"data.csv"</span>)
+<span class="kw">except</span> <span class="cls">FileNotFoundError</span>:
+    <span class="fn">print</span>(<span class="str">"File missing!"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"File loaded OK"</span>)
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="str">"Cleanup done"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ====== AGENDA ====== -->
+<div class="slide">
+  <h2>Agenda for <span class="accent">Today</span></h2>
+  <div style="max-width: 600px; margin-top: 1rem;">
+    <p style="color: var(--muted); margin-bottom: 1rem;">SOLID &mdash; deep dive:</p>
+    <ul>
+      <li>&#128307; The <strong>S</strong>ingle Responsibility Principle</li>
+      <li>&#128309; The <strong>O</strong>pen-Closed Principle</li>
+      <li>&#128311; The <strong>L</strong>iskov Substitution Principle</li>
+      <li>&#128312; The <strong>I</strong>nterface Segregation Principle</li>
+      <li>&#128994; The <strong>D</strong>ependency Inversion Principle</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====== INTRO SLIDES ====== -->
+<div class="slide center" style="background: var(--surface);">
+  <p style="font-size: 2rem; color: var(--heading); font-weight: 700; line-height: 1.6;">Software is not static.<br>It <span style="color: var(--accent);">evolves</span>.</p>
+</div>
+
+<div class="slide center" style="background: var(--surface);">
+  <p style="font-size: 1.5rem; color: var(--heading); font-weight: 600; line-height: 1.8;">We need code that is easy to:</p>
+  <div style="margin-top: 1.5rem; font-size: 1.4rem; color: var(--text); line-height: 2;">
+    <p>&#128270; <strong>Understand</strong></p>
+    <p>&#128736;&#65039; <strong>Modify</strong></p>
+    <p>&#129513; <strong>Extend</strong></p>
+    <p>&#9989; <strong>Test</strong></p>
+  </div>
+</div>
+
+<!-- LEGO analogy -->
+<div class="slide">
+  <h2>Think of it like building with <span class="accent">LEGOs</span></h2>
+  <div style="max-width: 750px;">
+    <p>&#129521; <strong>Functions and Data Structures</strong> are like individual LEGO bricks: the basic building blocks of your code.</p>
+    <p style="margin-top: 1rem;">&#127981; <strong>Classes</strong> are like organized LEGO sets: they group related bricks and give them a specific purpose (e.g., a car set, a house set).</p>
+    <p style="margin-top: 1.5rem;">&#128296; Imagine you want to add <strong>a new room</strong> to your LEGO house. If you built it following good instructions, you can easily add the new room <strong>without having to take the whole house apart</strong>.</p>
+    <p style="margin-top: 1rem;">In code, this means you can add new features or modify existing ones <strong>without breaking everything else</strong>.</p>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>We need instructions <span class="accent">how to:</span></h2>
+  <div style="max-width: 700px; margin-top: 1rem;">
+    <ul>
+      <li>&#128451;&#65039; <strong>Organize your code:</strong> So it's not a chaotic mess.</li>
+      <li>&#128260; <strong>Make your code adaptable:</strong> So it can handle changes and grow without breaking.</li>
+      <li>&#129309; <strong>Create code that's easy for humans to work with:</strong> So you and others can understand and maintain it.</li>
+      <li>&#9851;&#65039; <strong>Make code that is reusable:</strong> So you don't have to keep recreating the same code.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SOLID intro -->
+<div class="slide center" style="background: var(--surface);">
+  <h2 style="font-size: 2rem;">SOLID principles</h2>
+  <p style="color: var(--text); margin-top: 1rem; font-size: 1.1rem; font-style: italic;">are about creating code that's not just functional, but also well-structured, maintainable, and reusable.</p>
+  <p style="color: var(--text); margin-top: 1rem; font-size: 1.1rem;">They are about writing code that is <strong style="text-decoration: underline;">easy to work with in the long run.</strong></p>
+</div>
+
+<!-- Uncle Bob -->
+<div class="slide">
+  <h2>SOLID <span class="accent">design principles</span></h2>
+  <div style="max-width: 700px;">
+    <ul style="margin-top: 1rem;">
+      <li>Introduced by <strong>Robert C. Martin</strong> (Uncle Bob)</li>
+      <li>Frequently referenced in Design Pattern literature</li>
+      <li>Books: <em>Clean Code</em>, <em>Clean Architecture</em>, <em>The Clean Coder</em></li>
+    </ul>
+    <div class="callout" style="margin-top: 1.5rem;">These principles guide how to arrange functions and data structures into classes, and how those classes should be interconnected.</div>
+  </div>
+</div>
+
+<!-- SOLID acronym SVG -->
+<div class="slide center">
+  <h2>SOLID</h2>
+  <svg viewBox="0 0 810 120" width="85%" style="max-width: 900px; margin-top: 2rem;">
+    <rect x="0" y="30" width="140" height="70" rx="10" fill="var(--code-bg)" stroke="#818cf8" stroke-width="2.5"/>
+    <text x="70" y="75" text-anchor="middle" fill="#818cf8" font-size="32" font-weight="800" font-family="Outfit, sans-serif">S</text>
+    <text x="70" y="16" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Single</text>
+    <text x="70" y="116" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Responsibility</text>
+    <line x1="145" y1="65" x2="160" y2="65" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="165" y="30" width="140" height="70" rx="10" fill="var(--code-bg)" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="235" y="75" text-anchor="middle" fill="#a78bfa" font-size="32" font-weight="800" font-family="Outfit, sans-serif">O</text>
+    <text x="235" y="16" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Open-Closed</text>
+    <text x="235" y="116" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Principle</text>
+    <line x1="310" y1="65" x2="325" y2="65" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="330" y="30" width="140" height="70" rx="10" fill="var(--code-bg)" stroke="#f472b6" stroke-width="2.5"/>
+    <text x="400" y="75" text-anchor="middle" fill="#f472b6" font-size="32" font-weight="800" font-family="Outfit, sans-serif">L</text>
+    <text x="400" y="16" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Liskov</text>
+    <text x="400" y="116" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Substitution</text>
+    <line x1="475" y1="65" x2="490" y2="65" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="495" y="30" width="140" height="70" rx="10" fill="var(--code-bg)" stroke="#fbbf24" stroke-width="2.5"/>
+    <text x="565" y="75" text-anchor="middle" fill="#fbbf24" font-size="32" font-weight="800" font-family="Outfit, sans-serif">I</text>
+    <text x="565" y="16" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Interface</text>
+    <text x="565" y="116" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Segregation</text>
+    <line x1="640" y1="65" x2="655" y2="65" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="660" y="30" width="140" height="70" rx="10" fill="var(--code-bg)" stroke="#34d399" stroke-width="2.5"/>
+    <text x="730" y="75" text-anchor="middle" fill="#34d399" font-size="32" font-weight="800" font-family="Outfit, sans-serif">D</text>
+    <text x="730" y="16" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Dependency</text>
+    <text x="730" y="116" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif">Inversion</text>
+  </svg>
+</div>
+
+<!-- ============================================================ -->
+<!-- ====== S — SINGLE RESPONSIBILITY PRINCIPLE ================= -->
+<!-- ============================================================ -->
+
+<div class="slide center" style="background: var(--surface);">
+  <h2><span style="color: #818cf8;">Single Responsibility</span> Principle</h2>
+  <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;There should never be more than one reason<br>for a class to change.&rdquo;</p>
+  <p style="color: var(--muted); margin-top: 1rem;">or</p>
+  <p style="color: var(--muted); margin-top: 1rem; font-style: italic; font-size: 1.1rem;">&ldquo;A module should be responsible to one,<br>and only one, actor.&rdquo;</p>
+</div>
+
+<div class="slide">
+  <h2>What SRP <span class="accent">is NOT</span>?!</h2>
+  <div style="max-width: 700px;">
+    <p style="font-style: italic; color: var(--heading); font-weight: 600;">&ldquo;A function should do one, and only one, thing.&rdquo;</p>
+    <p style="margin-top: 1rem;">This is a <strong>refactoring</strong> principle, to refactor large functions into smaller functions; we use it at the lowest levels.</p>
+    <p style="margin-top: 1rem;">But <strong style="color: var(--accent);">it's NOT</strong> the Single Responsibility Principle.</p>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>What SRP <span class="accent">IS</span>:</h2>
+  <div style="max-width: 750px;">
+    <p>We want to:</p>
+    <ul style="margin-top: 0.5rem;">
+      <li>&#128994; <strong style="color: var(--green);">increase the cohesion</strong> between things that change for the same reasons</li>
+      <li style="margin-top: 1rem;">&#128308; <strong style="color: var(--accent);">decrease the coupling</strong> between those things that change for different reasons</li>
+    </ul>
+    <div class="two-col" style="margin-top: 1.5rem;">
+      <div class="col" style="border-color: var(--green);">
+        <h3 style="color: var(--green);">Cohesion</h3>
+        <p style="font-size: 0.9rem;">How well the internal elements of a module work together to fulfill a <strong>single, well-defined purpose</strong>.</p>
+      </div>
+      <div class="col" style="border-color: var(--accent);">
+        <h3 style="color: var(--accent);">Coupling</h3>
+        <p style="font-size: 0.9rem;">The degree of direct knowledge or reliance one module has on another. <strong>Lower is better.</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>Symptoms of <span class="accent">SRP violation</span></h2>
+  <div style="max-width: 700px;">
+    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent);">Accidental duplication:</strong> We put code that different actors depend on into close proximity. SRP says to separate code that different actors depend on.</p>
+    <p><strong style="color: var(--accent);">Merge conflicts:</strong> Multiple people changing the same source file for different reasons. Solution &mdash; move the functions into different classes.</p>
+    <div class="callout" style="margin-top: 1.5rem;">&#128161; Gather together the things that change for the same reasons. Separate those things that change for different reasons.</div>
+  </div>
+</div>
+
+<!-- SRP: Code example - violation -->
+<div class="slide reveal-slide">
+  <h2><span style="color: #818cf8;">SRP</span> violation <span class="accent">example</span></h2>
+  <div class="reveal-blocks">
+    <div class="reveal-block">
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">UserProfile</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, username, email):
+        <span class="par">self</span>.username = username
+        <span class="par">self</span>.email = email
+
+    <span class="kw">def</span> <span class="fn">save</span>(<span class="par">self</span>):
+        <span class="kw">with</span> <span class="fn">open</span>(<span class="str">f"{self.username}_profile.txt"</span>, <span class="str">"w"</span>) <span class="kw">as</span> file:
+            file.<span class="fn">write</span>(<span class="str">f"Username: {self.username}\n Email: {self.email}"</span>)</pre>
+      <p style="margin-top: 1rem;">The <code style="color: var(--cyan);">UserProfile</code> class <strong style="color: var(--accent);">violates SRP</strong> because it has two reasons to change:</p>
+      <ol style="margin-top: 0.5rem;">
+        <li>Changes related to how user profiles are <strong>managed</strong></li>
+        <li>Changes related to how user profiles are <strong>persisted</strong></li>
+      </ol>
+    </div>
+    <div class="reveal-block">
+      <p style="margin-top: 1.5rem; color: var(--green); font-weight: 600;">&#9989; Refactored:</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">UserProfile</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, username, email):
+        <span class="par">self</span>.username = username
+        <span class="par">self</span>.email = email
+
+<span class="kw">class</span> <span class="cls">UserDataStorage</span>:
+    <span class="kw">def</span> <span class="fn">save_to_file</span>(<span class="par">self</span>, user_profile, filename):
+        <span class="kw">with</span> <span class="fn">open</span>(filename, <span class="str">"w"</span>) <span class="kw">as</span> file:
+            file.<span class="fn">write</span>(<span class="str">f"Username: {user_profile.username}\n Email: {user_profile.email}"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- SRP Benefits -->
+<div class="slide">
+  <h2><span style="color: #818cf8;">SRP</span> Benefits</h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li>&#128270; <strong>Easier to Understand:</strong> A class focused on a single concern is inherently simpler and more straightforward</li>
+      <li>&#128736;&#65039; <strong>Easier to Modify:</strong> Changes tend to be isolated, reducing the risk of introducing bugs</li>
+      <li>&#128279; <strong>Reduced Dependencies:</strong> Separating concerns minimizes dependencies between different parts of the system</li>
+      <li>&#9989; <strong>Easier to Test:</strong> Easier to define test cases when you don't have to account for multiple intertwined behaviors</li>
+      <li>&#9851;&#65039; <strong>Improved Reusability:</strong> Classes that do one thing well can be more easily reused</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ====== O — OPEN-CLOSED PRINCIPLE =========================== -->
+<!-- ============================================================ -->
+
+<div class="slide center" style="background: var(--surface);">
+  <h2><span style="color: #a78bfa;">Open-Closed</span> Principle</h2>
+  <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Software entities (classes, modules, functions, etc.)<br>should be <strong>open for extension</strong><br>but <strong>closed for modification</strong>.&rdquo;</p>
+</div>
+
+<div class="slide center" style="background: var(--surface);">
+  <h2><span style="color: #a78bfa;">Open-Closed</span> Principle</h2>
+  <p style="color: var(--heading); margin-top: 1.5rem; font-weight: 600;">Main idea:</p>
+  <p style="color: var(--text); margin-top: 0.5rem; font-size: 1.1rem;">Software must be designed to allow the behavior of it to be<br><strong>changed by adding new code</strong>, rather than changing existing code.</p>
+</div>
+
+<div class="slide">
+  <h2>Applying <span style="color: #a78bfa;">OCP</span></h2>
+  <div style="max-width: 750px;">
+    <p>To adhere to OCP, software developers often employ strategies such as:</p>
+    <ul style="margin-top: 1rem;">
+      <li>&#128312; <strong>Polymorphism</strong>: Using abstract classes or interfaces to define stable, unchanging APIs, while allowing implementations to vary</li>
+      <li>&#127981; <strong>Inheritance and Composition</strong>: Extending behavior through inheritance or composition, rather than modifying existing classes</li>
+      <li>&#9851;&#65039; <strong>Strategy Pattern</strong>: Encapsulating algorithms as separate classes that can be selected and used interchangeably at runtime</li>
+      <li>&#128221; <strong>Template Method Pattern</strong>: Defining the skeleton of an algorithm in a method, deferring some steps to subclasses</li>
+    </ul>
+  </div>
+</div>
+
+<!-- OCP: Code example -->
+<div class="slide reveal-slide">
+  <h2><span style="color: #a78bfa;">OCP</span> <span class="accent">example</span></h2>
+  <div class="reveal-blocks">
+    <div class="reveal-block">
+      <p style="color: var(--muted); margin-bottom: 0.5rem;">A system that processes documents. Initially, it only handles Word:</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">DocumentProcessor</span>:
+    <span class="kw">def</span> <span class="fn">process</span>(<span class="par">self</span>, doc):
+        <span class="kw">if</span> doc.type == <span class="str">"Word"</span>:
+            <span class="par">self</span>.<span class="fn">process_word</span>(doc)
+
+    <span class="kw">def</span> <span class="fn">process_word</span>(<span class="par">self</span>, doc):
+        <span class="kw">pass</span></pre>
+    </div>
+    <div class="reveal-block">
+      <p style="margin-top: 1rem; color: var(--green); font-weight: 600;">&#9989; According to OCP, if we want to add PDF support, we shouldn't alter the existing code but extend it:</p>
+      <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">PDFProcessor</span>(<span class="cls">DocumentProcessor</span>):
+    <span class="kw">def</span> <span class="fn">process</span>(<span class="par">self</span>, doc):
+        <span class="kw">if</span> doc.type == <span class="str">"PDF"</span>:
+            <span class="par">self</span>.<span class="fn">process_pdf</span>(doc)
+        <span class="kw">else</span>:
+            <span class="fn">super</span>().<span class="fn">process</span>(doc)
+
+    <span class="kw">def</span> <span class="fn">process_pdf</span>(<span class="par">self</span>, doc):
+        <span class="kw">pass</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- OCP Benefits -->
+<div class="slide">
+  <h2><span style="color: #a78bfa;">OCP</span> Benefits</h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li>&#128640; <strong>Flexibility and Scalability:</strong> Systems can grow over time with minimal changes to existing code</li>
+      <li>&#128737;&#65039; <strong>Reduced Risk:</strong> Since existing code is not modified, there's a lower risk of introducing new bugs when extending</li>
+      <li>&#128736;&#65039; <strong>Easier Maintenance:</strong> New features can be added with minimal changes to the current system</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ====== L — LISKOV SUBSTITUTION PRINCIPLE =================== -->
+<!-- ============================================================ -->
+
+<div class="slide center" style="background: var(--surface);">
+  <h2><span style="color: #f472b6;">Liskov Substitution</span> Principle</h2>
+  <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Subclasses should be substitutable for their base classes.&rdquo;</p>
+  <p style="color: var(--muted); margin-top: 1rem;">or</p>
+  <p style="color: var(--muted); margin-top: 1rem; font-style: italic; font-size: 1rem; max-width: 700px;">&ldquo;If you have a parent class and a child class,<br>you should be able to use the child class anywhere<br>you'd use the parent class, without breaking your code.&rdquo;</p>
+</div>
+
+<div class="slide">
+  <h2><span style="color: #f472b6;">Liskov Substitution</span> Principle (LSP)</h2>
+  <div style="max-width: 750px;">
+    <p><strong>Substitutable</strong> = <em>capable of being exchanged</em>.</p>
+    <p style="margin-top: 1rem;">Users of a base class should continue to function properly if a derivative of that base class is passed to it.</p>
+    <p style="margin-top: 1.5rem;">&#128161; If you have a function that works with <code style="color: var(--cyan);">Animal</code>, it should also work with <code style="color: var(--cyan);">Dog</code> (which is a type of Animal) without needing any special adjustments.</p>
+    <div class="callout" style="margin-top: 1.5rem;">Named after <strong>Barbara Liskov</strong>, who introduced it in 1987.</div>
+  </div>
+</div>
+
+<!-- LSP: Rectangle/Square violation -->
+<div class="slide reveal-slide">
+  <h2><span style="color: #f472b6;">LSP</span> violation: <span class="accent">Rectangle &amp; Square</span></h2>
+  <div class="reveal-blocks">
+    <div class="reveal-block">
+      <div class="two-col">
+        <div>
+          <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Rectangle</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>._width = <span class="num">0</span>
+        <span class="par">self</span>._height = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">set_width</span>(<span class="par">self</span>, width):
+        <span class="par">self</span>._width = width
+
+    <span class="kw">def</span> <span class="fn">set_height</span>(<span class="par">self</span>, height):
+        <span class="par">self</span>._height = height
+
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="par">self</span>._width * <span class="par">self</span>._height</pre>
+        </div>
+        <div>
+          <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Square</span>(<span class="cls">Rectangle</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+
+    <span class="kw">def</span> <span class="fn">set_width</span>(<span class="par">self</span>, width):
+        <span class="par">self</span>._width = width
+        <span class="par">self</span>._height = width
+
+    <span class="kw">def</span> <span class="fn">set_height</span>(<span class="par">self</span>, height):
+        <span class="par">self</span>._width = height
+        <span class="par">self</span>._height = height</pre>
+        </div>
+      </div>
+    </div>
+    <div class="reveal-block">
+      <pre style="font-size: 0.75rem; margin-top: 1rem;"><span class="kw">def</span> <span class="fn">calculate_area</span>(rectangle):
+    rectangle.<span class="fn">set_width</span>(<span class="num">5</span>)
+    rectangle.<span class="fn">set_height</span>(<span class="num">10</span>)
+    <span class="kw">return</span> rectangle.<span class="fn">area</span>()
+
+<span class="fn">print</span>(<span class="fn">calculate_area</span>(<span class="cls">Rectangle</span>()))  <span class="cm"># 50</span>
+<span class="fn">print</span>(<span class="fn">calculate_area</span>(<span class="cls">Square</span>()))     <span class="cm"># 100! LSP violation</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- LSP: Fix with Shape ABC -->
+<div class="slide">
+  <h2><span style="color: #f472b6;">LSP</span> fix: <span class="green-text">Shape ABC</span></h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.72rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Shape</span>(ABC):
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">Rectangle</span>(<span class="cls">Shape</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>._width = <span class="num">0</span>
+        <span class="par">self</span>._height = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="par">self</span>._width * <span class="par">self</span>._height</pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Square</span>(<span class="cls">Shape</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>._side = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="par">self</span>._side * <span class="par">self</span>._side</pre>
+      <p style="margin-top: 1rem; font-size: 0.95rem;">Now they are <strong>siblings</strong>, not parent-child. Each satisfies the <code style="color: var(--cyan);">Shape</code> contract independently.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LSP: Violating consequences -->
+<div class="slide">
+  <h2>Violating <span style="color: #f472b6;">LSP</span> consequences</h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li>&#128165; <strong>Type Checking Errors:</strong> The program could behave incorrectly or fail at runtime</li>
+      <li>&#128200; <strong>Increased Complexity:</strong> Code often requires additional checks and conditions to handle special cases for subclasses</li>
+      <li>&#9940; <strong>Difficulty in Reusability:</strong> Subclasses that cannot be used interchangeably may limit reuse</li>
+    </ul>
+    <p style="margin-top: 1.5rem;"><strong>Implications of LSP:</strong></p>
+    <ul style="margin-top: 0.5rem;">
+      <li>&#128736;&#65039; <strong>Maintainability:</strong> You can add new subclasses without worrying about breaking existing code</li>
+      <li>&#9851;&#65039; <strong>Reusability:</strong> Ensures subclasses are truly compatible with their base classes</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ====== I — INTERFACE SEGREGATION PRINCIPLE ================== -->
+<!-- ============================================================ -->
+
+<div class="slide center" style="background: var(--surface);">
+  <h2><span style="color: #fbbf24;">Interface Segregation</span> Principle</h2>
+  <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Many client specific interfaces are better<br>than one general purpose interface.&rdquo;</p>
+</div>
+
+<div class="slide">
+  <h2><span style="color: #fbbf24;">Interface Segregation</span> Principle</h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li>Clients should not be forced to depend upon interfaces <strong>they do not use</strong></li>
+      <li>It's better to have several <strong>specific interfaces</strong> rather than one general-purpose interface</li>
+    </ul>
+    <p style="margin-top: 1.5rem;">Ensure that your <strong>classes only implement the methods they need</strong>. If a class is forced to implement methods it doesn't use, consider breaking your interface (or ABC) into smaller, more specific ones.</p>
+    <div class="callout" style="margin-top: 1rem;">&#128161; Think of it like USB cables: individual cables for each device (&#9989;) vs one cable with every connector (&#10060;).</div>
+  </div>
+</div>
+
+<!-- ISP: UML Diagram -->
+<div class="slide center">
+  <h2><span style="color: #fbbf24;">ISP</span> Example: Printer / Scanner / Fax</h2>
+  <svg viewBox="0 0 700 280" width="85%" style="max-width: 900px; margin-top: 1rem;">
+    <rect x="50" y="10" width="130" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
+    <text x="72" y="24" fill="#34d399" font-size="8" font-family="Outfit, sans-serif">abstract</text>
+    <text x="115" y="43" text-anchor="middle" fill="var(--heading)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Printer</text>
+
+    <rect x="240" y="10" width="130" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
+    <text x="262" y="24" fill="#34d399" font-size="8" font-family="Outfit, sans-serif">abstract</text>
+    <text x="305" y="43" text-anchor="middle" fill="var(--heading)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Scanner</text>
+
+    <rect x="430" y="10" width="130" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
+    <text x="452" y="24" fill="#34d399" font-size="8" font-family="Outfit, sans-serif">abstract</text>
+    <text x="495" y="43" text-anchor="middle" fill="var(--heading)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Fax</text>
+
+    <line x1="115" y1="60" x2="115" y2="165" stroke="var(--border)" stroke-width="1.5"/>
+    <polygon points="115,60 111,68 119,68" fill="var(--border)"/>
+
+    <line x1="115" y1="105" x2="350" y2="165" stroke="var(--border)" stroke-width="1.5"/>
+    <line x1="305" y1="60" x2="350" y2="165" stroke="var(--border)" stroke-width="1.5"/>
+    <polygon points="305,60 301,68 309,68" fill="var(--border)"/>
+
+    <line x1="115" y1="105" x2="580" y2="165" stroke="var(--border)" stroke-width="1.2"/>
+    <line x1="305" y1="60" x2="580" y2="165" stroke="var(--border)" stroke-width="1.2"/>
+    <line x1="495" y1="60" x2="580" y2="165" stroke="var(--border)" stroke-width="1.5"/>
+    <polygon points="495,60 491,68 499,68" fill="var(--border)"/>
+
+    <rect x="40" y="170" width="150" height="50" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="62" y="184" fill="var(--cyan)" font-size="8" font-family="Outfit, sans-serif">concrete</text>
+    <text x="115" y="203" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">SimplePrinter</text>
+    <text x="115" y="238" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">implements: Printer</text>
+
+    <rect x="270" y="170" width="160" height="50" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="295" y="184" fill="var(--cyan)" font-size="8" font-family="Outfit, sans-serif">concrete</text>
+    <text x="350" y="203" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Photocopier</text>
+    <text x="350" y="238" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">implements: Printer, Scanner</text>
+
+    <rect x="490" y="170" width="180" height="50" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="515" y="184" fill="var(--cyan)" font-size="8" font-family="Outfit, sans-serif">concrete</text>
+    <text x="580" y="203" text-anchor="middle" fill="var(--heading)" font-size="9" font-weight="600" font-family="JetBrains Mono, monospace">MultiFunctionPrinter</text>
+    <text x="580" y="238" text-anchor="middle" fill="var(--muted)" font-size="8" font-family="Outfit, sans-serif">implements: Printer, Scanner, Fax</text>
+  </svg>
+</div>
+
+<!-- ISP Code -->
+<div class="slide">
+  <h2><span style="color: #fbbf24;">ISP</span> Code Example</h2>
+  <div class="two-col">
+    <div>
+      <p style="color: var(--muted); margin-bottom: 0.5rem; font-size: 0.85rem;">Abstract interfaces (ABCs):</p>
+      <pre style="font-size: 0.68rem;"><span class="kw">class</span> <span class="cls">Printer</span>:
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">print</span>(<span class="par">self</span>, document):
+        <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">Scanner</span>:
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">scan</span>(<span class="par">self</span>, document):
+        <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">Fax</span>:
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">fax</span>(<span class="par">self</span>, document):
+        <span class="kw">pass</span></pre>
+    </div>
+    <div>
+      <p style="color: var(--muted); margin-bottom: 0.5rem; font-size: 0.85rem;">Concrete implementations:</p>
+      <pre style="font-size: 0.68rem;"><span class="kw">class</span> <span class="cls">SimplePrinter</span>(<span class="cls">Printer</span>):
+    <span class="kw">def</span> <span class="fn">print</span>(<span class="par">self</span>, document):
+        ...
+
+<span class="kw">class</span> <span class="cls">Photocopier</span>(<span class="cls">Printer</span>, <span class="cls">Scanner</span>):
+    <span class="kw">def</span> <span class="fn">print</span>(<span class="par">self</span>, document):
+        ...
+    <span class="kw">def</span> <span class="fn">scan</span>(<span class="par">self</span>, document):
+        ...
+
+<span class="kw">class</span> <span class="cls">MultiFunctionPrinter</span>(<span class="cls">Printer</span>, <span class="cls">Scanner</span>, <span class="cls">Fax</span>):
+    <span class="kw">def</span> <span class="fn">print</span>(<span class="par">self</span>, document):
+        ...
+    <span class="kw">def</span> <span class="fn">scan</span>(<span class="par">self</span>, document):
+        ...
+    <span class="kw">def</span> <span class="fn">fax</span>(<span class="par">self</span>, document):
+        ...</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ISP Implications -->
+<div class="slide">
+  <h2>Implications of <span style="color: #fbbf24;">ISP</span></h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li>&#128279; <strong>Minimize Coupling:</strong> By using smaller, more focused interfaces, classes have only the dependencies they need, reducing coupling</li>
+      <li>&#9851;&#65039; <strong>Enhanced Code Reusability:</strong> Smaller interfaces are easier to implement, making it more likely that new classes can reuse existing interfaces</li>
+      <li>&#128736;&#65039; <strong>Improved Maintainability:</strong> Changes to one part of a system are less likely to require changes in unrelated parts if those parts are segregated into different interfaces</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ====== D — DEPENDENCY INVERSION PRINCIPLE =================== -->
+<!-- ============================================================ -->
+
+<div class="slide center" style="background: var(--surface);">
+  <h2><span style="color: #34d399;">Dependency Inversion</span> Principle</h2>
+  <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Depend upon Abstractions.<br>Do not depend upon concretions.&rdquo;</p>
+</div>
+
+<div class="slide">
+  <h2><span style="color: #34d399;">DIP</span> <span class="accent">Solution</span></h2>
+  <div style="max-width: 750px;">
+    <p>One should depend upon interfaces or abstract functions &amp; classes, rather than upon concrete functions &amp; classes.</p>
+    <ul style="margin-top: 1rem;">
+      <li>&#128307; <strong>High-level modules</strong> should not depend on low-level modules. Both should depend on <strong>abstractions</strong>.</li>
+      <li>&#128312; <strong>Abstractions</strong> should not depend on details. Details should depend on <strong>abstractions</strong>.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- DIP: Before/After SVG -->
+<div class="slide center">
+  <h2><span style="color: #34d399;">DIP</span> Visualized</h2>
+  <svg viewBox="0 0 600 260" width="80%" style="max-width: 800px; margin-top: 1rem;">
+    <text x="110" y="20" text-anchor="middle" fill="var(--accent)" font-size="14" font-weight="700" font-family="Outfit, sans-serif">&#10060; Without DIP</text>
+    <rect x="35" y="35" width="150" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="110" y="63" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">High-Level Module</text>
+    <line x1="110" y1="80" x2="110" y2="120" stroke="var(--border)" stroke-width="2"/>
+    <polygon points="110,125 106,117 114,117" fill="var(--border)"/>
+    <rect x="35" y="130" width="150" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="110" y="158" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Low-Level Module</text>
+
+    <line x1="270" y1="35" x2="270" y2="220" stroke="var(--border)" stroke-width="1.5"/>
+
+    <text x="430" y="20" text-anchor="middle" fill="var(--green)" font-size="14" font-weight="700" font-family="Outfit, sans-serif">&#9989; With DIP</text>
+    <rect x="355" y="35" width="150" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="430" y="63" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">High-Level Module</text>
+    <line x1="430" y1="80" x2="430" y2="108" stroke="var(--border)" stroke-width="2"/>
+    <polygon points="430,113 426,105 434,105" fill="var(--border)"/>
+    <rect x="350" y="118" width="160" height="45" rx="8" fill="var(--code-bg)" stroke="var(--green)" stroke-width="2.5"/>
+    <text x="430" y="146" text-anchor="middle" fill="var(--green)" font-size="12" font-weight="700" font-family="JetBrains Mono, monospace">Abstraction Layer</text>
+    <line x1="430" y1="163" x2="430" y2="188" stroke="var(--border)" stroke-width="2"/>
+    <polygon points="430,195 426,187 434,187" fill="var(--border)"/>
+    <rect x="355" y="195" width="150" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <text x="430" y="223" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Low-Level Module</text>
+  </svg>
+</div>
+
+<!-- DIP: Bad code example -->
+<div class="slide reveal-slide">
+  <h2><span style="color: #34d399;">DIP</span> violation: <span class="accent">SellerWarehouse</span></h2>
+  <div class="reveal-blocks">
+    <div class="reveal-block">
+      <pre style="font-size: 0.78rem;"><span class="kw">class</span> <span class="cls">SellerWarehouse</span>:
+    <span class="kw">def</span> <span class="fn">airplane_delivery</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"Airplane delivery to {address}"</span>)
+    <span class="kw">def</span> <span class="fn">truck_delivery</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"Truck delivery to {address}"</span>)
+    <span class="kw">def</span> <span class="fn">ship_delivery</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"Ship delivery to {address}"</span>)
+
+warehouse = <span class="cls">SellerWarehouse</span>()
+<span class="kw">if</span> type == <span class="str">"airplane"</span>:
+    warehouse.<span class="fn">airplane_delivery</span>(address)
+<span class="kw">if</span> type == <span class="str">"truck"</span>:
+    warehouse.<span class="fn">truck_delivery</span>(address)
+<span class="kw">if</span> type == <span class="str">"ship"</span>:
+    warehouse.<span class="fn">ship_delivery</span>(address)</pre>
+      <p style="margin-top: 0.5rem; color: var(--accent);">&#10060; High-level module depends directly on low-level details (delivery methods)</p>
+    </div>
+    <div class="reveal-block">
+      <p style="margin-top: 1rem; color: var(--green); font-weight: 600;">&#9989; Fixed with dependency injection:</p>
+      <pre style="font-size: 0.78rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Delivery</span>(ABC):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, address):
+        <span class="par">self</span>.address = address
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>):
+        <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">AirplaneDelivery</span>(<span class="cls">Delivery</span>):
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"Airplane delivery to {self.address}"</span>)
+
+<span class="kw">class</span> <span class="cls">SellerWarehouse</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, delivery):
+        <span class="par">self</span>.delivery = delivery
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>):
+        <span class="par">self</span>.delivery.<span class="fn">deliver</span>()</pre>
+    </div>
+  </div>
+</div>
+
+<!-- DIP: Extensibility -->
+<div class="slide">
+  <h2><span style="color: #34d399;">DIP</span> <span class="green-text">Extensibility</span></h2>
+  <div style="max-width: 750px;">
+    <p>Now adding a new delivery method is trivial &mdash; <strong>no existing code needs to change</strong>:</p>
+    <pre style="margin-top: 1rem;"><span class="kw">class</span> <span class="cls">DroneDelivery</span>(<span class="cls">Delivery</span>):
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>):
+        <span class="fn">print</span>(<span class="str">f"Drone delivery to {self.address}"</span>)
+
+address = <span class="str">"Pilies 22, Vilnius, Lithuania"</span>
+delivery = <span class="cls">DroneDelivery</span>(address)
+warehouse = <span class="cls">SellerWarehouse</span>(delivery)
+warehouse.<span class="fn">deliver</span>()</pre>
+    <div class="callout" style="margin-top: 1rem;">&#128161; Notice how DIP connects to <strong>OCP</strong> (extend without modifying) and <strong>LSP</strong> (any Delivery subclass works). The SOLID principles reinforce each other!</div>
+  </div>
+</div>
+
+<!-- ====== KEY TAKEAWAYS ====== -->
+<div class="slide">
+  <h2>Key Takeaways</h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li style="margin-bottom: 0.5rem;"><span style="color: #818cf8; font-weight: 700;">S</span> &mdash; <strong>Single Responsibility:</strong> One class, one reason to change</li>
+      <li style="margin-bottom: 0.5rem;"><span style="color: #a78bfa; font-weight: 700;">O</span> &mdash; <strong>Open-Closed:</strong> Open for extension, closed for modification</li>
+      <li style="margin-bottom: 0.5rem;"><span style="color: #f472b6; font-weight: 700;">L</span> &mdash; <strong>Liskov Substitution:</strong> Subclasses must be substitutable for their parents</li>
+      <li style="margin-bottom: 0.5rem;"><span style="color: #fbbf24; font-weight: 700;">I</span> &mdash; <strong>Interface Segregation:</strong> Many small interfaces &gt; one fat interface</li>
+      <li style="margin-bottom: 0.5rem;"><span style="color: #34d399; font-weight: 700;">D</span> &mdash; <strong>Dependency Inversion:</strong> Depend on abstractions, not concretions</li>
+    </ul>
+    <div class="callout" style="margin-top: 1.5rem;">SOLID principles work <strong>together</strong>. They make your code easier to understand, modify, extend, and test. Start applying them gradually &mdash; you don't need to be perfect on day one.</div>
+  </div>
+  <p style="color: var(--muted); margin-top: 2rem; font-size: 1.1rem;">Next up: <strong style="color: var(--accent);">UML &amp; Design Patterns</strong></p>
+</div>
+
+<!-- Hackathon -->
+<div class="slide center" style="padding: 4rem 6rem 5rem; background: #000;">
+  <img src="hackathon.png" alt="AI Hackathon — Apr 18, 10AM-7PM at Visma Tech office" style="max-width: 100%; max-height: calc(100vh - 9rem); object-fit: contain;">
+</div>
+
+<div class="nav">
+  <button id="skip-quiz" class="skip-quiz" onclick="skipQuiz()">Skip Quiz &nbsp;&#9654;</button>
+  <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size: 1.2rem;">&#9788;</button>
+  <button id="prev" onclick="navigate(-1)">&lsaquo;</button>
+  <span class="counter" id="counter"></span>
+  <button id="next" onclick="navigate(1)">&rsaquo;</button>
+</div>
+
+<script src="shared.js"></script>
+<script>
+(function() {
+  var origShow = show;
+  show = function(i) {
+    origShow(i);
+    var s = document.querySelectorAll('.slide')[current];
+    if (s.classList.contains('reveal-slide') && !s.classList.contains('step-1')) {
+      s.classList.add('step-1');
+    }
+  };
+  var origNavigate = navigate;
+  navigate = function(d) {
+    var s = document.querySelectorAll('.slide')[current];
+    if (d === 1 && s.classList.contains('reveal-slide')) {
+      if (!s.classList.contains('step-2')) { s.classList.add('step-2'); return; }
+      if (!s.classList.contains('step-3')) { s.classList.add('step-3'); return; }
+    }
+    origNavigate(d);
+  };
+  var hash = parseInt(location.hash.replace('#', ''), 10);
+  if (hash > 0 && hash <= total) show(hash - 1);
+  window.addEventListener('hashchange', function() {
+    var h = parseInt(location.hash.replace('#', ''), 10);
+    if (h > 0 && h <= total) show(h - 1);
+  });
+  var origShow2 = show;
+  show = function(i) {
+    origShow2(i);
+    history.replaceState(null, '', '#' + (current + 1));
+  };
+})();
+</script>
+</body>
+</html>

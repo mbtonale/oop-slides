@@ -895,13 +895,33 @@ Caught in the outer try-except block.</pre>
 <!-- Exception object -->
 <div class="slide">
   <h2>Understanding Exception <span class="accent">object</span></h2>
-  <div style="max-width: 750px;">
-    <p>When an error occurs during the execution of a program, an exception object is instantiated from a corresponding exception class.</p>
-    <p style="margin-top: 1rem;">This object contains information about the error, including its type (class), a message, and a traceback detailing the point in the code at which the error occurred.</p>
-    <pre style="margin-top: 1.5rem;"><span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">"Invalid value"</span>)</pre>
-    <pre style="margin-top: 0.5rem;">exc = <span class="cls">ValueError</span>(<span class="str">"Invalid value"</span>)
-<span class="kw">raise</span> exc</pre>
-    <p style="margin-top: 1rem;">When you raise an exception, Python constructs an exception object that can be caught and handled by an except block.</p>
+  <div class="layout">
+    <div class="text">
+      <p>When an error occurs, Python creates an <strong>exception object</strong> with useful attributes:</p>
+      <pre style="font-size: 0.78rem; margin-top: 1rem;"><span class="kw">try</span>:
+    <span class="fn">int</span>(<span class="str">"abc"</span>)
+<span class="kw">except</span> <span class="cls">ValueError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="fn">type</span>(e))
+    <span class="fn">print</span>(e.args)
+    <span class="fn">print</span>(<span class="fn">str</span>(e))
+    <span class="fn">print</span>(e.__traceback__)</pre>
+      <p style="color: var(--muted); margin-top: 0.5rem; font-size: 0.9rem;">Output:</p>
+      <pre style="font-size: 0.78rem;">&lt;class <span class="str">'ValueError'</span>&gt;
+(<span class="str">"invalid literal for int()..."</span>,)
+invalid literal for int()...
+&lt;traceback object at 0x...&gt;</pre>
+    </div>
+    <div class="visual" style="flex: 0 0 280px;">
+      <div style="background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem;">
+        <p style="color: var(--accent); font-weight: 700; font-size: 1rem; font-family: JetBrains Mono, monospace; margin-bottom: 0.8rem;">ValueError</p>
+        <div style="border-top: 1px solid var(--border); padding-top: 0.6rem;">
+          <p style="color: var(--muted); font-size: 0.85rem; font-family: JetBrains Mono, monospace; margin-bottom: 0.3rem;"><span style="color: var(--cyan);">.args</span> &mdash; tuple of arguments</p>
+          <p style="color: var(--muted); font-size: 0.85rem; font-family: JetBrains Mono, monospace; margin-bottom: 0.3rem;"><span style="color: var(--cyan);">.__str__()</span> &mdash; error message</p>
+          <p style="color: var(--muted); font-size: 0.85rem; font-family: JetBrains Mono, monospace; margin-bottom: 0.3rem;"><span style="color: var(--cyan);">.__class__</span> &mdash; exception type</p>
+          <p style="color: var(--muted); font-size: 0.85rem; font-family: JetBrains Mono, monospace;"><span style="color: var(--cyan);">.__traceback__</span> &mdash; call stack</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
