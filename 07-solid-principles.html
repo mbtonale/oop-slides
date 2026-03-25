@@ -238,11 +238,15 @@
 <!-- LEGO analogy -->
 <div class="slide">
   <h2>Think of it like building with <span class="accent">LEGOs</span></h2>
-  <div style="max-width: 750px;">
-    <p>&#129521; <strong>Functions and Data Structures</strong> are like individual LEGO bricks: the basic building blocks of your code.</p>
-    <p style="margin-top: 1rem;">&#127981; <strong>Classes</strong> are like organized LEGO sets: they group related bricks and give them a specific purpose (e.g., a car set, a house set).</p>
-    <p style="margin-top: 1.5rem;">&#128296; Imagine you want to add <strong>a new room</strong> to your LEGO house. If you built it following good instructions, you can easily add the new room <strong>without having to take the whole house apart</strong>.</p>
-    <p style="margin-top: 1rem;">In code, this means you can add new features or modify existing ones <strong>without breaking everything else</strong>.</p>
+  <div class="layout">
+    <div class="text">
+      <p>&#129521; <strong>Functions and Data Structures</strong> are like individual LEGO bricks: the basic building blocks of your code.</p>
+      <p style="margin-top: 1rem;">&#127981; <strong>Classes</strong> are like organized LEGO sets: they group related bricks and give them a specific purpose.</p>
+      <p style="margin-top: 1.5rem;">&#128296; Imagine you want to add <strong>a new room</strong>. If you built it following good instructions, you can easily add it <strong>without taking the whole house apart</strong>.</p>
+    </div>
+    <div class="visual">
+      <img src="assets/solid-lego-build.png" alt="LEGO bricks" style="max-height: 450px; border-radius: 8px;">
+    </div>
   </div>
 </div>
 
@@ -268,13 +272,18 @@
 <!-- Uncle Bob -->
 <div class="slide">
   <h2>SOLID <span class="accent">design principles</span></h2>
-  <div style="max-width: 700px;">
-    <ul style="margin-top: 1rem;">
-      <li>Introduced by <strong>Robert C. Martin</strong> (Uncle Bob)</li>
-      <li>Frequently referenced in Design Pattern literature</li>
-      <li>Books: <em>Clean Code</em>, <em>Clean Architecture</em>, <em>The Clean Coder</em></li>
-    </ul>
-    <div class="callout" style="margin-top: 1.5rem;">These principles guide how to arrange functions and data structures into classes, and how those classes should be interconnected.</div>
+  <div class="layout">
+    <div class="text">
+      <ul style="margin-top: 1rem;">
+        <li>Introduced by <strong>Robert C. Martin</strong> (Uncle Bob)</li>
+        <li>Frequently referenced in Design Pattern literature</li>
+        <li>Books: <em>Clean Code</em>, <em>Clean Architecture</em>, <em>The Clean Coder</em></li>
+      </ul>
+      <div class="callout" style="margin-top: 1.5rem;">These principles guide how to arrange functions and data structures into classes, and how those classes should be interconnected.</div>
+    </div>
+    <div class="visual">
+      <img src="assets/download.jpeg" alt="Clean Code by Robert C. Martin" style="max-height: 350px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+    </div>
   </div>
 </div>
 
@@ -313,11 +322,18 @@
 <!-- ====== S — SINGLE RESPONSIBILITY PRINCIPLE ================= -->
 <!-- ============================================================ -->
 
-<div class="slide center" style="background: var(--surface);">
-  <h2><span style="color: #818cf8;">Single Responsibility</span> Principle</h2>
-  <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;There should never be more than one reason<br>for a class to change.&rdquo;</p>
-  <p style="color: var(--muted); margin-top: 1rem;">or</p>
-  <p style="color: var(--muted); margin-top: 1rem; font-style: italic; font-size: 1.1rem;">&ldquo;A module should be responsible to one,<br>and only one, actor.&rdquo;</p>
+<div class="slide" style="background: var(--surface);">
+  <div class="layout">
+    <div class="text" style="text-align: center;">
+      <h2><span style="color: #818cf8;">Single Responsibility</span> Principle</h2>
+      <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;There should never be more than one reason<br>for a class to change.&rdquo;</p>
+      <p style="color: var(--muted); margin-top: 1rem;">or</p>
+      <p style="color: var(--muted); margin-top: 1rem; font-style: italic; font-size: 1.1rem;">&ldquo;A module should be responsible to one,<br>and only one, actor.&rdquo;</p>
+    </div>
+    <div class="visual">
+      <img src="assets/solid-srp-knife.png" alt="Overloaded Swiss Army knife" style="max-height: 400px; border-radius: 8px;">
+    </div>
+  </div>
 </div>
 
 <div class="slide">
@@ -346,6 +362,24 @@
         <h3 style="color: var(--accent);">Coupling</h3>
         <p style="font-size: 0.9rem;">The degree of direct knowledge or reliance one module has on another. <strong>Lower is better.</strong></p>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide">
+  <h2>What is the <span style="color: #818cf8;">reason to change</span>?</h2>
+  <div class="layout">
+    <div class="text">
+      <p>When you write a software module, you want to make sure that when changes are requested, those changes can only originate from <strong>a single person</strong>, or rather, a single tightly coupled group of people representing <strong>a single narrowly defined business function</strong>.</p>
+      <p style="margin-top: 1.5rem;">Ask yourself: <em>who are the <strong>actors</strong> (stakeholders) that might request changes to this class?</em></p>
+      <ul style="margin-top: 1rem;">
+        <li>&#129489;&#8205;&#128187; The <strong>developer</strong> (logic changes)</li>
+        <li>&#128202; The <strong>accountant</strong> (reporting changes)</li>
+        <li>&#128451;&#65039; The <strong>DBA</strong> (persistence changes)</li>
+      </ul>
+    </div>
+    <div class="visual" style="flex: 0 0 280px;">
+      <div class="callout" style="font-size: 0.95rem;">If a class serves <strong>multiple actors</strong>, it has <strong>multiple reasons to change</strong> &mdash; and violates SRP.</div>
     </div>
   </div>
 </div>
@@ -422,6 +456,41 @@
   <p style="color: var(--text); margin-top: 0.5rem; font-size: 1.1rem;">Software must be designed to allow the behavior of it to be<br><strong>changed by adding new code</strong>, rather than changing existing code.</p>
 </div>
 
+<div class="slide center">
+  <h2><span style="color: #a78bfa;">OCP</span> Visualized: adding PDF support</h2>
+  <svg viewBox="0 0 750 240" width="90%" style="max-width: 950px; margin-top: 1rem;">
+    <text x="175" y="18" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="700" font-family="Outfit, sans-serif">&#10060; Without OCP: modify existing class</text>
+    <rect x="80" y="30" width="190" height="35" rx="8" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="2"/>
+    <text x="175" y="53" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">DocumentProcessor</text>
+    <line x1="130" y1="65" x2="90" y2="95" stroke="var(--border)" stroke-width="1.5"/>
+    <line x1="220" y1="65" x2="260" y2="95" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="30" y="95" width="120" height="30" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="90" y="115" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">process_word()</text>
+    <rect x="200" y="95" width="120" height="30" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2.5"/>
+    <text x="260" y="115" text-anchor="middle" fill="var(--cyan)" font-size="9" font-weight="600" font-family="JetBrains Mono, monospace">process_pdf()</text>
+    <text x="260" y="145" text-anchor="middle" fill="var(--cyan)" font-size="9" font-family="Outfit, sans-serif">&#9757; added here + if/elif</text>
+    <text x="175" y="175" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Outfit, sans-serif">Must edit the class every time you add a format</text>
+
+    <line x1="380" y1="25" x2="380" y2="220" stroke="var(--border)" stroke-width="1.5"/>
+
+    <text x="570" y="18" text-anchor="middle" fill="var(--green)" font-size="13" font-weight="700" font-family="Outfit, sans-serif">&#9989; With OCP: extend with new class</text>
+    <rect x="475" y="30" width="190" height="35" rx="8" fill="var(--code-bg)" stroke="var(--border)" stroke-width="2"/>
+    <text x="570" y="53" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">DocumentProcessor</text>
+    <text x="570" y="50" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">DocumentProcessor</text>
+    <line x1="520" y1="65" x2="470" y2="95" stroke="var(--border)" stroke-width="1.5"/>
+    <line x1="570" y1="65" x2="570" y2="95" stroke="var(--border)" stroke-width="1.5"/>
+    <line x1="620" y1="65" x2="680" y2="95" stroke="var(--green)" stroke-width="2"/>
+    <rect x="405" y="95" width="130" height="30" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="470" y="115" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">WordProcessor</text>
+    <rect x="505" y="95" width="130" height="30" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="570" y="115" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">CSVProcessor</text>
+    <rect x="615" y="95" width="130" height="30" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="2.5"/>
+    <text x="680" y="115" text-anchor="middle" fill="var(--green)" font-size="9" font-weight="600" font-family="JetBrains Mono, monospace">PDFProcessor</text>
+    <text x="680" y="145" text-anchor="middle" fill="var(--green)" font-size="9" font-family="Outfit, sans-serif">&#129513; new class, no edits!</text>
+    <text x="570" y="175" text-anchor="middle" fill="var(--green)" font-size="9" font-family="Outfit, sans-serif">Existing code untouched. Just add a new subclass.</text>
+  </svg>
+</div>
+
 <div class="slide">
   <h2>Applying <span style="color: #a78bfa;">OCP</span></h2>
   <div style="max-width: 750px;">
@@ -480,11 +549,18 @@
 <!-- ====== L — LISKOV SUBSTITUTION PRINCIPLE =================== -->
 <!-- ============================================================ -->
 
-<div class="slide center" style="background: var(--surface);">
-  <h2><span style="color: #f472b6;">Liskov Substitution</span> Principle</h2>
-  <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Subclasses should be substitutable for their base classes.&rdquo;</p>
-  <p style="color: var(--muted); margin-top: 1rem;">or</p>
-  <p style="color: var(--muted); margin-top: 1rem; font-style: italic; font-size: 1rem; max-width: 700px;">&ldquo;If you have a parent class and a child class,<br>you should be able to use the child class anywhere<br>you'd use the parent class, without breaking your code.&rdquo;</p>
+<div class="slide" style="background: var(--surface);">
+  <div class="layout">
+    <div class="text" style="text-align: center;">
+      <h2><span style="color: #f472b6;">Liskov Substitution</span> Principle</h2>
+      <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Subclasses should be substitutable<br>for their base classes.&rdquo;</p>
+      <p style="color: var(--muted); margin-top: 1rem;">or</p>
+      <p style="color: var(--muted); margin-top: 1rem; font-style: italic; font-size: 1rem;">&ldquo;You should be able to use the child class<br>anywhere you'd use the parent class,<br>without breaking your code.&rdquo;</p>
+    </div>
+    <div class="visual">
+      <img src="assets/solid-lsp-peg.png" alt="Square peg, round hole" style="max-height: 400px; border-radius: 8px;">
+    </div>
+  </div>
 </div>
 
 <div class="slide">
@@ -497,82 +573,77 @@
   </div>
 </div>
 
-<!-- LSP: Rectangle/Square violation -->
+<!-- LSP: Bird/Penguin violation -->
 <div class="slide reveal-slide">
-  <h2><span style="color: #f472b6;">LSP</span> violation: <span class="accent">Rectangle &amp; Square</span></h2>
+  <h2><span style="color: #f472b6;">LSP</span> violation: <span class="accent">Bird &amp; Penguin</span></h2>
   <div class="reveal-blocks">
     <div class="reveal-block">
       <div class="two-col">
         <div>
-          <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Rectangle</span>:
-    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
-        <span class="par">self</span>._width = <span class="num">0</span>
-        <span class="par">self</span>._height = <span class="num">0</span>
+          <pre style="font-size: 0.75rem;"><span class="kw">class</span> <span class="cls">Bird</span>:
+    <span class="kw">def</span> <span class="fn">fly</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Flying high!"</span>
 
-    <span class="kw">def</span> <span class="fn">set_width</span>(<span class="par">self</span>, width):
-        <span class="par">self</span>._width = width
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Eating..."</span>
 
-    <span class="kw">def</span> <span class="fn">set_height</span>(<span class="par">self</span>, height):
-        <span class="par">self</span>._height = height
 
-    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
-        <span class="kw">return</span> <span class="par">self</span>._width * <span class="par">self</span>._height</pre>
+<span class="kw">class</span> <span class="cls">Penguin</span>(<span class="cls">Bird</span>):
+    <span class="kw">def</span> <span class="fn">fly</span>(<span class="par">self</span>):
+        <span class="kw">raise</span> <span class="cls">Exception</span>(<span class="str">"I can't fly!"</span>)</pre>
         </div>
         <div>
-          <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Square</span>(<span class="cls">Rectangle</span>):
-    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
-        <span class="fn">super</span>().<span class="fn">__init__</span>()
-
-    <span class="kw">def</span> <span class="fn">set_width</span>(<span class="par">self</span>, width):
-        <span class="par">self</span>._width = width
-        <span class="par">self</span>._height = width
-
-    <span class="kw">def</span> <span class="fn">set_height</span>(<span class="par">self</span>, height):
-        <span class="par">self</span>._width = height
-        <span class="par">self</span>._height = height</pre>
+          <p style="margin-top: 0.5rem;">A <code style="color: var(--cyan);">Penguin</code> <strong>is-a</strong> <code style="color: var(--cyan);">Bird</code>, right?</p>
+          <p style="margin-top: 1rem;">But any code that expects a <code style="color: var(--cyan);">Bird</code> to <code style="color: var(--green);">fly()</code> will <strong style="color: var(--accent);">crash</strong> when given a Penguin.</p>
+          <p style="margin-top: 1rem;">The subclass <strong>breaks the contract</strong> of its parent.</p>
         </div>
       </div>
     </div>
     <div class="reveal-block">
-      <pre style="font-size: 0.75rem; margin-top: 1rem;"><span class="kw">def</span> <span class="fn">calculate_area</span>(rectangle):
-    rectangle.<span class="fn">set_width</span>(<span class="num">5</span>)
-    rectangle.<span class="fn">set_height</span>(<span class="num">10</span>)
-    <span class="kw">return</span> rectangle.<span class="fn">area</span>()
+      <pre style="font-size: 0.75rem; margin-top: 1rem;"><span class="kw">def</span> <span class="fn">make_bird_fly</span>(bird):
+    <span class="fn">print</span>(bird.<span class="fn">fly</span>())
 
-<span class="fn">print</span>(<span class="fn">calculate_area</span>(<span class="cls">Rectangle</span>()))  <span class="cm"># 50</span>
-<span class="fn">print</span>(<span class="fn">calculate_area</span>(<span class="cls">Square</span>()))     <span class="cm"># 100! LSP violation</span></pre>
+<span class="fn">make_bird_fly</span>(<span class="cls">Bird</span>())     <span class="cm"># "Flying high!"</span>
+<span class="fn">make_bird_fly</span>(<span class="cls">Penguin</span>())  <span class="cm"># Exception! LSP violation</span></pre>
     </div>
   </div>
 </div>
 
-<!-- LSP: Fix with Shape ABC -->
+<!-- LSP: Fix with proper hierarchy -->
 <div class="slide">
-  <h2><span style="color: #f472b6;">LSP</span> fix: <span class="green-text">Shape ABC</span></h2>
+  <h2><span style="color: #f472b6;">LSP</span> fix: <span class="green-text">proper hierarchy</span></h2>
   <div class="two-col">
     <div>
       <pre style="font-size: 0.72rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
 
-<span class="kw">class</span> <span class="cls">Shape</span>(ABC):
+<span class="kw">class</span> <span class="cls">Bird</span>(ABC):
     @abstractmethod
-    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="par">self</span>):
         <span class="kw">pass</span>
 
-<span class="kw">class</span> <span class="cls">Rectangle</span>(<span class="cls">Shape</span>):
-    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
-        <span class="par">self</span>._width = <span class="num">0</span>
-        <span class="par">self</span>._height = <span class="num">0</span>
+<span class="kw">class</span> <span class="cls">FlyingBird</span>(<span class="cls">Bird</span>):
+    <span class="kw">def</span> <span class="fn">fly</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Flying high!"</span>
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Eating seeds"</span>
 
-    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
-        <span class="kw">return</span> <span class="par">self</span>._width * <span class="par">self</span>._height</pre>
+<span class="kw">class</span> <span class="cls">SwimmingBird</span>(<span class="cls">Bird</span>):
+    <span class="kw">def</span> <span class="fn">swim</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Swimming!"</span>
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Eating fish"</span></pre>
     </div>
     <div>
-      <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Square</span>(<span class="cls">Shape</span>):
-    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
-        <span class="par">self</span>._side = <span class="num">0</span>
+      <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Eagle</span>(<span class="cls">FlyingBird</span>):
+    <span class="kw">pass</span>
 
-    <span class="kw">def</span> <span class="fn">area</span>(<span class="par">self</span>):
-        <span class="kw">return</span> <span class="par">self</span>._side * <span class="par">self</span>._side</pre>
-      <p style="margin-top: 1rem; font-size: 0.95rem;">Now they are <strong>siblings</strong>, not parent-child. Each satisfies the <code style="color: var(--cyan);">Shape</code> contract independently.</p>
+<span class="kw">class</span> <span class="cls">Penguin</span>(<span class="cls">SwimmingBird</span>):
+    <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">Duck</span>(<span class="cls">FlyingBird</span>, <span class="cls">SwimmingBird</span>):
+    <span class="kw">pass</span></pre>
+      <p style="margin-top: 1rem; font-size: 0.95rem;">Now <code style="color: var(--cyan);">Penguin</code> never promises to fly. Only <code style="color: var(--cyan);">FlyingBird</code> subclasses have <code style="color: var(--green);">fly()</code>.</p>
+      <p style="margin-top: 0.5rem;">Every subclass <strong>honors its parent's contract</strong>.</p>
     </div>
   </div>
 </div>
@@ -598,9 +669,16 @@
 <!-- ====== I — INTERFACE SEGREGATION PRINCIPLE ================== -->
 <!-- ============================================================ -->
 
-<div class="slide center" style="background: var(--surface);">
-  <h2><span style="color: #fbbf24;">Interface Segregation</span> Principle</h2>
-  <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Many client specific interfaces are better<br>than one general purpose interface.&rdquo;</p>
+<div class="slide" style="background: var(--surface);">
+  <div class="layout">
+    <div class="text" style="text-align: center;">
+      <h2><span style="color: #fbbf24;">Interface Segregation</span> Principle</h2>
+      <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Many client specific interfaces are better<br>than one general purpose interface.&rdquo;</p>
+    </div>
+    <div class="visual">
+      <img src="assets/solid-isp-cables.png" alt="Separate cables vs one multi-adapter" style="max-height: 400px; border-radius: 8px;">
+    </div>
+  </div>
 </div>
 
 <div class="slide">
@@ -615,48 +693,83 @@
   </div>
 </div>
 
-<!-- ISP: UML Diagram -->
+<!-- ISP: Violation example -->
+<div class="slide reveal-slide">
+  <h2><span style="color: #fbbf24;">ISP</span> violation <span class="accent">example</span></h2>
+  <div class="reveal-blocks">
+    <div class="reveal-block">
+      <p style="color: var(--accent); font-weight: 600;">&#10060; One fat interface forces all classes to implement everything:</p>
+      <pre style="font-size: 0.75rem; margin-top: 0.5rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Machine</span>(ABC):
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">print</span>(<span class="par">self</span>, doc): <span class="kw">pass</span>
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">scan</span>(<span class="par">self</span>, doc): <span class="kw">pass</span>
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">fax</span>(<span class="par">self</span>, doc): <span class="kw">pass</span></pre>
+    </div>
+    <div class="reveal-block">
+      <p style="margin-top: 1rem;">A simple printer is <strong>forced</strong> to implement <code style="color: var(--accent);">scan()</code> and <code style="color: var(--accent);">fax()</code> even though it can't do either:</p>
+      <pre style="font-size: 0.75rem; margin-top: 0.5rem;"><span class="kw">class</span> <span class="cls">SimplePrinter</span>(<span class="cls">Machine</span>):
+    <span class="kw">def</span> <span class="fn">print</span>(<span class="par">self</span>, doc):
+        <span class="fn">print</span>(<span class="str">f"Printing {doc}"</span>)
+
+    <span class="kw">def</span> <span class="fn">scan</span>(<span class="par">self</span>, doc):
+        <span class="kw">raise</span> <span class="cls">NotImplementedError</span>(<span class="str">"Can't scan!"</span>)
+
+    <span class="kw">def</span> <span class="fn">fax</span>(<span class="par">self</span>, doc):
+        <span class="kw">raise</span> <span class="cls">NotImplementedError</span>(<span class="str">"Can't fax!"</span>)</pre>
+      <div class="callout" style="margin-top: 0.5rem;">&#128161; This also violates <strong>LSP</strong> &mdash; a <code style="color: var(--cyan);">SimplePrinter</code> can't be used wherever a <code style="color: var(--cyan);">Machine</code> is expected. The principles reinforce each other!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ISP: UML Diagram (the fix) -->
 <div class="slide center">
-  <h2><span style="color: #fbbf24;">ISP</span> Example: Printer / Scanner / Fax</h2>
-  <svg viewBox="0 0 700 280" width="85%" style="max-width: 900px; margin-top: 1rem;">
-    <rect x="50" y="10" width="130" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
-    <text x="72" y="24" fill="#34d399" font-size="8" font-family="Outfit, sans-serif">abstract</text>
-    <text x="115" y="43" text-anchor="middle" fill="var(--heading)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Printer</text>
+  <h2><span style="color: #fbbf24;">ISP</span> &#9989; fix: Printer / Scanner / Fax</h2>
+  <svg viewBox="0 0 750 280" width="90%" style="max-width: 950px; margin-top: 1rem;">
+    <rect x="75" y="10" width="150" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
+    <text x="100" y="25" fill="#34d399" font-size="9" font-family="Outfit, sans-serif">abstract</text>
+    <text x="150" y="44" text-anchor="middle" fill="var(--heading)" font-size="13" font-weight="600" font-family="JetBrains Mono, monospace">Printer</text>
 
-    <rect x="240" y="10" width="130" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
-    <text x="262" y="24" fill="#34d399" font-size="8" font-family="Outfit, sans-serif">abstract</text>
-    <text x="305" y="43" text-anchor="middle" fill="var(--heading)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Scanner</text>
+    <rect x="300" y="10" width="150" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
+    <text x="325" y="25" fill="#34d399" font-size="9" font-family="Outfit, sans-serif">abstract</text>
+    <text x="375" y="44" text-anchor="middle" fill="var(--heading)" font-size="13" font-weight="600" font-family="JetBrains Mono, monospace">Scanner</text>
 
-    <rect x="430" y="10" width="130" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
-    <text x="452" y="24" fill="#34d399" font-size="8" font-family="Outfit, sans-serif">abstract</text>
-    <text x="495" y="43" text-anchor="middle" fill="var(--heading)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Fax</text>
+    <rect x="525" y="10" width="150" height="50" rx="8" fill="var(--code-bg)" stroke="#34d399" stroke-width="2"/>
+    <text x="550" y="25" fill="#34d399" font-size="9" font-family="Outfit, sans-serif">abstract</text>
+    <text x="600" y="44" text-anchor="middle" fill="var(--heading)" font-size="13" font-weight="600" font-family="JetBrains Mono, monospace">Fax</text>
 
-    <line x1="115" y1="60" x2="115" y2="165" stroke="var(--border)" stroke-width="1.5"/>
-    <polygon points="115,60 111,68 119,68" fill="var(--border)"/>
+    <line x1="150" y1="60" x2="150" y2="170" stroke="var(--blue)" stroke-width="2"/>
+    <polygon points="150,60 146,68 154,68" fill="var(--blue)"/>
 
-    <line x1="115" y1="105" x2="350" y2="165" stroke="var(--border)" stroke-width="1.5"/>
-    <line x1="305" y1="60" x2="350" y2="165" stroke="var(--border)" stroke-width="1.5"/>
-    <polygon points="305,60 301,68 309,68" fill="var(--border)"/>
+    <line x1="150" y1="60" x2="375" y2="170" stroke="var(--orange)" stroke-width="2"/>
+    <polygon points="150,60 146,68 154,68" fill="var(--orange)"/>
+    <line x1="375" y1="60" x2="375" y2="170" stroke="var(--orange)" stroke-width="2"/>
+    <polygon points="375,60 371,68 379,68" fill="var(--orange)"/>
 
-    <line x1="115" y1="105" x2="580" y2="165" stroke="var(--border)" stroke-width="1.2"/>
-    <line x1="305" y1="60" x2="580" y2="165" stroke="var(--border)" stroke-width="1.2"/>
-    <line x1="495" y1="60" x2="580" y2="165" stroke="var(--border)" stroke-width="1.5"/>
-    <polygon points="495,60 491,68 499,68" fill="var(--border)"/>
+    <line x1="150" y1="60" x2="600" y2="170" stroke="var(--accent)" stroke-width="2"/>
+    <polygon points="150,60 146,68 154,68" fill="var(--accent)"/>
+    <line x1="375" y1="60" x2="600" y2="170" stroke="var(--accent)" stroke-width="2"/>
+    <polygon points="375,60 371,68 379,68" fill="var(--accent)"/>
+    <line x1="600" y1="60" x2="600" y2="170" stroke="var(--accent)" stroke-width="2"/>
+    <polygon points="600,60 596,68 604,68" fill="var(--accent)"/>
 
-    <rect x="40" y="170" width="150" height="50" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
-    <text x="62" y="184" fill="var(--cyan)" font-size="8" font-family="Outfit, sans-serif">concrete</text>
-    <text x="115" y="203" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">SimplePrinter</text>
-    <text x="115" y="238" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">implements: Printer</text>
+    <rect x="50" y="175" width="200" height="50" rx="8" fill="var(--code-bg)" stroke="var(--blue)" stroke-width="2.5"/>
+    <text x="75" y="190" fill="var(--blue)" font-size="9" font-family="Outfit, sans-serif">concrete</text>
+    <text x="150" y="210" text-anchor="middle" fill="var(--heading)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">SimplePrinter</text>
+    <text x="150" y="243" text-anchor="middle" fill="var(--blue)" font-size="9" font-family="Outfit, sans-serif">implements: Printer</text>
 
-    <rect x="270" y="170" width="160" height="50" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
-    <text x="295" y="184" fill="var(--cyan)" font-size="8" font-family="Outfit, sans-serif">concrete</text>
-    <text x="350" y="203" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Photocopier</text>
-    <text x="350" y="238" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="Outfit, sans-serif">implements: Printer, Scanner</text>
+    <rect x="275" y="175" width="200" height="50" rx="8" fill="var(--code-bg)" stroke="var(--orange)" stroke-width="2.5"/>
+    <text x="300" y="190" fill="var(--orange)" font-size="9" font-family="Outfit, sans-serif">concrete</text>
+    <text x="375" y="210" text-anchor="middle" fill="var(--heading)" font-size="12" font-weight="600" font-family="JetBrains Mono, monospace">Photocopier</text>
+    <text x="375" y="243" text-anchor="middle" fill="var(--orange)" font-size="9" font-family="Outfit, sans-serif">implements: Printer, Scanner</text>
 
-    <rect x="490" y="170" width="180" height="50" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
-    <text x="515" y="184" fill="var(--cyan)" font-size="8" font-family="Outfit, sans-serif">concrete</text>
-    <text x="580" y="203" text-anchor="middle" fill="var(--heading)" font-size="9" font-weight="600" font-family="JetBrains Mono, monospace">MultiFunctionPrinter</text>
-    <text x="580" y="238" text-anchor="middle" fill="var(--muted)" font-size="8" font-family="Outfit, sans-serif">implements: Printer, Scanner, Fax</text>
+    <rect x="500" y="175" width="200" height="50" rx="8" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="2.5"/>
+    <text x="525" y="190" fill="var(--accent)" font-size="9" font-family="Outfit, sans-serif">concrete</text>
+    <text x="600" y="210" text-anchor="middle" fill="var(--heading)" font-size="10" font-weight="600" font-family="JetBrains Mono, monospace">MultiFunctionPrinter</text>
+    <text x="600" y="243" text-anchor="middle" fill="var(--purple)" font-size="8" font-family="Outfit, sans-serif">implements: Printer, Scanner, Fax</text>
   </svg>
 </div>
 
@@ -720,9 +833,16 @@
 <!-- ====== D — DEPENDENCY INVERSION PRINCIPLE =================== -->
 <!-- ============================================================ -->
 
-<div class="slide center" style="background: var(--surface);">
-  <h2><span style="color: #34d399;">Dependency Inversion</span> Principle</h2>
-  <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Depend upon Abstractions.<br>Do not depend upon concretions.&rdquo;</p>
+<div class="slide" style="background: var(--surface);">
+  <div class="layout">
+    <div class="text" style="text-align: center;">
+      <h2><span style="color: #34d399;">Dependency Inversion</span> Principle</h2>
+      <p style="color: var(--muted); margin-top: 1.5rem; font-style: italic; font-size: 1.1rem;">&ldquo;Depend upon Abstractions.<br>Do not depend upon concretions.&rdquo;</p>
+    </div>
+    <div class="visual">
+      <img src="assets/solid-dip-delivery.png" alt="Warehouse with delivery routes" style="max-height: 400px; border-radius: 8px;">
+    </div>
+  </div>
 </div>
 
 <div class="slide">
@@ -757,49 +877,48 @@
     <polygon points="430,113 426,105 434,105" fill="var(--border)"/>
     <rect x="350" y="118" width="160" height="45" rx="8" fill="var(--code-bg)" stroke="var(--green)" stroke-width="2.5"/>
     <text x="430" y="146" text-anchor="middle" fill="var(--green)" font-size="12" font-weight="700" font-family="JetBrains Mono, monospace">Abstraction Layer</text>
-    <line x1="430" y1="163" x2="430" y2="188" stroke="var(--border)" stroke-width="2"/>
-    <polygon points="430,195 426,187 434,187" fill="var(--border)"/>
+    <line x1="430" y1="195" x2="430" y2="170" stroke="var(--border)" stroke-width="2"/>
+    <polygon points="430,165 426,173 434,173" fill="var(--border)"/>
     <rect x="355" y="195" width="150" height="45" rx="8" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
     <text x="430" y="223" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">Low-Level Module</text>
   </svg>
 </div>
 
 <!-- DIP: Bad code example -->
-<div class="slide reveal-slide">
+<div class="slide">
   <h2><span style="color: #34d399;">DIP</span> violation: <span class="accent">SellerWarehouse</span></h2>
-  <div class="reveal-blocks">
-    <div class="reveal-block">
-      <pre style="font-size: 0.78rem;"><span class="kw">class</span> <span class="cls">SellerWarehouse</span>:
+  <div class="two-col">
+    <div>
+      <p style="color: var(--accent); font-weight: 600; margin-bottom: 0.5rem;">&#10060; Violation:</p>
+      <pre style="font-size: 0.68rem;"><span class="kw">class</span> <span class="cls">SellerWarehouse</span>:
     <span class="kw">def</span> <span class="fn">airplane_delivery</span>(<span class="par">self</span>):
-        <span class="fn">print</span>(<span class="str">f"Airplane delivery to {address}"</span>)
+        <span class="fn">print</span>(<span class="str">f"Airplane to {address}"</span>)
     <span class="kw">def</span> <span class="fn">truck_delivery</span>(<span class="par">self</span>):
-        <span class="fn">print</span>(<span class="str">f"Truck delivery to {address}"</span>)
+        <span class="fn">print</span>(<span class="str">f"Truck to {address}"</span>)
     <span class="kw">def</span> <span class="fn">ship_delivery</span>(<span class="par">self</span>):
-        <span class="fn">print</span>(<span class="str">f"Ship delivery to {address}"</span>)
+        <span class="fn">print</span>(<span class="str">f"Ship to {address}"</span>)
 
 warehouse = <span class="cls">SellerWarehouse</span>()
 <span class="kw">if</span> type == <span class="str">"airplane"</span>:
-    warehouse.<span class="fn">airplane_delivery</span>(address)
+    warehouse.<span class="fn">airplane_delivery</span>()
 <span class="kw">if</span> type == <span class="str">"truck"</span>:
-    warehouse.<span class="fn">truck_delivery</span>(address)
+    warehouse.<span class="fn">truck_delivery</span>()
 <span class="kw">if</span> type == <span class="str">"ship"</span>:
-    warehouse.<span class="fn">ship_delivery</span>(address)</pre>
-      <p style="margin-top: 0.5rem; color: var(--accent);">&#10060; High-level module depends directly on low-level details (delivery methods)</p>
+    warehouse.<span class="fn">ship_delivery</span>()</pre>
     </div>
-    <div class="reveal-block">
-      <p style="margin-top: 1rem; color: var(--green); font-weight: 600;">&#9989; Fixed with dependency injection:</p>
-      <pre style="font-size: 0.78rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+    <div>
+      <p style="color: var(--green); font-weight: 600; margin-bottom: 0.5rem;">&#9989; Fixed with dependency injection:</p>
+      <pre style="font-size: 0.68rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
 
 <span class="kw">class</span> <span class="cls">Delivery</span>(ABC):
     <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, address):
         <span class="par">self</span>.address = address
     @abstractmethod
-    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>):
-        <span class="kw">pass</span>
+    <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>): <span class="kw">pass</span>
 
 <span class="kw">class</span> <span class="cls">AirplaneDelivery</span>(<span class="cls">Delivery</span>):
     <span class="kw">def</span> <span class="fn">deliver</span>(<span class="par">self</span>):
-        <span class="fn">print</span>(<span class="str">f"Airplane delivery to {self.address}"</span>)
+        <span class="fn">print</span>(<span class="str">f"Airplane to {self.address}"</span>)
 
 <span class="kw">class</span> <span class="cls">SellerWarehouse</span>:
     <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, delivery):
@@ -823,11 +942,276 @@ address = <span class="str">"Pilies 22, Vilnius, Lithuania"</span>
 delivery = <span class="cls">DroneDelivery</span>(address)
 warehouse = <span class="cls">SellerWarehouse</span>(delivery)
 warehouse.<span class="fn">deliver</span>()</pre>
-    <div class="callout" style="margin-top: 1rem;">&#128161; Notice how DIP connects to <strong>OCP</strong> (extend without modifying) and <strong>LSP</strong> (any Delivery subclass works). The SOLID principles reinforce each other!</div>
+    <div class="callout" style="margin-top: 1rem;">&#128161; Remember <strong>dependency injection</strong> from Lecture 05 (Composition)? DIP is the <em>principle</em>, dependency injection is the <em>technique</em>. DIP also connects to <strong>OCP</strong> (extend without modifying) and <strong>LSP</strong> (any Delivery subclass works).</div>
+  </div>
+</div>
+
+<!-- ====== SOLID QUIZ — Spot the violation ====== -->
+
+<!-- Quiz 1: SRP + OCP -->
+<div class="slide quiz-slide">
+  <h2>&#128269; Spot the violation!</h2>
+  <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Order</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, items):
+        <span class="par">self</span>.items = items
+
+    <span class="kw">def</span> <span class="fn">calculate_total</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="fn">sum</span>(item.price <span class="kw">for</span> item <span class="kw">in</span> <span class="par">self</span>.items)
+
+    <span class="kw">def</span> <span class="fn">generate_invoice</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">f"Invoice: {self.calculate_total()}"</span>
+
+    <span class="kw">def</span> <span class="fn">save_to_database</span>(<span class="par">self</span>):
+        db.<span class="fn">save</span>(<span class="par">self</span>)</pre>
+  <div class="two-col quiz-answers" style="margin-top: 1rem; max-width: 700px;">
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);"><strong>A) SRP — three reasons to change</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">B) LSP — can't substitute subclass</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">C) DIP — depends on concretions</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">D) No violation</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 0.5rem; font-size: 0.9rem;">Order has <strong>3 responsibilities</strong>: business logic, presentation (invoice), and persistence (database). Each could change for a different reason.</p>
+</div>
+
+<!-- Quiz 1: Fix -->
+<div class="slide">
+  <h2>&#9989; Fix: separate responsibilities</h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.68rem;"><span class="kw">class</span> <span class="cls">Order</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, items):
+        <span class="par">self</span>.items = items
+
+    <span class="kw">def</span> <span class="fn">calculate_total</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="fn">sum</span>(
+            item.price <span class="kw">for</span> item <span class="kw">in</span> <span class="par">self</span>.items
+        )
+
+<span class="kw">class</span> <span class="cls">InvoiceGenerator</span>:
+    <span class="kw">def</span> <span class="fn">generate</span>(<span class="par">self</span>, order):
+        <span class="kw">return</span> <span class="str">f"Invoice: {order.calculate_total()}"</span></pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.68rem;"><span class="kw">class</span> <span class="cls">OrderRepository</span>:
+    <span class="kw">def</span> <span class="fn">save</span>(<span class="par">self</span>, order):
+        db.<span class="fn">save</span>(order)</pre>
+      <ul style="margin-top: 1rem;">
+        <li><code style="color: var(--cyan);">Order</code> &mdash; only business logic</li>
+        <li><code style="color: var(--cyan);">InvoiceGenerator</code> &mdash; only presentation</li>
+        <li><code style="color: var(--cyan);">OrderRepository</code> &mdash; only persistence</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 2: OCP -->
+<div class="slide quiz-slide">
+  <h2>&#128269; Spot the violation!</h2>
+  <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">NotificationService</span>:
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="par">self</span>, message, channel):
+        <span class="kw">if</span> channel == <span class="str">"email"</span>:
+            <span class="par">self</span>.<span class="fn">_send_email</span>(message)
+        <span class="kw">elif</span> channel == <span class="str">"sms"</span>:
+            <span class="par">self</span>.<span class="fn">_send_sms</span>(message)
+        <span class="kw">elif</span> channel == <span class="str">"push"</span>:
+            <span class="par">self</span>.<span class="fn">_send_push</span>(message)</pre>
+  <div class="two-col quiz-answers" style="margin-top: 1rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">A) ISP — fat interface</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);"><strong>B) OCP — must modify to add channels</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">C) LSP — broken substitution</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">D) SRP — multiple responsibilities</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 0.5rem; font-size: 0.9rem;">Adding Slack or WhatsApp means <strong>editing this class</strong>. OCP says extend with new classes, don't modify existing ones.</p>
+</div>
+
+<!-- Quiz 2: Fix -->
+<div class="slide">
+  <h2>&#9989; Fix: open for extension</h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.68rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">NotificationChannel</span>(ABC):
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="par">self</span>, message): <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">EmailChannel</span>(<span class="cls">NotificationChannel</span>):
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="par">self</span>, message):
+        <span class="fn">print</span>(<span class="str">f"Email: {message}"</span>)
+
+<span class="kw">class</span> <span class="cls">SMSChannel</span>(<span class="cls">NotificationChannel</span>):
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="par">self</span>, message):
+        <span class="fn">print</span>(<span class="str">f"SMS: {message}"</span>)</pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.68rem;"><span class="kw">class</span> <span class="cls">SlackChannel</span>(<span class="cls">NotificationChannel</span>):
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="par">self</span>, message):
+        <span class="fn">print</span>(<span class="str">f"Slack: {message}"</span>)
+
+<span class="kw">class</span> <span class="cls">NotificationService</span>:
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="par">self</span>, message, channel):
+        channel.<span class="fn">send</span>(message)</pre>
+      <p style="margin-top: 1rem;">Adding Slack? Just create a new class. <strong>Zero changes</strong> to existing code.</p>
+      <p style="margin-top: 0.5rem;">This also applies <strong>DIP</strong> &mdash; <code style="color: var(--cyan);">NotificationService</code> depends on the abstraction, not concrete channels.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 3: LSP + ISP -->
+<div class="slide quiz-slide">
+  <h2>&#128269; Spot the violation(s)!</h2>
+  <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">Vehicle</span>:
+    <span class="kw">def</span> <span class="fn">start_engine</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Engine started"</span>
+
+    <span class="kw">def</span> <span class="fn">accelerate</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Accelerating"</span>
+
+<span class="kw">class</span> <span class="cls">Bicycle</span>(<span class="cls">Vehicle</span>):
+    <span class="kw">def</span> <span class="fn">start_engine</span>(<span class="par">self</span>):
+        <span class="kw">raise</span> <span class="cls">Exception</span>(<span class="str">"Bicycles don't have engines!"</span>)
+
+    <span class="kw">def</span> <span class="fn">accelerate</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Pedaling faster"</span></pre>
+  <div class="two-col quiz-answers" style="margin-top: 1rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">A) Only OCP</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">B) Only SRP</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);"><strong>C) LSP + ISP</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">D) DIP only</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 0.5rem; font-size: 0.9rem;"><strong>LSP</strong>: Bicycle breaks the Vehicle contract (can't start engine). <strong>ISP</strong>: Vehicle forces an engine interface on vehicles that don't have one. Same pattern as Bird/Penguin!</p>
+</div>
+
+<!-- Quiz 3: Fix -->
+<div class="slide">
+  <h2>&#9989; Fix: proper hierarchy</h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.68rem;"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cls">Vehicle</span>(ABC):
+    @abstractmethod
+    <span class="kw">def</span> <span class="fn">accelerate</span>(<span class="par">self</span>): <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="cls">MotorizedVehicle</span>(<span class="cls">Vehicle</span>):
+    <span class="kw">def</span> <span class="fn">start_engine</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Engine started"</span>
+
+<span class="kw">class</span> <span class="cls">HumanPoweredVehicle</span>(<span class="cls">Vehicle</span>):
+    <span class="kw">def</span> <span class="fn">pedal</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Pedaling"</span></pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.68rem;"><span class="kw">class</span> <span class="cls">Car</span>(<span class="cls">MotorizedVehicle</span>):
+    <span class="kw">def</span> <span class="fn">accelerate</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Car accelerating"</span>
+
+<span class="kw">class</span> <span class="cls">Bicycle</span>(<span class="cls">HumanPoweredVehicle</span>):
+    <span class="kw">def</span> <span class="fn">accelerate</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="str">"Pedaling faster"</span></pre>
+      <ul style="margin-top: 1rem;">
+        <li>&#128994; <strong>LSP</strong>: Bicycle never promises an engine</li>
+        <li>&#128994; <strong>ISP</strong>: Engine interface only on motorized vehicles</li>
+        <li>Same fix pattern as Bird/Penguin!</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz 4: Multiple violations -->
+<div class="slide quiz-slide">
+  <h2>&#128269; How many violations?</h2>
+  <pre style="font-size: 0.72rem;"><span class="kw">class</span> <span class="cls">ReportGenerator</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>):
+        <span class="par">self</span>.db = <span class="cls">MySQLDatabase</span>()
+
+    <span class="kw">def</span> <span class="fn">fetch_data</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="par">self</span>.db.<span class="fn">query</span>(<span class="str">"SELECT * FROM reports"</span>)
+
+    <span class="kw">def</span> <span class="fn">generate_pdf</span>(<span class="par">self</span>, data):
+        <span class="fn">print</span>(<span class="str">f"PDF with {len(data)} rows"</span>)
+
+    <span class="kw">def</span> <span class="fn">send_email</span>(<span class="par">self</span>, pdf):
+        <span class="fn">print</span>(<span class="str">f"Emailing {pdf}"</span>)</pre>
+  <div class="two-col quiz-answers" style="margin-top: 1rem; max-width: 700px;">
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">A) 1 (SRP only)</p></div>
+    <div class="col quiz-answer correct" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);"><strong>B) 2 (SRP + DIP)</strong></p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">C) 3 (SRP + OCP + DIP)</p></div>
+    <div class="col quiz-answer" style="text-align: center;"><p style="font-size: 1rem; color: var(--green);">D) All 5 principles</p></div>
+  </div>
+  <p class="quiz-explanation" style="color: var(--muted); margin-top: 0.5rem; font-size: 0.9rem;"><strong>SRP</strong>: fetching, generating, and emailing are 3 responsibilities. <strong>DIP</strong>: hardcoded <code>MySQLDatabase()</code> instead of injecting an abstraction.</p>
+</div>
+
+<!-- Quiz 4: Fix -->
+<div class="slide">
+  <h2>&#9989; Fix: separate + inject</h2>
+  <div class="two-col">
+    <div>
+      <pre style="font-size: 0.68rem;"><span class="kw">class</span> <span class="cls">ReportRepository</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="par">self</span>, db):
+        <span class="par">self</span>.db = db
+
+    <span class="kw">def</span> <span class="fn">fetch</span>(<span class="par">self</span>):
+        <span class="kw">return</span> <span class="par">self</span>.db.<span class="fn">query</span>(
+            <span class="str">"SELECT * FROM reports"</span>
+        )
+
+<span class="kw">class</span> <span class="cls">PDFGenerator</span>:
+    <span class="kw">def</span> <span class="fn">generate</span>(<span class="par">self</span>, data):
+        <span class="fn">print</span>(<span class="str">f"PDF: {len(data)} rows"</span>)
+
+<span class="kw">class</span> <span class="cls">EmailService</span>:
+    <span class="kw">def</span> <span class="fn">send</span>(<span class="par">self</span>, attachment):
+        <span class="fn">print</span>(<span class="str">f"Emailing {attachment}"</span>)</pre>
+    </div>
+    <div>
+      <pre style="font-size: 0.68rem;"><span class="cm"># Usage with dependency injection:</span>
+db = <span class="cls">MySQLDatabase</span>()
+repo = <span class="cls">ReportRepository</span>(db)
+pdf = <span class="cls">PDFGenerator</span>()
+email = <span class="cls">EmailService</span>()
+
+data = repo.<span class="fn">fetch</span>()
+report = pdf.<span class="fn">generate</span>(data)
+email.<span class="fn">send</span>(report)</pre>
+      <ul style="margin-top: 1rem;">
+        <li>&#128307; <strong>SRP</strong>: each class has one job</li>
+        <li>&#128994; <strong>DIP</strong>: database is injected, not hardcoded</li>
+        <li>&#128312; <strong>OCP</strong>: swap PDF for Excel? New class, zero changes</li>
+      </ul>
+    </div>
   </div>
 </div>
 
 <!-- ====== KEY TAKEAWAYS ====== -->
+<!-- When NOT to apply SOLID -->
+<div class="slide">
+  <h2>When <span class="accent">NOT</span> to apply SOLID</h2>
+  <div style="max-width: 750px;">
+    <p>SOLID is a guideline, not a law. Don't over-engineer:</p>
+    <ul style="margin-top: 1rem;">
+      <li>&#128221; <strong>Small scripts:</strong> A 50-line script doesn't need 5 classes with abstract interfaces</li>
+      <li>&#128640; <strong>Prototypes / MVPs:</strong> Speed matters more than architecture when validating an idea</li>
+      <li>&#129300; <strong>YAGNI:</strong> "You Ain't Gonna Need It" &mdash; don't create abstractions for hypothetical future requirements</li>
+      <li>&#9878;&#65039; <strong>Balance:</strong> Perfect SOLID compliance can make simple code harder to read</li>
+    </ul>
+    <div class="callout" style="margin-top: 1.5rem;">Start simple. Refactor toward SOLID <strong>when the pain appears</strong> &mdash; when a class gets too big, when adding features requires editing 5 files, when tests become impossible.</div>
+  </div>
+</div>
+
+<!-- Common pitfalls -->
+<div class="slide">
+  <h2>Common <span class="accent">pitfalls</span></h2>
+  <div style="max-width: 750px;">
+    <ul>
+      <li><span style="color: #818cf8; font-weight: 700;">S</span> &mdash; Splitting classes too aggressively &mdash; 100 tiny classes is worse than 5 cohesive ones</li>
+      <li><span style="color: #a78bfa; font-weight: 700;">O</span> &mdash; Creating abstractions "just in case" before you have a real second use case</li>
+      <li><span style="color: #f472b6; font-weight: 700;">L</span> &mdash; Inheriting from a class just to reuse code, when there's no real "is-a" relationship</li>
+      <li><span style="color: #fbbf24; font-weight: 700;">I</span> &mdash; Creating one interface per method &mdash; interfaces should be <em>cohesive</em>, not atomic</li>
+      <li><span style="color: #34d399; font-weight: 700;">D</span> &mdash; Abstracting everything &mdash; not every dependency needs an interface (e.g., <code style="color: var(--muted);">math.sqrt</code>)</li>
+    </ul>
+  </div>
+</div>
+
 <div class="slide">
   <h2>Key Takeaways</h2>
   <div style="max-width: 750px;">
@@ -841,11 +1225,6 @@ warehouse.<span class="fn">deliver</span>()</pre>
     <div class="callout" style="margin-top: 1.5rem;">SOLID principles work <strong>together</strong>. They make your code easier to understand, modify, extend, and test. Start applying them gradually &mdash; you don't need to be perfect on day one.</div>
   </div>
   <p style="color: var(--muted); margin-top: 2rem; font-size: 1.1rem;">Next up: <strong style="color: var(--accent);">UML &amp; Design Patterns</strong></p>
-</div>
-
-<!-- Hackathon -->
-<div class="slide center" style="padding: 4rem 6rem 5rem; background: #000;">
-  <img src="hackathon.png" alt="AI Hackathon — Apr 18, 10AM-7PM at Visma Tech office" style="max-width: 100%; max-height: calc(100vh - 9rem); object-fit: contain;">
 </div>
 
 <div class="nav">
