@@ -457,37 +457,35 @@
 </div>
 
 <div class="slide center">
-  <h2><span style="color: #a78bfa;">OCP</span> Visualized: adding PDF support</h2>
-  <svg viewBox="0 0 750 240" width="90%" style="max-width: 950px; margin-top: 1rem;">
-    <text x="175" y="18" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="700" font-family="Outfit, sans-serif">&#10060; Without OCP: modify existing class</text>
-    <rect x="80" y="30" width="190" height="35" rx="8" fill="var(--code-bg)" stroke="var(--accent)" stroke-width="2"/>
-    <text x="175" y="53" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">DocumentProcessor</text>
-    <line x1="130" y1="65" x2="90" y2="95" stroke="var(--border)" stroke-width="1.5"/>
-    <line x1="220" y1="65" x2="260" y2="95" stroke="var(--border)" stroke-width="1.5"/>
-    <rect x="30" y="95" width="120" height="30" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
-    <text x="90" y="115" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">process_word()</text>
-    <rect x="200" y="95" width="120" height="30" rx="6" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2.5"/>
-    <text x="260" y="115" text-anchor="middle" fill="var(--cyan)" font-size="9" font-weight="600" font-family="JetBrains Mono, monospace">process_pdf()</text>
-    <text x="260" y="145" text-anchor="middle" fill="var(--cyan)" font-size="9" font-family="Outfit, sans-serif">&#9757; added here + if/elif</text>
-    <text x="175" y="175" text-anchor="middle" fill="var(--accent)" font-size="9" font-family="Outfit, sans-serif">Must edit the class every time you add a format</text>
+  <h2><span style="color: #a78bfa;">OCP</span> Visualized</h2>
+  <svg viewBox="0 0 700 220" width="85%" style="max-width: 900px; margin-top: 1rem;">
+    <text x="160" y="20" text-anchor="middle" fill="var(--accent)" font-size="14" font-weight="700" font-family="Outfit, sans-serif">&#10060; Usual way: modify existing</text>
+    <rect x="60" y="35" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="130" y="35" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="200" y="35" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="60" y="80" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <rect x="130" y="80" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <rect x="200" y="80" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <rect x="60" y="125" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="130" y="125" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--cyan)" stroke-width="2"/>
+    <rect x="200" y="125" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <text x="160" y="185" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif"><tspan fill="var(--cyan)">Blue = changed</tspan> &mdash; changes scattered everywhere</text>
 
-    <line x1="380" y1="25" x2="380" y2="220" stroke="var(--border)" stroke-width="1.5"/>
+    <line x1="340" y1="30" x2="340" y2="195" stroke="var(--border)" stroke-width="1.5"/>
 
-    <text x="570" y="18" text-anchor="middle" fill="var(--green)" font-size="13" font-weight="700" font-family="Outfit, sans-serif">&#9989; With OCP: extend with new class</text>
-    <rect x="475" y="30" width="190" height="35" rx="8" fill="var(--code-bg)" stroke="var(--border)" stroke-width="2"/>
-    <text x="570" y="53" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">DocumentProcessor</text>
-    <text x="570" y="50" text-anchor="middle" fill="var(--heading)" font-size="11" font-weight="600" font-family="JetBrains Mono, monospace">DocumentProcessor</text>
-    <line x1="520" y1="65" x2="470" y2="95" stroke="var(--border)" stroke-width="1.5"/>
-    <line x1="570" y1="65" x2="570" y2="95" stroke="var(--border)" stroke-width="1.5"/>
-    <line x1="620" y1="65" x2="680" y2="95" stroke="var(--green)" stroke-width="2"/>
-    <rect x="405" y="95" width="130" height="30" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
-    <text x="470" y="115" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">WordProcessor</text>
-    <rect x="505" y="95" width="130" height="30" rx="6" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
-    <text x="570" y="115" text-anchor="middle" fill="var(--muted)" font-size="9" font-family="JetBrains Mono, monospace">CSVProcessor</text>
-    <rect x="615" y="95" width="130" height="30" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="2.5"/>
-    <text x="680" y="115" text-anchor="middle" fill="var(--green)" font-size="9" font-weight="600" font-family="JetBrains Mono, monospace">PDFProcessor</text>
-    <text x="680" y="145" text-anchor="middle" fill="var(--green)" font-size="9" font-family="Outfit, sans-serif">&#129513; new class, no edits!</text>
-    <text x="570" y="175" text-anchor="middle" fill="var(--green)" font-size="9" font-family="Outfit, sans-serif">Existing code untouched. Just add a new subclass.</text>
+    <text x="520" y="20" text-anchor="middle" fill="var(--green)" font-size="14" font-weight="700" font-family="Outfit, sans-serif">&#9989; OCP way: extend only</text>
+    <rect x="420" y="35" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="490" y="35" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="560" y="35" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="420" y="80" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="490" y="80" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="560" y="80" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="420" y="125" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="490" y="125" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="560" y="125" width="60" height="35" rx="4" fill="var(--code-bg)" stroke="var(--border)" stroke-width="1.5"/>
+    <rect x="630" y="80" width="60" height="35" rx="6" fill="var(--code-bg)" stroke="var(--green)" stroke-width="2.5"/>
+    <text x="660" y="102" text-anchor="middle" fill="var(--green)" font-size="16">&#129513;</text>
+    <text x="520" y="185" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Outfit, sans-serif"><tspan fill="var(--green)">Green = new</tspan> &mdash; just add a new piece</text>
   </svg>
 </div>
 
